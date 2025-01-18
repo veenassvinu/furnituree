@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
 
-     <style>
+    <style>
         :root {
             --primary-color: #2c7a7b;
             --primary-hover: #285e61;
@@ -16,17 +16,57 @@
             --card-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
         }
 
+        /* Main Layout */
         body {
             background-color: var(--bg-color);
             font-family: 'Inter', sans-serif;
             color: #333;
+            display: flex;
+            min-height: 100vh;
         }
 
-        /* Main Layout */
+        .container {
+            padding: 0;
+            display: flex;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* Sidebar positioning */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            z-index: 1000;
+        }
+
+        /* Main content positioning */
         .main-content {
+            flex: 1;
             margin-left: 250px;
             padding: 2rem;
-            max-width: 1200px;
+            max-width: calc(100% - 250px);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                max-width: 100%;
+            }
         }
 
         /* Page Header */
@@ -177,8 +217,8 @@
                 padding: 1.5rem;
             }
         }
-    </style> 
-    
+    </style>
+
 
 
 
@@ -271,7 +311,7 @@
                                 <div class="row">
                                     <% for(let i=1; i<=4; i++) { %>
                                         <div class="col-md-3 mb-3">
-                                            <input type="file" id="image<%= i %>"  class="image-input form-control"
+                                            <input type="file" id="image<%= i %>" class="image-input form-control"
                                                 accept="image/*" data-index="<%= i %>">
                                         </div>
                                         <% } %>
@@ -464,54 +504,54 @@
         // Handle crop button click
         // Modify the crop button event listener
         document.getElementById("cropButton").addEventListener("click", function () {
-    const croppedCanvas = cropper.getCroppedCanvas({
-        width: 800,
-        height: 800
-    });
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: 800,
+                height: 800
+            });
 
-    // Convert canvas to blob
-    croppedCanvas.toBlob(function(blob) {
-        // Create a File object
-        const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
-        
-        // Create a new FileList-like object
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
+            // Convert canvas to blob
+            croppedCanvas.toBlob(function (blob) {
+                // Create a File object
+                const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
 
-        // Create file input for the cropped image
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.name = 'productImages';  // Match the name expected by multer
-        fileInput.style.display = 'none';
-        fileInput.files = dataTransfer.files;
-        
-        document.getElementById('productForm').appendChild(fileInput);
+                // Create a new FileList-like object
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
 
-        // Preview the cropped image
-        const previewContainer = document.getElementById("imagePreview");
-        const previewItem = document.createElement("div");
-        previewItem.classList.add("preview-item");
+                // Create file input for the cropped image
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.name = 'productImages';  // Match the name expected by multer
+                fileInput.style.display = 'none';
+                fileInput.files = dataTransfer.files;
 
-        const imgPreview = document.createElement("img");
-        imgPreview.src = URL.createObjectURL(blob);
-        previewItem.appendChild(imgPreview);
+                document.getElementById('productForm').appendChild(fileInput);
 
-        const deleteButton = document.createElement("button");
-        deleteButton.innerText = "Delete";
-        deleteButton.classList.add("btn", "btn-danger", "btn-sm", "mt-2");
-        deleteButton.onclick = function () {
-            previewItem.remove();
-            fileInput.remove();
-        };
-        previewItem.appendChild(deleteButton);
+                // Preview the cropped image
+                const previewContainer = document.getElementById("imagePreview");
+                const previewItem = document.createElement("div");
+                previewItem.classList.add("preview-item");
 
-        previewContainer.appendChild(previewItem);
+                const imgPreview = document.createElement("img");
+                imgPreview.src = URL.createObjectURL(blob);
+                previewItem.appendChild(imgPreview);
 
-        // Close the modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById("cropperModal"));
-        modal.hide();
-    }, 'image/jpeg');
-});
+                const deleteButton = document.createElement("button");
+                deleteButton.innerText = "Delete";
+                deleteButton.classList.add("btn", "btn-danger", "btn-sm", "mt-2");
+                deleteButton.onclick = function () {
+                    previewItem.remove();
+                    fileInput.remove();
+                };
+                previewItem.appendChild(deleteButton);
+
+                previewContainer.appendChild(previewItem);
+
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById("cropperModal"));
+                modal.hide();
+            }, 'image/jpeg');
+        });
 
 
     </script>

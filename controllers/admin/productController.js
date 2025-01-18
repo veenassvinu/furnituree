@@ -42,46 +42,13 @@ const getProductAddPage = async (req, res) => {
   }
 };
 
-// const addproduct = async (req, res) => {
-//   try {
-//     const products = req.body;
-
-//     const productExists = await Product.findOne({
-//       productName: products.productName,
-//     });
-
-//     const category = await Category.findOne({name:products.category})
-//     console.log("Category :", category)
-
-//     const newProduct = new Product({
-//                 productName: products.productName,
-//                 description: products.description,
-//                 category: category._id,
-//                 originalPrice: products.regularPrice,
-//                 salePrice: products.salePrice,
-//                 createOn: new Date(),
-//                 quantity: products.quantity,
-//                 color: products.color,
-//                 // productImage: images,
-//                 status: "Available",
-//     });
-
-//     await newProduct.save();
-
-//     res.redirect('/admin/product')
-
-//   } catch (error) {
-//     console.log(error)
-//   }
-// };
-
 const addproduct = async (req, res) => {
   try {
     const products = req.body;
 
     // Debugging: log incoming data and uploaded files
     console.log("Submitted Product Data:", products);
-    console.log("Uploaded Files:", req.files);
+    // console.log("Uploaded Files:", req.files);
 
     const productExists = await Product.findOne({
       productName: products.productName,
@@ -152,6 +119,5 @@ const addproduct = async (req, res) => {
 module.exports = {
   getProductAddPage,
   loadProduct,
-  //   postAddProduct,
   addproduct,
 };
