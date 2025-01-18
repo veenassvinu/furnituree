@@ -1,0 +1,154 @@
+const Category=require("../../models/categorySchema");
+
+
+
+const categoryInfo = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 6;
+        const skip = (page - 1) * limit;
+
+     
+        const categoryData = await Category.find().skip(skip).limit(limit);
+        // console.log(categoryData)
+
+        const totalCategories = await Category.countDocuments();
+        const totalPages = Math.ceil(totalCategories / limit);
+
+        res.render('category-Management', {  // Remove the leading slash
+            cat: categoryData,
+            currentPage: page,
+            totalPages: totalPages,
+            totalCategories: totalCategories
+        });
+    } catch (error) {
+        console.error(error);
+        res.redirect('/pageerror');
+    }
+};
+
+
+const addCategory = async (req, res) => {
+    const { name, description } = req.body;
+
+    // Validate the input
+    if (!name || typeof name !== 'string' || name.trim() === '') {
+        return res.status(400).json({ error: "Name is required and must be a non-empty string." });
+    }
+    if (!description || typeof description !== 'string' || description.trim() === '') {
+        return res.status(400).json({ error: "Description is required and must be a non-empty string." });
+    }
+
+    try {
+        const regex = new RegExp(`^${name}$`, "i")
+        const existingCategory = await Category.findOne({ name:regex});
+        if (existingCategory) {
+            
+            return res.status(400).json({ error: "Category already exists." });
+        }
+
+        const newCategory = new Category({
+            name: name.trim(),
+            description: description.trim(),
+        });
+        await newCategory.save();
+        res.status(200).json({ success: true, message: "Category added successfully." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+
+const updateCategory = async (req, res) => {
+    try {
+        const { id } = req.params; // Extract category ID from route params
+        const { name, description } = req.body; // Extract updated data from request body
+
+        // Check if category exists
+        const category = await Category.findById(id);
+        if (!category) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+
+        // Update category details
+        category.name = name || category.name;
+        category.description = description || category.description;
+        await category.save();
+
+        res.json({ success: true, message: "Category updated successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+const deleteCategory = async (req, res) => {
+    try {
+        const { id } = req.params; // Extract category ID from route params
+
+        // Find and delete the category
+        const category = await Category.findByIdAndDelete(id);
+        if (!category) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+
+        res.json({ success: true, message: "Category deleted successfully" });
+    } catch (error) {
+        console.error("error deleting category",error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+const listCategory = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Update the category's `isListed` field to true
+        const category = await Category.findByIdAndUpdate(
+            id,
+            { isListed: true },
+            { new: true } // Return the updated document
+        );
+
+        if (!category) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+
+        res.json({ success: true, message: "Category listed successfully" });
+    } catch (error) {
+        console.error("Error listing category:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+const unlistCategory = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Update the category's `isListed` field to false
+        const category = await Category.findByIdAndUpdate(
+            id,
+            { isListed: false },
+            { new: true } // Return the updated document
+        );
+
+        if (!category) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+
+        res.json({ success: true, message: "Category unlisted successfully" });
+    } catch (error) {
+        console.error("Error unlisting category:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+
+module.exports= {
+    categoryInfo,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    listCategory,
+    unlistCategory,
+}

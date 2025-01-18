@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Furniture - User Management</title>
+    <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #4a4a4a;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+           
+            width: 250px;
+            background-color: white;
+            padding: 20px;
+        } 
+        
+
+        .sidebar h2 {
+            margin: 0 0 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            color: white;
+            margin: 10px 0;
+        }
+
+        .sidebar a:hover {
+            background-color: #285e61;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+
+        .logo {
+            font-size: 24px;
+            color: #5cc6ba;
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 12px 0;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            color: #5cc6ba;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            margin: 20px;
+            border-radius: 8px;
+        }
+
+        /* Search Bar */
+       
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            background-color: #0099ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+
+        /* User Table */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .user-table th {
+            text-align: left;
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .user-table td {
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .ban-button {
+            padding: 5px 15px;
+            background-color: transparent;
+            color: red;
+            border: 1px solid red;
+            border-radius: 4px;
+            cursor: pointer;
+            
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .top-bar {
+            background-color: #5cc6ba;
+            padding: 15px;
+            color: white;
+            font-size: 20px;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .green-dot {
+            background-color: #4CAF50;
+        }
+
+        .red-dot {
+            background-color: #f44336;
+        }
+        .ban-button {
+          padding: 8px 12px;
+          background-color: #f0f0f0;
+          color: #333;
+          border: 1px solid #ddd;
+          cursor: pointer;            
+          transition: background-color 0.3s, color 0.3s;
+        }
+        .ban-button:hover {
+        background-color: #ffcccc; 
+        color: #000;
+       }
+       .ban-button:disabled {
+         cursor: not-allowed;
+         opacity: 0.6;
+        }
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pagination-button {
+            padding: 5px 10px;
+            background-color: #0099ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination-button.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+      <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Optional JavaScript (for components like modals, dropdowns, etc.) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+    <div style="margin: 0;" class="container ">
+        
+  <%- include("../../views/partials/admin/sidebar")%>
+        <div class="main-content">
+            <div class="top-bar">
+                Furni.
+                <div class="controls">
+                    <div class="control-dot green-dot"></div>
+                    <div class="control-dot red-dot"></div>
+                </div>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search users">
+                <button class="search-button">Search</button>
+            </div>
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone </th>
+                        <th>Block</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <%for(let i=0;i<userData.length;i++){%>
+                    <tr>
+                        <td><%=userData[i].name%></td>
+                        <td><%=userData[i].email%></td>
+                    
+                        <td><%=userData[i].phone%></td>
+    
+                        <%if(userData[i].isBlocked===false){%>
+                        <td><a href="/admin/blockUser?id=<%=userData[i]._id%>" class="btn-update">Block</a></td>
+                        <%}else{%>
+                            <td><a href="/admin/unblockUser?id=<%=userData[i]._id%>" class="btn-update">UnBlock</a></td>
+                        <%}%>
+                        
+                        <td><button class="btn-delete">View</button></td>
+                        
+                    </tr>
+                    <%}%>
+                </tbody>
+
+            </table>
+             <!-- <div class="user-details">
+                            <h2>User Details</h2>
+                            <div class="detail">
+                                <div class="label">Name:</div>
+                                <div class="value" id="userName">John Doe</div>
+                            </div>
+                            <div class="detail">
+                                <div class="label">Email:</div>
+                                <div class="value" id="userEmail">johndoe@example.com</div>
+                            </div>
+                            <div class="detail">
+                                <div class="label">Phone:</div>
+                                <div class="value" id="userPhone">123-456-7890</div>
+                            </div>
+                            <div class="detail">
+                                <div class="label">Address:</div>
+                                <div class="value" id="userAddress">123 Main St, Cityville</div>
+                            </div>
+                            <div class="detail">
+                                <div class="label">Role:</div>
+                                <div class="value" id="userRole">Admin</div>
+                            </div>
+                        </div>  -->
+
+                        <div class="pagination">
+                            <!-- Previous Button -->
+                            <button class="pagination-button"
+                                onclick="changePage(`<%= currentPage - 1 %>`)"
+                                <%= currentPage === 1 ? 'disabled="disabled"' : '' %>>
+                                Previous
+                            </button>
+                        
+                            <!-- Page Numbers -->
+                            <% for (let page = 1; page <= totalPages; page++) { %>
+                                <button class="pagination-button <%= currentPage === page ? 'active' : '' %>"
+                                    onclick="changePage(`<%= page %>`)">
+                                    <%= page %>
+                                </button>
+                            <% } %>
+                        
+                            <!-- Next Button -->
+                            <button class="pagination-button"
+                                onclick="changePage(`<%= currentPage + 1 %>`)"
+                                <%= currentPage === totalPages ? 'disabled="disabled"' : '' %>>
+                                Next
+                            </button>
+                        </div>
+                        
+            
+                    </div>
+    </div>
+
+    <script>
+        function changePage(page) {
+            const search = document.querySelector(".search-input").value || "";
+            // Redirect to the desired page with search parameters
+            window.location.href = `/admin/User?search=${encodeURIComponent(search)}&page=${page}`;
+        }
+    </script>
+    
+</body>
+</html>
+
+

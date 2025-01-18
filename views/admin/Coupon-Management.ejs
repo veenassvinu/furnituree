@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanWorn - Coupon Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #4a4a4a;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            color: #5cc6ba;
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 12px 0;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            color: #5cc6ba;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            margin: 20px;
+        }
+
+        .table-section {
+            flex: 2;
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        .form-section {
+            flex: 1;
+            background-color: #5cc6ba;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .search-input {
+            width: calc(100% - 100px);
+            padding: 10px;
+            border: none;
+            background-color: #1e2124;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            background-color: #0099ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        /* Coupon Table */
+        .coupon-table {
+            width: 100%;
+            border-collapse: collapse;
+            padding: 0 20px;
+        }
+
+        .coupon-table th {
+            text-align: left;
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .coupon-table td {
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .update-button {
+            padding: 5px 15px;
+            background-color: transparent;
+            color: #00c853;
+            border: 1px solid #00c853;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            padding: 5px 15px;
+            background-color: transparent;
+            color: #f44336;
+            border: 1px solid #f44336;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .create-button {
+            padding: 10px 20px;
+            background-color: #0099ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .top-bar {
+            background-color: #5cc6ba;
+            padding: 15px;
+            color: white;
+            font-size: 20px;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .green-dot {
+            background-color: #4CAF50;
+        }
+
+        .red-dot {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">UrbanWorn</div>
+            <div class="nav-item">Dashboard</div>
+            <div class="nav-item">User Management</div>
+            <div class="nav-item">Products Management</div>
+            <div class="nav-item">Order Management</div>
+            <div class="nav-item">Category Management</div>
+            <div class="nav-item">Coupon Management</div>
+            <div class="nav-item">Offers Management</div>
+        </div>
+        <div class="main-content">
+            <div class="table-section">
+                <div class="top-bar">
+                    UrbanWorn
+                    <div class="controls">
+                        <div class="control-dot green-dot"></div>
+                        <div class="control-dot red-dot"></div>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search users">
+                    <button class="search-button">Search</button>
+                </div>
+                <table class="coupon-table">
+                    <thead>
+                        <tr>
+                            <th>Coupon Code</th>
+                            <th>Discount Value</th>
+                            <th>Valid From</th>
+                            <th>Valid Until</th>
+                            <th>Usage Limit</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MF736H98GDD</td>
+                            <td>10%</td>
+                            <td>04 Jan 2024</td>
+                            <td>05 Jan 2024</td>
+                            <td>2</td>
+                            <td><button class="update-button">Update</button></td>
+                            <td><button class="delete-button">Delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Coupon Code</label>
+                    <input type="text" placeholder="Coupon Code">
+                </div>
+                <div class="form-group">
+                    <label>Discount Value</label>
+                    <input type="text" placeholder="Discount Value">
+                </div>
+                <div class="form-group">
+                    <label>Valid From</label>
+                    <input type="date" placeholder="dd-mm-yyyy">
+                </div>
+                <div class="form-group">
+                    <label>Valid Until</label>
+                    <input type="date" placeholder="dd-mm-yyyy">
+                </div>
+                <div class="form-group">
+                    <label>Usage Limit</label>
+                    <input type="number" placeholder="Usage Limit">
+                </div>
+                <button class="create-button">Create</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

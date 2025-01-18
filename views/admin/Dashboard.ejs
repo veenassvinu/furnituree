@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    .stats-container {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .stat-box {
+      background-color: #38b2ac;
+      color: white;
+      padding: 20px;
+      flex: 1;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .add-maintenance {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .add-maintenance input,
+    .add-maintenance select,
+    .add-maintenance button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .financial-container {
+      display: flex;
+      gap: 20px;
+    }
+
+    .financial-box {
+      background-color: #edf2f7;
+      padding: 20px;
+      flex: 1;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .financial-box h3 {
+      margin: 0;
+    }
+
+    .financial-box p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  
+  <%- include("../../views/partials/admin/sidebar")%>
+
+  <div class="main-content">
+    <div class="stats-container">
+      <div class="stat-box">
+        <h3>3002</h3>
+        <p>Total Users</p>
+      </div>
+      <div class="stat-box">
+        <h3>266</h3>
+        <p>Total Products</p>
+      </div>
+      <div class="stat-box">
+        <h3>66</h3>
+        <p>Total Orders</p>
+      </div>
+      <div class="stat-box">
+        <h3>277</h3>
+        <p>Weekly Sales</p>
+      </div>
+    </div>
+
+    <div class="add-maintenance">
+      <h3>Add Maintenance</h3>
+      <select>
+        <option value="" disabled selected>Select Item</option>
+        <option value="item1">Item 1</option>
+        <option value="item2">Item 2</option>
+      </select>
+      <input type="date" placeholder="Select Date" />
+      <textarea placeholder="Enter a message"></textarea>
+      <button>Add</button>
+    </div>
+
+    <div class="financial-container">
+      <div class="financial-box">
+        <h3>Revenue</h3>
+        <p>$32123</p>
+        <p>+5% this month</p>
+      </div>
+      <div class="financial-box">
+        <h3>Sales</h3>
+        <p>$45850</p>
+        <p>+8% this month</p>
+      </div>
+      <div class="financial-box">
+        <h3>Purchases</h3>
+        <p>$2039</p>
+        <p>-2% this month</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

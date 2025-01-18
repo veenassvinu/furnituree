@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management</title>
+  <style>
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background-color: #2c7a7b;
+      color: white;
+      position: fixed;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      margin: 0 0 20px;
+    }
+
+    .sidebar a {
+      display: block;
+      text-decoration: none;
+      color: white;
+      margin: 10px 0;
+    }
+
+    .sidebar a:hover {
+      background-color: #285e61;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+
+
+    /* Layout */
+    .d-flex {
+      display: flex;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <!-- <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Furni.</a>
+    </div>
+  </nav> -->
+
+  <!-- Sidebar & Content -->
+  <!-- <div class="d-flex"> -->
+    <!-- Sidebar -->
+    <!-- <div class="sidebar"> -->
+        <div class="sidebar">
+            <h2>Furni.</h2>
+      <ul>
+        <li><a href="http://localhost:3005/admin/dashboard">Dashboard</a></li>
+        <li><a href="http://localhost:3005/admin/User">User Management</a></li>
+        <li><a href="http://localhost:3005/admin/addproduct">Products Management</a></li>
+        <li><a href="http://localhost:3005/admin/order">Order Management</a></li>
+        <li><a href="http://localhost:3005/admin/category">Category Management</a></li>
+        <li><a href="http://localhost:3005/admin/coupon">Coupon Management</a></li>
+        <li><a href="http://localhost:3005/admin/offer">Offers Management</a></li>
+        <li><a href="http://localhost:3005/admin/logout" style="background-color: rgb(93, 90, 230); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+          Log Out
+        </a></li>
+      </ul>
+    </div>
+    
+
+</body>
+</html>
