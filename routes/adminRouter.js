@@ -29,6 +29,15 @@ router.put("/unlist-category/:id",adminAuth,categoryController.unlistCategory);
 router.get("/product",adminAuth,productController.loadProduct);
 router.get("/addproduct",adminAuth,productController.getProductAddPage);
 router.post("/addproduct",upload.array("productImages",4),productController.addproduct);
+router.get("/edit-product/:id",productController.loadEditProduct);
+router.post("/edit-product/:id",upload.array("productImages",4),productController.editproduct);
+router.delete("/delete-image",adminAuth,productController.deleteImage);
+router.get("/blockProduct",adminAuth,productController.blockProduct);
+router.get("/unblockProduct",adminAuth,productController.unblockProduct);
+
+
+
+
 
 
 module.exports=router;

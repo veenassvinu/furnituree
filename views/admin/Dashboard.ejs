@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +12,51 @@
       background-color: #f4f4f4;
     }
 
-    
-    .main-content {
-      margin-left: 250px;
-      padding: 20px;
+
+    .container {
+      padding: 0;
+      display: flex;
+      width: 100%;
+      max-width: 100%;
     }
+
+    /* Sidebar positioning */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 250px;
+      z-index: 1000;
+    }
+
+    /* Main content positioning */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 2rem;
+      max-width: calc(100% - 250px);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+        max-width: 100%;
+      }
+    }
+
 
     .stats-container {
       display: flex;
@@ -72,59 +113,61 @@
     }
   </style>
 </head>
+
 <body>
-  
+
   <%- include("../../views/partials/admin/sidebar")%>
 
-  <div class="main-content">
-    <div class="stats-container">
-      <div class="stat-box">
-        <h3>3002</h3>
-        <p>Total Users</p>
+    <div class="main-content">
+      <div class="stats-container">
+        <div class="stat-box">
+          <h3>3002</h3>
+          <p>Total Users</p>
+        </div>
+        <div class="stat-box">
+          <h3>266</h3>
+          <p>Total Products</p>
+        </div>
+        <div class="stat-box">
+          <h3>66</h3>
+          <p>Total Orders</p>
+        </div>
+        <div class="stat-box">
+          <h3>277</h3>
+          <p>Weekly Sales</p>
+        </div>
       </div>
-      <div class="stat-box">
-        <h3>266</h3>
-        <p>Total Products</p>
-      </div>
-      <div class="stat-box">
-        <h3>66</h3>
-        <p>Total Orders</p>
-      </div>
-      <div class="stat-box">
-        <h3>277</h3>
-        <p>Weekly Sales</p>
-      </div>
-    </div>
 
-    <div class="add-maintenance">
-      <h3>Add Maintenance</h3>
-      <select>
-        <option value="" disabled selected>Select Item</option>
-        <option value="item1">Item 1</option>
-        <option value="item2">Item 2</option>
-      </select>
-      <input type="date" placeholder="Select Date" />
-      <textarea placeholder="Enter a message"></textarea>
-      <button>Add</button>
-    </div>
+      <div class="add-maintenance">
+        <h3>Add Maintenance</h3>
+        <select>
+          <option value="" disabled selected>Select Item</option>
+          <option value="item1">Item 1</option>
+          <option value="item2">Item 2</option>
+        </select>
+        <input type="date" placeholder="Select Date" />
+        <textarea placeholder="Enter a message"></textarea>
+        <button>Add</button>
+      </div>
 
-    <div class="financial-container">
-      <div class="financial-box">
-        <h3>Revenue</h3>
-        <p>$32123</p>
-        <p>+5% this month</p>
-      </div>
-      <div class="financial-box">
-        <h3>Sales</h3>
-        <p>$45850</p>
-        <p>+8% this month</p>
-      </div>
-      <div class="financial-box">
-        <h3>Purchases</h3>
-        <p>$2039</p>
-        <p>-2% this month</p>
+      <div class="financial-container">
+        <div class="financial-box">
+          <h3>Revenue</h3>
+          <p>$32123</p>
+          <p>+5% this month</p>
+        </div>
+        <div class="financial-box">
+          <h3>Sales</h3>
+          <p>$45850</p>
+          <p>+8% this month</p>
+        </div>
+        <div class="financial-box">
+          <h3>Purchases</h3>
+          <p>$2039</p>
+          <p>-2% this month</p>
+        </div>
       </div>
     </div>
-  </div>
 </body>
+
 </html>

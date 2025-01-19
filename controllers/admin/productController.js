@@ -21,6 +21,8 @@ const loadProduct = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
+    console.log("products ", products);
+
     res.render("Products-Management", {
       products,
       totalPages,
@@ -62,7 +64,6 @@ const addproduct = async (req, res) => {
         for (let i = 0; i < req.files.length; i++) {
           const originalImagePath = req.files[i].path;
 
-
           const resizeImagePath = path.join(
             "public",
             "uploads",
@@ -80,7 +81,6 @@ const addproduct = async (req, res) => {
 
       // Query the Category model by name to find the corresponding _id
       const category = await Category.findOne({ name: products.category });
-
       if (!category) {
         return res.status(400).send("Invalid category name");
       }
@@ -110,14 +110,185 @@ const addproduct = async (req, res) => {
         .json("Product already exists. Please try another name.");
     }
   } catch (error) {
-    console.log("Error saving product:", error);
+    console.error("Error saving product:", error);
     return res.status(500).send("An error occurred while saving the product.");
   }
 };
+
+const loadEditProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    // Fetch the product by ID
+    const product = await Product.findById(productId);
+    console.log("products data:", product);
+
+    // Fetch all available categories
+    const categories = await Category.find();
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    // Pass both product and categories to the template
+    res.render("edit-product", { product, cat: categories });
+  } catch (error) {
+    console.error("Error loading edit product page:", error);
+    res.status(500).send("An error occurred while loading the page.");
+  }
+};
+
+const editproduct = async (req, res) => {
+  try {
+    const productId = req.params.id; // Product ID from the request params
+    const updatedData = req.body; // Updated product data from the request body
+
+    // Debugging: log incoming data
+    console.log("Updated Product Data:", updatedData);
+
+    // Check if the product exists
+    const existingProduct = await Product.findById(productId);
+    if (!existingProduct) {
+      return res.status(404).send("Product not found");
+    }
+
+    // Check if files were uploaded for new images
+    const images = existingProduct.productImages; // Start with the current images
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        const originalImagePath = req.files[i].path;
+
+        const resizeImagePath = path.join(
+          "public",
+          "uploads",
+          "product-images",
+          req.files[i].filename
+        );
+        await sharp(originalImagePath)
+          .resize({ width: 440, height: 440 })
+          .toFile(resizeImagePath);
+
+        // Push resized image filename to the images array
+        images.push(req.files[i].filename);
+      }
+    }
+
+    // Query the Category model by name to find the corresponding _id
+    const category = await Category.findOne({ name: updatedData.category });
+    if (!category) {
+      return res.status(400).send("Invalid category name");
+    }
+
+    // Update product details
+    existingProduct.productName =
+      updatedData.productName || existingProduct.productName;
+    existingProduct.description =
+      updatedData.description || existingProduct.description;
+    existingProduct.category = category._id || existingProduct.category;
+    existingProduct.originalPrice =
+      updatedData.regularPrice || existingProduct.originalPrice;
+    existingProduct.salePrice =
+      updatedData.salePrice || existingProduct.salePrice;
+    existingProduct.quantity = updatedData.quantity || existingProduct.quantity;
+    existingProduct.color = updatedData.color || existingProduct.color;
+    existingProduct.productImages =
+      images.length > 0 ? images : existingProduct.productImages;
+    existingProduct.status = updatedData.status || existingProduct.status;
+
+    // Save the updated product to the database
+    const updatedProduct = await existingProduct.save();
+
+    console.log("Updated Product:", updatedProduct); // Debugging: log updated product
+
+    return res.redirect("/admin/product"); // Redirect to the products page after editing
+  } catch (error) {
+    console.error("Error editing product:", error);
+    return res.status(500).send("An error occurred while editing the product.");
+  }
+};
+
+
+const deleteImage = async (req, res) => {
+  try {
+    const { productId, imageIndex } = req.body;
+
+    // Validate input
+    if (!productId || imageIndex === undefined) {
+      return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    // Find the product by ID
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Check if the image index is valid
+    if (!product.productImages || !product.productImages[imageIndex]) {
+      return res.status(400).json({ error: "Invalid image index" });
+    }
+
+    // Get the image filename to delete
+    const imageToDelete = product.productImages[imageIndex];
+
+    // Remove the image from the productImages array
+    product.productImages.splice(imageIndex, 1);
+
+    // Save the updated product
+    await product.save();
+
+    // Delete the image file from the server
+    const imagePath = path.join(
+      __dirname,
+      "public",
+      "uploads",
+      "product-images",
+      imageToDelete
+    );
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error("Error deleting image file:", err);
+      }
+    });
+
+    // Send a success response
+    res.status(200).json({ message: "Image deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the image" });
+  }
+};
+
+const blockProduct=async(req,res)=>{
+  try {
+    let id=req.query.id;
+    await Product.updateOne({_id:id},{$set:{isBlocked:true}});
+    res.redirect("/admin/product");
+  } catch (error) {
+    res.redirect("/pageerror");
+  }
+}
+
+const unblockProduct=async(req,res)=>{
+  try {
+    let id=req.query.id;
+    await Product.updateOne({_id:id},{$set:{isBlocked:false}});
+    res.redirect("/admin/product");
+  } catch (error) {
+    res.redirect("/pageerror");
+  }
+}
 
 
 module.exports = {
   getProductAddPage,
   loadProduct,
   addproduct,
+  editproduct,
+  loadEditProduct,
+  deleteImage,
+  blockProduct,
+  unblockProduct,
 };

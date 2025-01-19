@@ -49,9 +49,11 @@ const addproduct = async (req, res) => {
   try {
     console.log("Body ", products);
     console.log("Files ", req.files);
+    console.log("Uploaded Files:", req.files);
 
     const products = req.body;
     const croppedImages = [];
+    console.log("Submitted Product Data:", req.body);
 
     // Define the upload directory path relative to project root
     const uploadDir = path.join(

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Untree.co">
+  <link rel="shortcut icon" href="favicon.png">
+
+  <meta name="description" content="" />
+  <meta name="keywords" content="bootstrap, bootstrap5" />
+
+  <!-- Bootstrap CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="/css/tiny-slider.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <title>Product Details - Ergonomic Chair</title>
+</head>
+
+<body>
+  <!-- Start Header/Navigation -->
+  <header>
+    <%- include("../../views/partials/user/header.ejs")%>
+</header>
+  <!-- End Header/Navigation -->
+
+  <!-- Start Hero Section -->
+  <div class="hero">
+    <div class="container">
+      <div class="row justify-content-between">
+        <div class="col-lg-5">
+          <div class="intro-excerpt">
+            <h1>Product Details</h1>
+          </div>
+        </div>
+        <div class="col-lg-7">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Hero Section -->
+
+  <!-- Start Product Details Section -->
+  <div class="untree_co-section product-section">
+    <div class="container">
+      <div class="row">
+        <!-- Product Images -->
+        <div class="col-12 col-md-6 mb-5">
+          <div class="product-image">
+            <img src="/uploads/<%= product.productImages[0]  %>" class="img-fluid" alt="Ergonomic Chair">
+            <div class="small-images mt-3">
+              <div class="row">
+                <div class="col-4">
+                  <img src="/uploads/<%= product.productImages[1]  %>" class="img-fluid" alt="Chair View 2">
+                </div>
+                <div class="col-4">
+                  <img src="/uploads/<%= product.productImages[2]  %>" class="img-fluid" alt="Chair View 3">
+                </div>
+                <div class="col-4">
+                  <img src="/uploads/<%= product.productImages[3]  %>" class="img-fluid" alt="Chair View 4">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-12 col-md-6 mb-5">
+          <div class="product-details">
+            <h2 class="product-title mb-4"><%= product.productName  %></h2>
+            <div class="rating mb-3">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+              <span class="ms-2">(4.5/5)</span>
+            </div>
+            <p class="price mb-4">$<%= product.salePrice  %></p>
+            <div class="product-description mb-4">
+              <p><%= product.description  %>.</p>
+            </div>
+            
+            <!-- Quantity Selector -->
+            <div class="quantity-selector mb-4">
+              <div class="input-group" style="width: 130px;">
+                <button class="btn btn-outline-secondary" type="button">-</button>
+                <input type="text" class="form-control text-center" value="1">
+                <button class="btn btn-outline-secondary" type="button">+</button>
+              </div>
+            </div>
+
+            <!-- Add to Cart Button -->
+            <button class="btn btn-primary btn-lg w-100 mb-4">Add to Cart</button>
+
+            <!-- Product Features -->
+            <div class="product-features">
+              <h4 class="mb-3">Features</h4>
+              <ul class="list-unstyled">
+                <li class="mb-2"><i class="fas fa-check me-2"></i>Adjustable height</li>
+                <li class="mb-2"><i class="fas fa-check me-2"></i>Ergonomic design</li>
+                <li class="mb-2"><i class="fas fa-check me-2"></i>Premium upholstery</li>
+                <li class="mb-2"><i class="fas fa-check me-2"></i>Lumbar support</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Description Tabs -->
+      <div class="row mt-5">
+        <div class="col-12">
+          <ul class="nav nav-tabs" id="productTabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="description-tab" data-bs-toggle="tab" href="#description" role="tab">Description</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab">Reviews</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="productTabsContent">
+            <div class="tab-pane fade show active p-4" id="description" role="tabpanel">
+              <p>What is an ergonomic chair designed for?</p>
+              <p>They are designed to support the natural forward curve of your spine - which helps - does promote descent posture to also provide you with back support. In this, an ergonomic chair is designed to fit and support the body and serve whilst you work, allowing you to stay comfortable for long periods at your studies, office chair or desk. As a type of chair that is designed to use at a desk or an office, it is usually a swivel chair with a set of wheels for mobility and adjustable height.</p>
+            </div>
+            <div class="tab-pane fade p-4" id="reviews" role="tabpanel">
+              <!-- Reviews content -->
+              <div class="reviews">
+                <!-- Sample Review -->
+                <div class="review mb-4">
+                  <div class="d-flex align-items-center mb-2">
+                    <strong class="me-2">John D.</strong>
+                    <div class="rating">
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                    </div>
+                  </div>
+                  <p>Great chair for long work hours. Very comfortable and supportive.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Product Details Section -->
+
+  <!-- Start Footer Section -->
+  <footer>
+    <%- include("../../views/partials/user/footer.ejs")%>
+</footer>
+  <!-- End Footer Section -->
+
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/tiny-slider.js"></script>
+  <script src="/js/custom.js"></script>
+</body>
+</html>

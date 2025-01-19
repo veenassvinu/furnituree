@@ -2,6 +2,7 @@ const User=require("../../models/userSchema");
 require("dotenv").config();
 const nodemailer=require("nodemailer");
 const bcrypt=require("bcrypt");
+const Product=require("../../models/productSchema");
 
 
 
@@ -43,8 +44,6 @@ function generateOtp() {
     console.log("Generated OTP:", otp); // Log the OTP here
     return otp;
 }
-
-
 
 async function sendVerificationEmail(email, otp) {
     try {
@@ -262,9 +261,6 @@ const resendOtp = async (req, res) => {
     }
 };
 
-
-
-
 const registerUser = async (req, res) => {
     try {
         const { name, email, password,phone } = req.body;
@@ -366,8 +362,29 @@ const login = async (req, res) => {
     }
 };
 
+const loadShopPage=async(req,res) =>{
+    try{
+        const product= await Product.find({})
+        return res.render("shop",{product});
 
+    }catch(error){
+        console.log("shop page not found",error);
+        res.status(500).send("Server error")
 
+    }
+}
+
+const productDetails=async(req,res)=>{
+    try {
+
+        const productId = req.params.id
+        const product=await Product.findOne({_id:productId})
+        console.log("product in details ", product)
+        res.render("productDetails",{product});
+    } catch (error) {
+        console.log("product is not display",error)
+    }
+}
 
 
 module.exports={
@@ -383,6 +400,8 @@ module.exports={
     loadLogin,
     login,
     registerUser,
+    loadShopPage,
+    productDetails,
 }
 
 
