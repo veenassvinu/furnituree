@@ -692,27 +692,35 @@
                 isValid = false;
             }
 
-            // Validate Regular Price
+            
+
             const regularPrice = document.getElementById('regularPrice').value.trim();
-            if (!regularPrice) {
-                document.getElementById('regularPrice-error').classList.add('show');
-                isValid = false;
-            } else if (isNaN(regularPrice) || Number(regularPrice) <= 0) {
-                document.getElementById('regularPrice-error').textContent = 'Please enter a valid price';
-                document.getElementById('regularPrice-error').classList.add('show');
+            const salePrice = document.getElementById('salePrice').value.trim();
+
+            // Reset previous error messages
+            document.getElementById('regularPrice-error').style.display = 'none';
+            document.getElementById('salePrice-error').style.display = 'none';
+
+            // let isValid = true;
+
+            // Validate Regular Price
+            if (!regularPrice || isNaN(regularPrice) || Number(regularPrice) <= 0) {
+                document.getElementById('regularPrice-error').textContent = 'Regular price is required';
+                document.getElementById('regularPrice-error').style.display = 'block';
                 isValid = false;
             }
 
             // Validate Sale Price
-            const salePrice = document.getElementById('salePrice').value.trim();
-            if (!salePrice) {
-                document.getElementById('salePrice-error').classList.add('show');
+            if (!salePrice || isNaN(salePrice) || Number(salePrice) <= 0) {
+                document.getElementById('salePrice-error').textContent = 'Sale price is required';
+                document.getElementById('salePrice-error').style.display = 'block';
                 isValid = false;
-            } else if (isNaN(salePrice) || Number(salePrice) <= 0) {
-                document.getElementById('salePrice-error').textContent = 'Please enter a valid price';
-                document.getElementById('salePrice-error').classList.add('show');
+            } else if (Number(salePrice) >= Number(regularPrice)) {
+                document.getElementById('salePrice-error').textContent = 'Sale price must be less than regular price';
+                document.getElementById('salePrice-error').style.display = 'block';
                 isValid = false;
             }
+
 
             // Validate Quantity
             const quantity = document.getElementById('quantity').value.trim();
@@ -742,7 +750,7 @@
 
             if (!validateForm()) return;
 
-            
+
             const formData = new FormData(productForm);
             formData.delete('images');
             Object.values(imageData).forEach((data, index) => {

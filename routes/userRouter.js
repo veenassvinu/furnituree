@@ -62,4 +62,16 @@ router.get('/cart',userAuth,categoryController.cartPage);
 // router.post("/resend-otp", forgotPasswordController.resendOtp);
 // router.get("/enter-otp", forgotPasswordController.loadEmailPage);
 
+
+
+// router.get("/about-us", userController.aboutUsPage);
+
+
+
+
+
+
+
+
+
 module.exports=router;

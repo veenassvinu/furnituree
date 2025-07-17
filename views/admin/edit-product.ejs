@@ -310,6 +310,7 @@
                             <div class="image-inputs">
                                 <p class="text-muted mb-4">Upload or edit 4 product images</p>
                                 <div class="row">
+                                   
                                     <% for (let i=0; i < 4; i++) { %>
                                         <div class="col-md-3 mb-3">
                                             <input type="file" name="productImages" id="image<%= i %>"
@@ -554,6 +555,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
+ const updated = urlParams.get("updated");
 
     if (urlParams.get("updated") === "success") {
       Swal.fire({
@@ -626,58 +628,6 @@
             });
         });
 
-
-        // Handle crop button click
-
-        // document.getElementById("cropButton").addEventListener("click", function () {
-        //     const croppedCanvas = cropper.getCroppedCanvas({
-        //         width: 800,
-        //         height: 800
-        //     });
-
-        //     // Convert canvas to blob
-        //     croppedCanvas.toBlob(function (blob) {
-        //         // Create a File object
-        //         const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
-
-        //         // Create a new FileList-like object
-        //         const dataTransfer = new DataTransfer();
-        //         dataTransfer.items.add(file);
-
-        //         // Create file input for the cropped image
-        //         const fileInput = document.createElement('input');
-        //         fileInput.type = 'file';
-        //         fileInput.name = 'productImages';  // Match the name expected by multer
-        //         fileInput.style.display = 'none';
-        //         fileInput.files = dataTransfer.files;
-
-        //         document.getElementById('productForm').appendChild(fileInput);
-
-        //         // Preview the cropped image
-        //         const previewContainer = document.getElementById("imagePreview");
-        //         const previewItem = document.createElement("div");
-        //         previewItem.classList.add("preview-item");
-
-        //         const imgPreview = document.createElement("img");
-        //         imgPreview.src = URL.createObjectURL(blob);
-        //         previewItem.appendChild(imgPreview);
-
-        //         const deleteButton = document.createElement("button");
-        //         deleteButton.innerText = "Delete";
-        //         deleteButton.classList.add("btn", "btn-danger", "btn-sm", "mt-2");
-        //         deleteButton.onclick = function () {
-        //             previewItem.remove();
-        //             fileInput.remove();
-        //         };
-        //         previewItem.appendChild(deleteButton);
-
-        //         previewContainer.appendChild(previewItem);
-
-        //         // Close the modal
-        //         const modal = bootstrap.Modal.getInstance(document.getElementById("cropperModal"));
-        //         modal.hide();
-        //     }, 'image/jpeg');
-        // });
 
         document.getElementById("cropButton").addEventListener("click", function () {
             if (!cropper || !currentInput) return;

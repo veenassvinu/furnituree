@@ -2,7 +2,6 @@ const Category=require("../../models/categorySchema");
 
 
 
-
 const categoryInfo = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -39,31 +38,51 @@ const categoryInfo = async (req, res) => {
 const addCategory = async (req, res) => {
     const { name, description } = req.body;
 
-    // Validate the input
+    // Validate input
     if (!name || typeof name !== 'string' || name.trim() === '') {
-        return res.status(400).json({ error: "Name is required and must be a non-empty string." });
+        return res.status(400).json({
+            success: false,
+            message: "Category name is required and must be a non-empty string."
+        });
     }
+
     if (!description || typeof description !== 'string' || description.trim() === '') {
-        return res.status(400).json({ error: "Description is required and must be a non-empty string." });
+        return res.status(400).json({
+            success: false,
+            message: "Description is required and must be a non-empty string."
+        });
     }
 
     try {
-        const regex = new RegExp(`^${name}$`, "i")
-        const existingCategory = await Category.findOne({ name:regex});
+        // Check if category with same name exists (case-insensitive)
+        const regex = new RegExp(`^${name.trim()}$`, 'i');
+        const existingCategory = await Category.findOne({ name: regex });
+
         if (existingCategory) {
-            
-            return res.status(400).json({ error: "Category already exists." });
+            return res.status(400).json({
+                success: false,
+                message: "Category already exists."
+            });
         }
 
+        // Save new category
         const newCategory = new Category({
             name: name.trim(),
-            description: description.trim(),
+            description: description.trim()
         });
+
         await newCategory.save();
-        res.status(200).json({ success: true, message: "Category added successfully." });
+
+        return res.status(200).json({
+            success: true,
+            message: "Category added successfully."
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error in addCategory:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error. Please try again later."
+        });
     }
 };
 
@@ -106,6 +125,7 @@ const deleteCategory = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
+
 const listCategory = async (req, res) => {
     try {
         const { id } = req.params;
@@ -127,6 +147,7 @@ const listCategory = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
+
 const unlistCategory = async (req, res) => {
     try {
         const { id } = req.params;

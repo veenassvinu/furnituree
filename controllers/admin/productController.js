@@ -177,7 +177,6 @@ const loadEditProduct = async (req, res) => {
   }
 };
 
-
 const editproduct = async (req, res) => {
   try {
     const {
@@ -205,10 +204,15 @@ const editproduct = async (req, res) => {
     }
 
     await product.save();
-    res.redirect("/admin/product");
+    
+    // Redirect to edit page with success parameter instead of directly to product list
+    res.redirect(`/admin/edit-product/${req.params.id}?updated=success`);
+
   } catch (err) {
     console.error("Edit Product Error:", err);
-    res.status(500).send("Server error");
+    
+    // Optional: redirect with error parameter
+    res.redirect(`/admin/edit-product/${req.params.id}?updated=error`);
   }
 };
 
