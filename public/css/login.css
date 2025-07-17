@@ -63,19 +63,17 @@
     border: 1px solid #ddd;
     border-radius: 5px;
   }
-  
-  .forgot-password {
-    display: block;
-    margin-top: 5px;
-    font-size: 0.9rem;
+ 
+  .forgot-password-link{
+    font-size: 0.875rem;
     color: #007bff;
     text-decoration: none;
   }
-  
-  .forgot-password:hover {
+  .forgot-password-link:hover{
+    color: #0056b3;
     text-decoration: underline;
   }
-  
+
   .login-button {
     width: 100%;
     padding: 10px;

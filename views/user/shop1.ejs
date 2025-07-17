@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Untree.co">
+	<link rel="shortcut icon" href="/public/images/favicon.png">
+
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap4" />
+
+	<!-- Bootstrap CSS -->
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	<link href="/css/tiny-slider.css" rel="stylesheet">
+	<link href="/css/style.css" rel="stylesheet">
+	<title>Furniture Free Bootstrap 5 Template for Furniture and Interior Design Websites by Untree.co</title>
+
+	<style>
+		.filter-sidebar {
+			background-color: #f8f9fa;
+			padding: 20px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+		}
+
+		.filter-section {
+			margin-bottom: 25px;
+		}
+
+		.filter-section h5 {
+			color: #3b5d50;
+			font-weight: 600;
+			margin-bottom: 15px;
+			border-bottom: 2px solid #3b5d50;
+			padding-bottom: 8px;
+		}
+
+		.price-range-container input[type="number"] {
+			width: 100%;
+			padding: 6px 10px;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+		}
+
+		.price-inputs {
+			display: flex;
+			gap: 10px;
+		}
+
+		.price-range-container {
+			padding: 10px 0;
+		}
+
+		.price-inputs {
+			display: flex;
+			gap: 10px;
+			margin-top: 10px;
+		}
+
+		.price-inputs input {
+			flex: 1;
+			padding: 8px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+		}
+
+		.filter-checkbox {
+			margin-bottom: 8px;
+		}
+
+		.filter-checkbox input[type="checkbox"] {
+			margin-right: 8px;
+		}
+
+		.search-container {
+			margin-bottom: 30px;
+		}
+
+		.search-input {
+			border: 2px solid #3b5d50;
+			border-radius: 25px;
+			padding: 12px 20px;
+			font-size: 16px;
+		}
+
+		.search-input:focus {
+			outline: none;
+			box-shadow: 0 0 0 0.2rem rgba(59, 93, 80, 0.25);
+		}
+
+		.search-btn {
+			background-color: #3b5d50;
+			border: none;
+			border-radius: 25px;
+			padding: 12px 25px;
+			color: white;
+			font-weight: 600;
+		}
+
+		.search-btn:hover {
+			background-color: #2d4a3e;
+		}
+
+		.filter-buttons {
+			display: flex;
+			gap: 10px;
+			margin-top: 20px;
+		}
+
+		.apply-filters-btn {
+			background-color: #3b5d50;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 5px;
+			font-weight: 600;
+		}
+
+		.apply-filters-btn:hover {
+			background-color: #2d4a3e;
+		}
+
+		.clear-filters-btn {
+			background-color: #6c757d;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 5px;
+		}
+
+		.clear-filters-btn:hover {
+			background-color: #545b62;
+		}
+
+		.sort-container {
+			margin-bottom: 20px;
+		}
+
+		.sort-select {
+			padding: 8px 12px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			background-color: white;
+		}
+
+		.results-count {
+			color: #666;
+			font-size: 14px;
+			margin-bottom: 15px;
+		}
+
+		.mobile-filter-toggle {
+			display: none;
+			margin-bottom: 20px;
+		}
+
+		.loading-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(255, 255, 255, 0.8);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+		}
+
+		.products-container {
+			position: relative;
+			min-height: 400px;
+		}
+
+		@media (max-width: 768px) {
+			.mobile-filter-toggle {
+				display: block;
+			}
+
+			.filter-sidebar {
+				display: none;
+			}
+
+			.filter-sidebar.show {
+				display: block;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- Start Header/Navigation -->
+	<%- include("../../views/partials/user/navBar.ejs")%>
+
+		<!-- End Header/Navigation -->
+
+		<!-- Start Hero Section -->
+		<div class="hero">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-5">
+						<div class="intro-excerpt">
+							<h1>Shop</h1>
+						</div>
+					</div>
+					<div class="col-lg-7">
+						<!-- Search Bar in Hero Section -->
+						<div class="search-container">
+							<form id="searchForm" class="d-flex">
+								<input type="text" name="search" id="searchInput" class="form-control search-input me-2"
+									placeholder="Search for furniture..."
+									value="<%= typeof search !== 'undefined' ? search : '' %>">
+								<button type="submit" class="btn search-btn">
+									<i class="fas fa-search"></i>
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Hero Section -->
+
+		<div class="untree_co-section product-section before-footer-section">
+			<div class="container">
+				<div class="row">
+					<!-- Mobile Filter Toggle -->
+					<div class="col-12">
+						<button class="btn btn-outline-primary mobile-filter-toggle" onclick="toggleMobileFilters()">
+							<i class="fas fa-filter"></i> Filters
+						</button>
+					</div>
+
+					<!-- Filter Sidebar -->
+					<div class="col-lg-3 col-md-4">
+						<div class="filter-sidebar" id="filterSidebar">
+							<form id="filterForm" method="GET" action="/shop">
+								<!-- Category Filter -->
+								<div class="filter-section">
+									<h5><i class="fas fa-list"></i> Category</h5>
+									<% if (categories && categories.length> 0) { %>
+										<div class="filter-checkbox">
+											<input type="radio" name="category" value="" id="cat_all" <%=!category
+												? 'checked' : '' %>>
+											<label for="cat_all">All</label>
+										</div>
+										<% categories.forEach(cat=> { %>
+											<div class="filter-checkbox">
+												<input type="radio" name="category" value="<%= cat.name %>"
+													id="cat_<%= cat._id %>" <%=category===cat.name ? 'checked' : '' %>>
+												<label for="cat_<%= cat._id %>">
+													<%= cat.name %>
+												</label>
+											</div>
+											<% }) %>
+												<% } else { %>
+													<p>No categories available</p>
+													<% } %>
+								</div>
+
+								<!-- Price Range Filter -->
+								<div class="filter-section">
+									<h5><i class="fas fa-dollar-sign"></i> Price Range</h5>
+									<div class="price-range-container">
+										<div class="price-inputs">
+											<input type="number" name="minPrice" id="minPrice" placeholder="Min"
+												value="<%= minPrice || '' %>">
+											<input type="number" name="maxPrice" id="maxPrice" placeholder="Max"
+												value="<%= maxPrice || '' %>">
+										</div>
+									</div>
+								</div>
+
+								<!-- Availability Filter -->
+								<div class="filter-section">
+									<h5><i class="fas fa-check-circle"></i> Availability</h5>
+									<div class="filter-checkbox">
+										<input type="checkbox" name="availability" value="inStock" id="inStock"
+											<%=(Array.isArray(availability) ? availability.includes('inStock') :
+											availability==='inStock' ) ? 'checked' : '' %>>
+										<label for="inStock">In Stock</label>
+									</div>
+									<div class="filter-checkbox">
+										<input type="checkbox" name="availability" value="onSale" id="onSale"
+											<%=(Array.isArray(availability) ? availability.includes('onSale') :
+											availability==='onSale' ) ? 'checked' : '' %>>
+										<label for="onSale">On Sale</label>
+									</div>
+								</div>
+
+								<!-- Filter Buttons -->
+								<div class="filter-buttons">
+									<button type="submit" class="apply-filters-btn">
+										<i class="fas fa-filter"></i> Apply Filters
+									</button>
+									<button type="button" class="clear-filters-btn" onclick="clearFilters()">
+										<i class="fas fa-times"></i> Clear
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<!-- Products Section -->
+					<div class="col-lg-9 col-md-8">
+						<!-- Sort and Results Info -->
+						<div class="d-flex justify-content-between align-items-center mb-4">
+							<div class="results-count" id="resultsCount">
+								<% if (typeof product !=='undefined' ) { %>
+									Showing <%= product.length %> products
+										<% } %>
+							</div>
+							<div class="sort-container">
+								<select class="sort-select" id="sortSelect">
+									<option value="">Sort by</option>
+									<option value="name-asc" <%=sort==='name-asc' ? 'selected' : '' %>>Name (A-Z)
+									</option>
+									<option value="name-desc" <%=sort==='name-desc' ? 'selected' : '' %>>Name (Z-A)
+									</option>
+									<option value="price-asc" <%=sort==='price-asc' ? 'selected' : '' %>>Price (Low to
+										High)</option>
+									<option value="price-desc" <%=sort==='price-desc' ? 'selected' : '' %>>Price (High
+										to Low)</option>
+									<option value="newest" <%=sort==='newest' ? 'selected' : '' %>>Newest First</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- Products Grid -->
+						<div class="products-container">
+							<div class="loading-overlay" id="loadingOverlay">
+								<div class="spinner-border text-primary" role="status">
+									<span class="visually-hidden">Loading...</span>
+								</div>
+							</div>
+
+							<div class="row" id="productsGrid">
+								<% if (typeof product !=='undefined' && product.length> 0) { %>
+									<% for(let i=0; i < product.length; i++) { %>
+										<div class="col-12 col-md-6 col-lg-4 mb-5">
+											<a class="product-item" href="/productDetails/<%= product[i]._id %>">
+												<img src="/uploads/product-images/<%= product[i].productImages[0] %>"
+													class="img-fluid product-thumbnail">
+												<h3 class="product-title">
+													<%= product[i].productName %>
+												</h3>
+												<strong class="product-price">₹<%= product[i].salePrice %></strong>
+												<span class="icon-cross">
+													<img src="images/cross.svg" class="img-fluid">
+												</span>
+											</a>
+										</div>
+										<% } %>
+											<% } else { %>
+												<div class="col-12 text-center">
+													<div class="alert alert-info">
+														<i class="fas fa-info-circle"></i> No products found matching
+														your criteria.
+													</div>
+												</div>
+												<% } %>
+							</div>
+						</div>
+
+						<!-- Pagination Section -->
+						<div id="paginationContainer">
+							<% if (typeof totalPages !=='undefined' && totalPages> 1) { %>
+								<div class="pagination d-flex justify-content-center mt-4">
+									<!-- Previous Button -->
+									<button class="pagination-button btn btn-secondary me-2"
+										onclick="changePage('<%= currentPage - 1 %>')" <%=currentPage===1 ? 'disabled'
+										: '' %>>Previous</button>
+
+									<!-- Page Numbers -->
+									<% for (let page=1; page <=totalPages; page++) { %>
+										<button
+											class="pagination-button btn <%= currentPage === page ? 'btn-primary' : 'btn-outline-primary' %> mx-1"
+											onclick="changePage('<%= page %>')">
+											<%= page %>
+										</button>
+										<% } %>
+
+											<!-- Next Button -->
+											<button class="pagination-button btn btn-secondary ms-2"
+												onclick="changePage('<%= currentPage + 1 %>')"
+												<%=currentPage===totalPages ? 'disabled' : '' %>>Next</button>
+								</div>
+								<% } %>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Start Footer Section -->
+		<%- include("../../views/partials/user/footer") %>
+			<!-- End Footer Section -->
+
+			<script src="/js/bootstrap.bundle.min.js"></script>
+			<script src="/js/tiny-slider.js"></script>
+			<script src="/js/custom.js"></script>
+
+			<script>
+				let currentPage = 1;
+
+				// Show loading overlay
+				function showLoading() {
+					document.getElementById('loadingOverlay').style.display = 'flex';
+				}
+
+				// Hide loading overlay
+				function hideLoading() {
+					document.getElementById('loadingOverlay').style.display = 'none';
+				}
+
+				// Get all form data including multiple checkbox values
+				function getFormData() {
+					const formData = {
+						search: document.getElementById('searchInput').value,
+						sort: document.getElementById('sortSelect').value,
+						minPrice: document.getElementById('minPrice').value,
+						maxPrice: document.getElementById('maxPrice').value,
+						page: currentPage
+					};
+
+					// Get all checked categories
+					const categoryCheckboxes = document.querySelectorAll('input[name="category"]:checked');
+					if (categoryCheckboxes.length > 0) {
+						formData.category = Array.from(categoryCheckboxes).map(cb => cb.value);
+					}
+
+					// Get all checked availability options
+					const availabilityCheckboxes = document.querySelectorAll('input[name="availability"]:checked');
+					if (availabilityCheckboxes.length > 0) {
+						formData.availability = Array.from(availabilityCheckboxes).map(cb => cb.value);
+					}
+
+					return formData;
+				}
+
+				// Apply filters with AJAX
+				async function applyFilters(resetPage = true) {
+					if (resetPage) {
+						currentPage = 1;
+					}
+
+					showLoading();
+
+					try {
+						const formData = getFormData();
+						const params = new URLSearchParams();
+
+						// Add all form data to params
+						Object.keys(formData).forEach(key => {
+							if (Array.isArray(formData[key])) {
+								formData[key].forEach(value => params.append(key, value));
+							} else if (formData[key]) {
+								params.append(key, formData[key]);
+							}
+						});
+
+						const response = await fetch(`/shop?₹{params.toString()}`, {
+							headers: {
+								'Accept': 'application/json',
+								'X-Requested-With': 'XMLHttpRequest'
+							}
+						});
+
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+
+						const data = await response.json();
+						updateProductGrid(data.products, data.totalPages, data.currentPage);
+						updateResultsCount(data.products.length);
+
+					} catch (error) {
+						console.error('Error applying filters:', error);
+						// Fallback to page reload if AJAX fails
+						const formData = getFormData();
+						const params = new URLSearchParams();
+						Object.keys(formData).forEach(key => {
+							if (Array.isArray(formData[key])) {
+								formData[key].forEach(value => params.append(key, value));
+							} else if (formData[key]) {
+								params.append(key, formData[key]);
+							}
+						});
+						window.location.href = `/shop?₹{params.toString()}`;
+					} finally {
+						hideLoading();
+					}
+				}
+
+				// Update product grid
+				function updateProductGrid(products, totalPages, currentPageNum) {
+					const container = document.getElementById('productsGrid');
+					currentPage = currentPageNum;
+
+					let html = "";
+					if (products.length === 0) {
+						html = `
+						<div class="col-12 text-center">
+							<div class="alert alert-info">
+								<i class="fas fa-info-circle"></i> No products found matching your criteria.
+							</div>
+						</div>`;
+					} else {
+						for (let p of products) {
+							html += `
+							<div class="col-12 col-md-6 col-lg-4 mb-5">
+								<a class="product-item" href="/productDetails/₹{p._id}">
+									<img src="/uploads/product-images/₹{p.productImages[0]}" class="img-fluid product-thumbnail">
+									<h3 class="product-title">₹{p.productName}</h3>
+									<strong class="product-price">₹{p.salePrice}</strong>
+									<span class="icon-cross">
+										<img src="images/cross.svg" class="img-fluid">
+									</span>
+								</a>
+							</div>`;
+						}
+					}
+
+					container.innerHTML = html;
+					updatePagination(totalPages, currentPageNum);
+				}
+
+				// Update pagination
+				function updatePagination(totalPages, currentPageNum) {
+					const paginationContainer = document.getElementById('paginationContainer');
+
+					if (totalPages <= 1) {
+						paginationContainer.innerHTML = '';
+						return;
+					}
+
+					let html = '<div class="pagination d-flex justify-content-center mt-4">';
+
+					// Previous button
+					html += `<button class="pagination-button btn btn-secondary me-2" 
+						onclick="changePage(₹{currentPageNum - 1})" 
+						₹{currentPageNum === 1 ? 'disabled' : ''}>Previous</button>`;
+
+					// Page numbers
+					for (let page = 1; page <= totalPages; page++) {
+						html += `<button class="pagination-button btn ₹{currentPageNum === page ? 'btn-primary' : 'btn-outline-primary'} mx-1" 
+							onclick="changePage(₹{page})">₹{page}</button>`;
+					}
+
+					// Next button
+					html += `<button class="pagination-button btn btn-secondary ms-2" 
+						onclick="changePage(₹{currentPageNum + 1})" 
+						₹{currentPageNum === totalPages ? 'disabled' : ''}>Next</button>`;
+
+					html += '</div>';
+					paginationContainer.innerHTML = html;
+				}
+
+				// Update results count
+				function updateResultsCount(count) {
+					document.getElementById('resultsCount').textContent = `Showing ₹{count} products`;
+				}
+
+				// Change page
+				function changePage(page) {
+					if (page < 1) return;
+					currentPage = page;
+					applyFilters(false);
+				}
+
+				// Clear filters
+				function clearFilters() {
+					// Clear search
+					document.getElementById('searchInput').value = '';
+
+					// Clear all checkboxes
+					document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+					// Clear price inputs
+					document.getElementById('minPrice').value = '';
+					document.getElementById('maxPrice').value = '';
+
+					// Clear sort
+					document.getElementById('sortSelect').value = '';
+
+					// Apply filters (which will show all products)
+					applyFilters();
+				}
+
+				// Toggle mobile filters
+				function toggleMobileFilters() {
+					const sidebar = document.getElementById('filterSidebar');
+					sidebar.classList.toggle('show');
+				}
+
+				// Event listeners
+				document.addEventListener('DOMContentLoaded', function () {
+					// Filter form submission
+					document.getElementById('filterForm').addEventListener('submit', function (e) {
+						e.preventDefault();
+						applyFilters();
+					});
+
+					// Search form submission
+					document.getElementById('searchForm').addEventListener('submit', function (e) {
+						e.preventDefault();
+						applyFilters();
+					});
+
+					// Sort change
+					document.getElementById('sortSelect').addEventListener('change', function () {
+						applyFilters();
+					});
+
+					// Filter changes (debounced)
+					let filterTimeout;
+					const filterInputs = document.querySelectorAll('#filterForm input, #filterForm select');
+					filterInputs.forEach(input => {
+						input.addEventListener('change', function () {
+							clearTimeout(filterTimeout);
+							filterTimeout = setTimeout(() => {
+								if (input.type !== 'submit' && input.type !== 'button') {
+									applyFilters();
+								}
+							}, 300);
+						});
+					});
+				});
+			</script>
+</body>
+
+</html>

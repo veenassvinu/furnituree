@@ -13,77 +13,92 @@ const pageerror=async(req,res)=>{
     
   }}
 
-
-
-const loadLogin=(req,res)=>{
-    if(req.session.admin){
-        return res.redirect("/admin/dashboard")
-    }
-    res.render("admin-login",{message:null})
-}
-const login = async (req, res) => {
-    try {
-      console.log('Login method hit');
-      const { email, password } = req.body;
-      console.log('Email:', email, 'Password:', password);
-  
-      const admin = await User.findOne({ email, isAdmin: true });
-      if (admin) {
-        const passwordMatch = await bcrypt.compare(password, admin.password);
-        if (passwordMatch) {
-          req.session.admin = true;
-          return res.redirect('/admin');
-        } else {
-          console.log('Password mismatch');
-          return res.redirect('/admin-login');
-        }
-      } else {
-        console.log('Admin not found');
-        return res.redirect('/admin-login');
-      }
-    } catch (error) {
-      console.log('Login error:', error);
-      return res.redirect('/pageerror');
-    }
-  };
-  
-  
-const loadDashboard=async(req,res)=>{
-    if(req.session.admin){
-        try {
-            res.render("Dashboard")
-        } catch (error) {
-            console.log("error loading dashboard:",error);
-            
-          res.redirect("/pageerror")  
-        }
-    // }else{
-    //     res.redirect("admin-login")
-    }
+const loadLogin = (req, res) => {
+  if (req.session.admin) {
+    return res.redirect("/admin/dashboard");
+  }
+  res.render("admin-login", { message: null }); // allow message injection
 };
 
-const logout=async (req,res)=>{
-    try {
-        req.session.destroy(err=>{
-            if(err){
-                console.log("Error destroying session",err);
-                return res.redirect("/pageerror")
-            }
-            res.redirect("/admin/admin-login")
-        })
-    } catch (error) {
-        console.log("unexpected error during logout",error);
-        res.redirect("/pageerror")
-        
+
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const admin = await User.findOne({ email, isAdmin: true });
+
+    if (!admin) {
+      return res.render("admin-login", {
+        message: "Admin not found. Please check your credentials.",
+      });
     }
+
+    const passwordMatch = await bcrypt.compare(password, admin.password);
+    if (!passwordMatch) {
+      return res.render("admin-login", {
+        message: "Incorrect password. Please try again.",
+      });
+    }
+
+    // Login success
+    req.session.admin = true;
+    req.session.successMessage = "Welcome Admin!";
+    return res.redirect("/admin/dashboard");
+
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.redirect("/pageerror");
+  }
+};
+
+const loadDashboard = async (req, res) => {
+  if (req.session.admin) {
+    try {
+      const successMessage = req.session.successMessage;
+      req.session.successMessage = null; // clear after displaying once
+
+      res.render("Dashboard", { successMessage });
+    } catch (error) {
+      console.log("error loading dashboard:", error);
+      res.redirect("/pageerror");
+    }
+  } else {
+    res.redirect("/admin/admin-login");
+  }
+};
+
+const adminLogout = async (req, res) => {
+try {
+  // Destroy session
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Could not log out' 
+      });
+    }
+    
+    // Clear session cookie
+    res.clearCookie('connect.sid');  // Adjust cookie name if different
+    
+    // Send successful logout response
+    res.json({ 
+      success: true, 
+      message: 'Logged out successfully' 
+    });
+});
+} catch (error) {
+  res.status(500).json({ 
+    success: false, 
+    message: 'Server error during logout' 
+  });
 }
-
-
+}
 
 module.exports={
     loadLogin,
     login,
     loadDashboard,
     pageerror,
-    logout,
+    adminLogout,
 };

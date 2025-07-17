@@ -29,10 +29,10 @@ const productsSchema = new Schema({
         type:Number,
         default:0
     },
-    color:{
-        type:String,
-        required:true
-    },
+    // color:{
+    //     type:String,
+    //     required:true
+    // },
     description: {
         type: String,
         required: true,

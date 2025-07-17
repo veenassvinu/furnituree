@@ -7,6 +7,8 @@
   <title>Furniture</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 
   <!-- Custom Styles -->
   <style>
@@ -123,91 +125,205 @@
       color: white;
       text-decoration: none;
     }
+
+    .btn.bg-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .custom-swal-popup {
+      border-radius: 15px;
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+    }
+
+    .custom-swal-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .custom-swal-cancel {
+      color: white !important;
+      background-color: #6c757d !important;
+      border-radius: 5px !important;
+      font-size: 14px;
+    }
+
+    .custom-swal-confirm {
+      color: white !important;
+      border-radius: 5px !important;
+      font-size: 14px;
+    }
+
+    .swal2-icon.swal2-success {
+      color: #28a745;
+    }
+
+    .swal2-icon.swal2-error {
+      color: #d33;
+    }
+
+    .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pagination-button {
+      padding: 5px 10px;
+      background-color: #0099ff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .pagination-button.disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
 <body>
+  <%- include("../../views/partials/admin/sidebar") %>
 
-
-  <%- include("../../views/partials/admin/sidebar")%>
-
-    <div class="main-content">
-      <div class="content-header">
-        <h2 class="content-title">Products</h2>
-      </div>
-
-      <header class="card-header text-center mb-20">
-        <form action="" method="get" class="d-inline">
-          <div class="input-group input-group-sm border border-1 border-grey rounded-pill">
-            <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands"
-              name="search">
-            <button class="btn border-0" type="submit">Search</button>
-          </div>
-        </form>
-      </header>
-
-      <div class="right mt-5">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-                <th>Username</th>
-                <th>originalPrice</th>
-                <th>salePrice </th>
-                <th>quantity</th>
-                <th>status</th>
-                
-                
-            </tr>
-          </thead>
-          <tbody>
-            <% for(let i=0 ; i<products.length; i++){ %>
-              
-                <tr>
-                  <td><%= products[i].productName  %></td>
-                  <td><%= products[i].originalPrice  %></td>
-                  <td><%= products[i].salePrice %></td>
-                  <td><%= products[i].quantity %></td>
-                  <td><%= products[i].status %></td>
-                  <!-- <td>
-                    <button class="btn btn-info">
-                      <a href="#" class="text-white">Add Offer</a>
-                    </button>
-                    <button class="btn btn-info">
-                      <a href="#" class="text-white">Remove</a>
-                    </button>
-                  </td> -->
-                  <td></td>
-                  <td>
-
-                    <%if(products[i].isBlocked===false){ %>
-                    <button class="btn btn-danger">
-                      <a href="/admin/blockProduct?id=<%=products[i]._id %>" class="text-white">Block</a>
-                    </button>
-                    <% }else{ %>
-                    <button class="btn btn-success" style="width: 80px;;">
-                      <a href="/admin/unblockProduct?id=<%=products[i]._id %>" class="text-white" >Unblock</a>
-                    </button>
-                    <% } %>
-                  </td>
-             
-                  <td>
-                    <button class="btn btn-info">
-                      <a href="/admin/edit-product/<%= products[i]._id  %>" class="text-white">Edit</a>
-                    </button>
-                  </td>
-                </tr>
-                
-                <% } %>
-          </tbody>
-        </table>
-      </div>
+  <div class="main-content">
+    <div class="content-header">
+      <h2 class="content-title">Products</h2>
     </div>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- Bootstrap JS (Optional for components like modals, dropdowns, etc.) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <header class="card-header text-center mb-20">
+      <form action="/admin/product" method="get" class="d-inline">
+        <div class="input-group input-group-sm border border-1 border-grey rounded-pill">
+          <input type="text" class="form-control border-0 rounded-pill search-input" name="search"
+            placeholder="Search products" value="<%= search || '' %>">
+
+          <button type="submit" class="btn border-0 rounded-pill bg-primary text-white px-3">Search</button>
+
+          <button type="button" class="btn border-0 rounded-pill bg-secondary text-white px-3"
+            onclick="resetSearch()">Reset</button>
+        </div>
+      </form>
+    </header>
+
+    <div class="right mt-5">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Regular Price</th>
+            <th>Sale Price</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (products.length > 0) { %>
+            <% products.forEach(product => { %>
+              <tr>
+                <td><%= product.productName %></td>
+                <td><%= product.originalPrice %></td>
+                <td><%= product.salePrice %></td>
+                <td><%= product.quantity %></td>
+                <td><%= product.isBlocked ? "Unavailable" : "Available" %></td>
+                <td>
+                  <% if (!product.isBlocked) { %>
+                    <button class="btn btn-danger"
+                      onclick="confirmBlockUnblock('<%= product._id %>', 'block')">Block</button>
+                  <% } else { %>
+                    <button class="btn btn-success"
+                      onclick="confirmBlockUnblock('<%= product._id %>', 'unblock')">Unblock</button>
+                  <% } %>
+                </td>
+                <td>
+                  <button class="btn btn-info"
+                    onclick="validateEdit('<%= product._id %>', '<%= product.isBlocked %>')">Edit</button>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="7" class="text-center text-danger">No matching products found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination mt-4">
+        <button class="pagination-button" onclick="changePage(`<%= currentPage - 1 %>`)" <%= currentPage === 1 ? 'disabled' : '' %>>
+          Previous
+        </button>
+
+        <% for (let page = 1; page <= totalPages; page++) { %>
+          <button class="pagination-button <%= page === currentPage ? 'active' : '' %>"
+            onclick="changePage(`<%= page %>`)">
+            <%= page %>
+          </button>
+        <% } %>
+
+        <button class="pagination-button" onclick="changePage(`<%= currentPage + 1 %>`)"
+          <%= currentPage === totalPages ? 'disabled' : '' %>>
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    function changePage(page) {
+      const search = document.querySelector(".search-input")?.value || "";
+      window.location.href = `/admin/product?search=${encodeURIComponent(search)}&page=${page}`;
+    }
+
+    function resetSearch() {
+      window.location.href = "/admin/product";
+    }
+
+    function confirmBlockUnblock(productId, action) {
+      const actionText = action === 'block' ? 'Block' : 'Unblock';
+      Swal.fire({
+        title: `Confirm ${actionText}`,
+        text: `Are you sure you want to ${actionText.toLowerCase()} this product?`,
+        icon: action === 'block' ? 'error' : 'success',
+        showCancelButton: true,
+        confirmButtonColor: action === 'block' ? '#d33' : '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: `${actionText} Product`,
+        cancelButtonText: 'No, Cancel',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = `/admin/${action}Product?id=${productId}`;
+        }
+      });
+    }
+
+    function validateEdit(productId, isBlocked) {
+      if (isBlocked === 'true' || isBlocked === true) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Blocked Product',
+          text: 'This product is currently blocked and cannot be edited.',
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'OK',
+        });
+      } else {
+        window.location.href = `/admin/edit-product/${productId}`;
+      }
+    }
+  </script>
+
+  <!-- External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 
 </html>

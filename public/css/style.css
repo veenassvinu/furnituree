@@ -311,7 +311,7 @@ a {
     line-height: 22px;
     color: #6a6a6a; }
 
-.we-help-section {
+/* .we-help-section {
   padding: 7rem 0; }
   .we-help-section .imgs-grid {
     display: -ms-grid;
@@ -330,7 +330,31 @@ a {
       -webkit-transform: translate(-40%, -40%);
       -ms-transform: translate(-40%, -40%);
       transform: translate(-40%, -40%);
-      z-index: -1; }
+      z-index: -1; } */
+      .we-help-section {
+        padding: 7rem 0;
+      }
+      
+      .we-help-section .imgs-grid {
+        display: -ms-grid;
+        display: grid;
+        grid-template-columns: repeat(27, 1fr); /* Modern browsers */
+        position: relative;
+        /* -ms-grid-columns omitted unless IE11 is targeted */
+      }
+      
+      .we-help-section .imgs-grid:before {
+        position: absolute;
+        content: "";
+        width: 255px;
+        height: 217px;
+        background-image: url("../images/dots-green.svg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        transform: translate(-40%, -40%); /* Modern syntax */
+        z-index: -1;
+      }
+      
     .we-help-section .imgs-grid .grid {
       position: relative; }
       .we-help-section .imgs-grid .grid img {

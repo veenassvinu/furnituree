@@ -1,39 +1,40 @@
+
 const multer = require('multer');
-const path = require('path')
+const path = require('path');
 
-// Define storage options (where the file will be saved and how it will be named)
+// Storage config
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        // Store the images in the 'uploads' directory (ensure this folder exists)
-        cb(null, path.join(__dirname, '../public/uploads'));
-    },
-    filename: (req, file, cb) => {
-        // Create a unique filename by appending the current timestamp to the original filename
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../public/uploads/product-images'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
 });
 
-// File filter to accept only image files
+// File filter
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-    if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(new Error('Invalid file type. Only images are allowed.'));
-    }
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    req.fileValidationError = 'Only image files are allowed!';
+    cb(null, false);
+  }
 };
 
-// Set file size limit (optional, e.g., 5MB)
+// Limits
 const limits = {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+  fileSize: 5 * 1024 * 1024 // 5MB
 };
 
-// Initialize multer with storage, file filter, and limits
+// Initialize multer
 const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: limits
+  storage,
+  fileFilter,
+  limits
 });
 
+module.exports = upload;
 
-module.exports= upload

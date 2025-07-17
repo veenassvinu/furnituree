@@ -10,8 +10,8 @@ const upload = require('../middlewares/multer');
 router.get("/pageerror",adminController.pageerror);
 router.get('/admin-login',adminController.loadLogin);
 router.post("/admin-login",adminController.login);
-router.get("/Dashboard",adminController.loadDashboard);
-router.get('/logout',adminController.logout);
+router.get("/dashboard",adminController.loadDashboard);
+// router.get('/logout',adminController.logout);
 
 router.get("/User",adminAuth,adminUserController.userInfo);
 router.get("/blockUser",adminAuth,adminUserController.UserBlocked);
@@ -28,12 +28,30 @@ router.put("/unlist-category/:id",adminAuth,categoryController.unlistCategory);
 
 router.get("/product",adminAuth,productController.loadProduct);
 router.get("/addproduct",adminAuth,productController.getProductAddPage);
-router.post("/addproduct",upload.array("productImages",4),productController.addproduct);
-router.get("/edit-product/:id",productController.loadEditProduct);
-router.post("/edit-product/:id",upload.array("productImages",4),productController.editproduct);
+// router.post("/addproduct",upload.array("productImages",4),productController.addproduct);
+router.post(
+  '/add-product',
+  upload.array('productImages', 4), // 5 is max number of images allowed
+  (req, res, next) => {
+    if (req.fileValidationError) {
+      return res.status(400).send(req.fileValidationError);
+    }
+    next();
+  },
+  productController.addproduct
+);
+router.get("/edit-product/:id",adminAuth,productController.loadEditProduct);
+// router.post("/edit-product/:id",upload.array("productImages",4),productController.editproduct);
+router.post(
+  "/edit-product/:id",
+  adminAuth,
+  upload.array("productImages", 4), // max 4 images
+  productController.editproduct
+);
 router.delete("/delete-image",adminAuth,productController.deleteImage);
 router.get("/blockProduct",adminAuth,productController.blockProduct);
 router.get("/unblockProduct",adminAuth,productController.unblockProduct);
+router.get("/adminLogout",adminController.adminLogout);
 
 
 

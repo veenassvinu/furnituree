@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Furniture website</title>
   <link rel="stylesheet" href="/css/verify-otp.css">
 </head>
+<style>
+  #resendOtp:disabled,
+  #resendOtp.disabled,
+  #resendOtp[style*="pointer-events: none"] {
+    background-color: #e0e0e0;
+    color: gray;
+    border-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  #resendOtp:hover:not([disabled]):not(.disabled) {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+  }
+</style>
+
 <body>
   <div class="container">
     <div class="left-panel">
@@ -25,13 +43,13 @@
           <span id="countdown">00:30</span>
           <button id="resendOtp" type="button" onclick="resendOTP()">Resend OTP</button>
         </p>
-        <button type="submit" class="verify-btn" >Verify</button>
+        <button type="submit" class="verify-btn">Verify</button>
       </form>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
+
   <script>
     // Function to move focus to the next input field
     function moveToNext(current, index) {
@@ -68,46 +86,46 @@
     }
 
     // Function to submit OTP to the server
-   
+
     function submitOtp(otp) {
-  fetch('/verify', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ otp })  // Send OTP as JSON payload
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Handle success: Redirect to the desired page
-      Swal.fire({
-        icon: 'success',
-        title: 'Verified',
-        text: data.message || 'OTP Verified Successfully!',
-        timer: 2000,
-        showConfirmButton: false
-      }).then(() => {
-        window.location.href = data.redirectUrl || '/home';  // Redirect to home or custom URL
-      });
-    } else {
-      // Handle failure: Show error message
-      Swal.fire({
-        icon: 'error',
-        title: 'Verification Failed',
-        text: data.message || 'OTP is incorrect. Please try again.',
-      });
+      fetch('/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ otp })  // Send OTP as JSON payload
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Handle success: Redirect to the desired page
+            Swal.fire({
+              icon: 'success',
+              title: 'Verified',
+              text: data.message || 'OTP Verified Successfully!',
+              timer: 2000,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = data.redirectUrl || '/home';  // Redirect to home or custom URL
+            });
+          } else {
+            // Handle failure: Show error message
+            Swal.fire({
+              icon: 'error',
+              title: 'Verification Failed',
+              text: data.message || 'OTP is incorrect. Please try again.',
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while verifying OTP. Please try again later.',
+          });
+        });
     }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'An error occurred while verifying OTP. Please try again later.',
-    });
-  });
-}
 
     // Function to handle resend OTP
     function resendOTP() {
@@ -121,8 +139,8 @@
 
       // Disable Resend OTP button temporarily
       const resendButton = document.getElementById("resendOtp");
-      resendButton.style.pointerEvents = "none"; 
-      resendButton.style.color = "gray"; 
+      resendButton.style.pointerEvents = "none";
+      resendButton.style.color = "gray";
 
       // Restart the countdown timer
       const countdownDisplay = document.getElementById("countdown");
@@ -134,31 +152,31 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          Swal.fire({
-            icon: "success",
-            title: "OTP Resent Successfully",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        } else {
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire({
+              icon: "success",
+              title: "OTP Resent Successfully",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "An error occurred while resending OTP. Please try again.",
+            });
+          }
+        })
+        .catch(error => {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "An error occurred while resending OTP. Please try again.",
+            text: "An error occurred. Please try again.",
           });
-        }
-      })
-      .catch(error => {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred. Please try again.",
+          console.error('Error:', error);
         });
-        console.error('Error:', error);
-      });
 
       return false;
     }
@@ -194,10 +212,11 @@
     };
 
     // Add event listener for resend OTP button
-    document.getElementById("resendOtp").addEventListener("click", function(event) {
+    document.getElementById("resendOtp").addEventListener("click", function (event) {
       event.preventDefault();  // Prevent default link behavior (navigation)
       resendOTP();
     });
   </script>
 </body>
+
 </html>

@@ -23,6 +23,7 @@
                 { email: { $regex: ".*" + search + ".*", $options: "i" } }
             ]
         })
+            .sort({ _id: -1 })
             .limit(limit)
             .skip(skip)
             .exec();

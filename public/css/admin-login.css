@@ -84,6 +84,13 @@ input::placeholder {
 .login-button:active {
     transform: translateY(1px);
 }
+.error-message {
+  color: red;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+
 
 /* Responsive Design */
 @media (max-width: 480px) {

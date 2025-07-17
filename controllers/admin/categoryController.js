@@ -2,31 +2,39 @@ const Category=require("../../models/categorySchema");
 
 
 
+
 const categoryInfo = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = 6;
-        const skip = (page - 1) * limit;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
 
-     
-        const categoryData = await Category.find().skip(skip).limit(limit);
-        // console.log(categoryData)
+    const search = req.query.search || "";
 
-        const totalCategories = await Category.countDocuments();
-        const totalPages = Math.ceil(totalCategories / limit);
+    // Search filter (case-insensitive search on category name)
+    const searchFilter = search
+      ? { name: { $regex: search, $options: "i" } }
+      : {};
 
-        res.render('category-Management', {  // Remove the leading slash
-            cat: categoryData,
-            currentPage: page,
-            totalPages: totalPages,
-            totalCategories: totalCategories
-        });
-    } catch (error) {
-        console.error(error);
-        res.redirect('/pageerror');
-    }
+    const totalCategories = await Category.countDocuments(searchFilter);
+    const totalPages = Math.ceil(totalCategories / limit);
+
+    const categoryData = await Category.find(searchFilter)
+      .skip(skip)
+      .limit(limit);
+
+    res.render("category-Management", {
+      cat: categoryData,
+      currentPage: page,
+      totalPages,
+      totalCategories,
+      search, // ✅ Send search term back to view
+    });
+  } catch (error) {
+    console.error("Error loading categories:", error);
+    res.redirect("/pageerror");
+  }
 };
-
 
 const addCategory = async (req, res) => {
     const { name, description } = req.body;
@@ -58,8 +66,6 @@ const addCategory = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
-
 
 const updateCategory = async (req, res) => {
     try {
