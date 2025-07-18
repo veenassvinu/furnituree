@@ -1,6 +1,8 @@
-<%- include("../../partials/header") %>
+        <%- include("../../views/partials/user/header.ejs") %>
+        <%- include("../../views/partials/user/navBar") %>
 
-  <link rel="stylesheet" href="/user/stylesheets/profile.css">
+
+  <link rel="stylesheet" href="/css/profile.css">
   <style>
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -208,9 +210,11 @@
     <div class="container-fluid">
       <div class="dashboard">
         <!-- Sidebar -->
+                 <%- include("../../views/partials/user/profileSideBar") %>
 
-        <%- include("../../partials/user/profileSideBar") %>
 
+
+   
           <!-- Main Content -->
           <div class="main-content">
             <h2 class="section-title">Update Profile</h2>
@@ -219,7 +223,7 @@
               <label for="name" class="form-label profile-label">NAME</label>
               <div class="profile-value-container">
                 <div class="profile-value" id="nameValue">
-                  <%= userData.username %>
+                  yasin
                 </div>
                 <button class="edit-btn" data-field="name">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -234,7 +238,7 @@
               <label for="email" class="form-label profile-label">EMAIL</label>
               <div class="profile-value-container">
                 <div class="profile-value" id="emailValue">
-                  <%= userData.email %>
+                  234567890
                 </div>
               </div>
             </div>
@@ -243,7 +247,7 @@
               <label for="phone" class="form-label profile-label">PHONE NUMBER</label>
               <div class="profile-value-container">
                 <div class="profile-value" id="phoneValue">
-                  <%= userData.phone %>
+                  sdfghjk56789
                 </div>
                 <button class="edit-btn" data-field="phone">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -511,63 +515,7 @@
         });
       });
 
-      // doneButton.addEventListener('click', () => {
-      //   const updatedName = document.getElementById('nameValue').textContent;
-      //   const updatedPhone = document.getElementById('phoneValue').textContent;
-
-      //   if (nameChanged || passwordChanged || phoneChanged) {
-      //     const updateData = {};
-
-      //     if (nameChanged) updateData.name = updatedName;
-      //     if (phoneChanged) updateData.phone = updatedPhone === 'Not Set' ? '' : updatedPhone;
-
-      //     fetch('/profile/update', {
-      //       method: 'PUT',
-      //       headers: {
-      //         'Content-Type': 'application/json',
-      //       },
-      //       body: JSON.stringify(updateData)
-      //     })
-      //       .then(response => response.json())
-      //       .then(data => {
-      //         if (data.message === "Profile updated successfully") {
-      //           document.getElementById('nameValue').textContent = data.user.name;
-      //           document.getElementById('phoneValue').textContent = data.user.phone || 'Not Set';
-
-      //           nameChanged = false;
-      //           passwordChanged = false;
-      //           phoneChanged = false;
-
-      //           Swal.fire({
-      //             icon: 'success',
-      //             title: 'Success',
-      //             text: 'Profile updated successfully'
-      //           });
-      //         } else {
-      //           Swal.fire({
-      //             icon: 'error',
-      //             title: 'Error!',
-      //             text: data.message
-      //           });
-      //         }
-      //       })
-      //       .catch(error => {
-      //         console.error('Error:', error);
-      //         Swal.fire({
-      //           icon: 'error',
-      //           title: 'Error!',
-      //           text: 'An error occurred while updating profile'
-      //         });
-      //       });
-      //   } else {
-      //     Swal.fire({
-      //       icon: 'info',
-      //       title: 'Info',
-      //       text: 'No changes to save'
-      //     });
-      //   }
-      // });
-
+      
       doneButton.addEventListener("click", () => {
         const updatedName = document.getElementById("nameValue").textContent;
         const updatedPhone = document.getElementById("phoneValue").textContent;
@@ -639,5 +587,3 @@
 
 
 
-
-  <%- include("../../partials/user/footer") %>

@@ -8,6 +8,7 @@ const categoryController=require("../controllers/user/cartCotroller.js")
 
 const {userAuth,already} = require('../middlewares/auth');
 const { getForgotPassPage } = require("../controllers/user/forgotPasswordController.js");
+const profileController=require("../controllers/user/profileController.js")
 
 // Banned Page
 router.get("/banned", (req, res) => {
@@ -15,7 +16,7 @@ router.get("/banned", (req, res) => {
 });
 
 
-router.get("/pageNotFound",userController.pageNotFound)
+// router.get("/pageNotFound",userController.pageNotFound)
 router.get("/",already,checkBan,userController.loadHomepage);
 router.get('/signup',userController.loadSignUp);
 router.post('/signup',userController.signup);
@@ -35,6 +36,14 @@ router.get('/shop',checkBan,userController.loadShopPage);
 // router.get('/productDetails/:id',userController.productDetails);
 
 router.get('/productDetails/:id([a-fA-F0-9]{24})', userController.productDetails);
+
+
+
+
+// -------Profile Section -------------- //
+
+router.get('/profile' , profileController.loadProfilePage)
+
 
 
 router.get('/logout', async (req,res)=>{
@@ -65,10 +74,6 @@ router.get('/cart',userAuth,categoryController.cartPage);
 
 
 // router.get("/about-us", userController.aboutUsPage);
-
-
-
-
 
 
 

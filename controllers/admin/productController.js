@@ -55,7 +55,6 @@ const getProductAddPage = async (req, res) => {
   }
 };
 
-
 const addproduct = async (req, res) => {
   try {
     // const products = req.body;

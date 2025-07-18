@@ -12,8 +12,8 @@ const loadProfilePage = async (req, res) => {
   try {
     console.log("User ID from session:", req.session.User);
     const user = await User.findById(req.session.User);
-    console.log("User found:", user);
-    res.render("user/userProfile", { userData: user });
+    console.log("User found:", user); 
+    res.render("profile/profile", { userData: user  });
   } catch (error) {
     console.error("Error loading profile page:", error);
     res.redirect("/pageNotFound");

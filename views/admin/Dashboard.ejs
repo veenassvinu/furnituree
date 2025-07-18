@@ -37,22 +37,23 @@
       padding: 2rem;
       max-width: calc(100% - 250px);
     }
-    .welcome-message {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 50px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 0 20px  #2c7a7b;
-  margin-top: 250px;
-}
 
-.welcome-message h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
-}
+    .welcome-message {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 50px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #2c7a7b;
+      margin-top: 250px;
+    }
+
+    .welcome-message h1 {
+      font-size: 2.5rem;
+      color: #2c3e50;
+    }
 
 
     /* Responsive Adjustments */
@@ -73,9 +74,6 @@
         max-width: 100%;
       }
     }
-
-
-    
   </style>
 </head>
 
@@ -83,24 +81,24 @@
 
   <%- include("../../views/partials/admin/sidebar")%>
 
-<div class="main-content">
-  <div class="welcome-message">
-    <h1>Welcome to Dashboard</h1>
-  </div>
-</div>
+    <div class="main-content">
+      <div class="welcome-message">
+        <h1>Welcome to Dashboard</h1>
+      </div>
+    </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<% if (successMessage) { %>
-<script>
-  Swal.fire({
-    icon: 'success',
-    title: 'Login Successful',
-    text: '<%= successMessage %>',
-    confirmButtonColor: '#28a745'
-  });
-</script>
-<% } %>
+    <% if (successMessage) { %>
+      <script>
+        Swal.fire({
+          icon: 'success',
+          title: 'Login Successful',
+          text: '<%= successMessage %>',
+          confirmButtonColor: '#28a745'
+        });
+      </script>
+      <% } %>
 
 </body>
 

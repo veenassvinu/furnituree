@@ -21,36 +21,6 @@ const loadLogin = (req, res) => {
 };
 
 
-// const login = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const admin = await User.findOne({ email, isAdmin: true });
-
-//     if (!admin) {
-//       return res.render("admin-login", {
-//         message: "Admin not found. Please check your credentials.",
-//       });
-//     }
-
-//     const passwordMatch = await bcrypt.compare(password, admin.password);
-//     if (!passwordMatch) {
-//       return res.render("admin-login", {
-//         message: "Incorrect password. Please try again.",
-//       });
-//     }
-
-//     // Login success
-//     req.session.admin = true;
-//     req.session.successMessage = "Welcome Admin!";
-//     return res.redirect("/admin/dashboard");
-
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     return res.redirect("/pageerror");
-//   }
-// };
-
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -59,16 +29,14 @@ const login = async (req, res) => {
 
     if (!admin) {
       return res.render("admin-login", {
-        emailError: "Admin not found. Please check your email.",
-        email,
+        message: "Admin not found. Please check your credentials.",
       });
     }
 
     const passwordMatch = await bcrypt.compare(password, admin.password);
     if (!passwordMatch) {
       return res.render("admin-login", {
-        passwordError: "Incorrect password. Please try again.",
-        email,
+        message: "Incorrect password. Please try again.",
       });
     }
 
