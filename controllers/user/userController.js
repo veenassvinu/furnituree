@@ -629,6 +629,9 @@ const productDetails = async (req, res) => {
   }
 };
 
+const loadContactPage = async(req,res)=>{
+  res.render('contact')
+}
 module.exports = {
   loadHomepage,
   pageNotFound,
@@ -645,4 +648,5 @@ module.exports = {
   loadShopPage,
   productDetails,
   sendOtpEmail,
+  loadContactPage
 };

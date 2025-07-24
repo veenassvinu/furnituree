@@ -7,10 +7,12 @@ const  { userAuth,adminAuth}=require("../middlewares/auth");
 const productController=require("../controllers/admin/productController");
 const upload = require('../middlewares/multer');
 
+
+
 router.get("/pageerror",adminController.pageerror);
 router.get('/admin-login',adminController.loadLogin);
 router.post("/admin-login",adminController.login);
-router.get("/dashboard",adminController.loadDashboard);
+router.get("/dashboard",adminAuth,adminController.loadDashboard);
 // router.get('/logout',adminController.logout);
 
 router.get("/User",adminAuth,adminUserController.userInfo);
@@ -51,7 +53,7 @@ router.post(
 router.delete("/delete-image",adminAuth,productController.deleteImage);
 router.get("/blockProduct",adminAuth,productController.blockProduct);
 router.get("/unblockProduct",adminAuth,productController.unblockProduct);
-router.get("/adminLogout",adminController.adminLogout);
+router.get("/adminLogout",adminAuth,adminController.adminLogout);
 
 
 

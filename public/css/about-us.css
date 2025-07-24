@@ -1,0 +1,291 @@
+  
+    :root {
+      --dark-green: #3b5d50;
+      --accent: #f4a261;
+      --gray-bg: #f3f3f3;
+      --text: #333;
+      --white: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: var(--white);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--dark-green);
+      color: var(--white);
+      text-align: center;
+      padding: 60px 20px;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    header a.btn {
+      background: var(--accent);
+      color: var(--white);
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    /* .why-choose {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 80px 10%;
+      background: var(--gray-bg);
+      flex-wrap: wrap;
+    }
+
+    .why-choose .text {
+      flex: 1 1 400px;
+      margin-right: 40px;
+    }
+
+    .why-choose .text h2 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    .why-choose .feature {
+      margin-bottom: 20px;
+    }
+
+    .why-choose .feature h4 {
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+    }
+
+    .why-choose .feature i {
+      color: var(--accent);
+      margin-right: 8px;
+    }
+
+    .why-choose img {
+      flex: 1 1 300px;
+      max-width: 100%;
+      border-radius: 10px;
+    } */
+
+    .why-choose {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 80px 10%;
+  background: var(--gray-bg);
+  gap: 40px;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.why-choose .left {
+  flex: 1 1 500px;
+}
+
+.why-choose .left h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.why-choose .left p {
+  color: #555;
+  margin-bottom: 30px;
+}
+.why-choose .right {
+  flex: 1 1 400px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.feature-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.feature-box img {
+  width: 30px;
+  height: 30px;
+  margin-top: 4px;
+}
+
+.feature-box h4 {
+  margin: 0 0 5px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.feature-box p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.why-choose .right {
+  flex: 1 1 500px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.why-choose .right img {
+  width: 100%;
+  border-radius: 10px;
+  z-index: 1;
+}
+
+.dot-pattern {
+  position: absolute;
+  top: 0;
+  right: 60px;
+  width: 80px;
+  height: 120px;
+  background-image: radial-gradient(var(--accent) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  z-index: 0;
+}
+
+
+    .team-section {
+      text-align: center;
+      padding: 80px 10%;
+      background: var(--white);
+    }
+
+    .team-section h2 {
+      margin-bottom: 40px;
+      font-size: 2rem;
+    }
+
+    .team-members {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .member {
+      width: 200px;
+      text-align: center;
+    }
+
+    .member img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .member h4 {
+      margin: 10px 0 5px;
+    }
+
+    .testimonials {
+      padding: 80px 10%;
+      background: var(--gray-bg);
+      text-align: center;
+    }
+
+    .testimonial-content {
+      max-width: 600px;
+      margin: 0 auto;
+      font-style: italic;
+    }
+
+    .testimonial-content strong {
+      display: block;
+      margin-top: 15px;
+    }
+
+    .subscribe {
+      background: var(--white);
+      padding: 40px 0;
+      text-align: center;
+    }
+
+    .subscribe input {
+      padding: 10px;
+      width: 250px;
+      max-width: 80%;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .subscribe button {
+      padding: 10px 20px;
+      background: var(--accent);
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    footer {
+      background: var(--dark-green);
+      color: var(--white);
+      padding: 60px 10%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    footer .column {
+      flex: 1 1 200px;
+    }
+
+    footer h4 {
+      margin-bottom: 10px;
+    }
+
+    footer a {
+      display: block;
+      color: #ccc;
+      margin-bottom: 6px;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .why-choose, .team-members {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .why-choose .text, .why-choose img {
+        margin: 0;
+      }
+
+      .member {
+        width: 80%;
+      }
+
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }

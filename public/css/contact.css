@@ -1,0 +1,291 @@
+/* === General Styles === */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* === Header === */
+.header {
+    background: #1f3d36;
+    padding: 20px 0;
+    color: white;
+}
+
+.header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.nav-links .active {
+    border-bottom: 2px solid white;
+}
+
+/* === Hero Section === */
+.hero-section {
+    background: #3b5d50;
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+
+}
+.hero-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.hero-text h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+    text-align: center;
+
+}
+
+.hero-text p {
+    font-size: 18px;
+    max-width: 600px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    margin-top: 20px;
+}
+
+.hero-buttons .btn {
+    margin: 5px;
+}
+
+/* Hero Image */
+.hero-image {
+    margin-top: 30px;
+}
+
+.hero-image img {
+    max-width: 100%;
+    width: 300px;
+    height: auto;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.btn.primary {
+    background: #fbd23c;
+    color: black;
+}
+
+.btn.secondary {
+    background: white;
+    color: #264f41;
+}
+
+/* === Contact Info Section === */
+.contact-info {
+    background: #f5f5f5;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.info-grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 30px;
+    font-size: 16px;
+}
+
+.info-item {
+    text-align: center;
+    max-width: 250px;
+}
+
+/* === Contact Form === */
+.contact-form {
+    padding: 50px 0;
+    background: white;
+}
+
+.contact-form form {
+    background: #f5f5f5;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+    margin: auto;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.full {
+    width: 100%;
+}
+
+button.full {
+    font-size: 16px;
+    border-radius: 4px;
+    background: #3b5d50;
+    color: white;
+    border: none;
+    padding: 12px;
+}
+
+/* === Newsletter Section === */
+.newsletter {
+    background: #f5f5f5;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.newsletter p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.newsletter-form {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.newsletter-form input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.newsletter-form button {
+    padding: 10px 20px;
+    background: #264f41;
+    color: white;
+    border: none;
+    font-size: 18px;
+    border-radius: 4px;
+}
+
+/* === Footer Section === */
+.footer {
+    background: #fff;
+    padding: 60px 0 20px;
+    font-size: 14px;
+    color: #444;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.footer-left {
+    max-width: 300px;
+}
+
+.footer-right {
+    flex-grow: 1;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.footer-links div {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #333;
+    margin-bottom: 5px;
+    transition: all 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #3b5d50;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+/* === Responsive Layout === */
+@media (min-width: 768px) {
+    .hero-content {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+
+    .hero-text {
+        flex: 1;
+    }
+
+    .hero-image {
+        flex: 1;
+        text-align: right;
+    }
+
+    .hero-image img {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .contact-form form {
+        width: 70%;
+    }
+}

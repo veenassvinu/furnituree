@@ -7,6 +7,7 @@ const userAuth = async (req, res, next) => {
 
     // If no user session, redirect to login
     if (!userId) {
+      console.log("User ID from session: undefined");
       return res.redirect("/login");
     }
 
@@ -36,6 +37,7 @@ const userAuth = async (req, res, next) => {
 };
 
 
+
 const already = async (req, res, next) => {
     if (req.session.User) {
       return res.redirect("/");
@@ -44,19 +46,17 @@ const already = async (req, res, next) => {
   };
 
 const adminAuth=(req,res,next)=>{
-    User.findOne({isAdmin:true})
-    .then(data=>{
-        if(data){
-            next();
-        }else{
-            res.redirect("/admin/admin-login")
-        }
-    })
-   .catch(error=>{
-    console.log("Error in adminauth middleware",error);
-    res.status(500).send("Interanal Server error")
+
+
+  try {
+    if(req.session.admin){
+      next()
+    }else{
+      res.redirect('/admin/admin-login')
+    }
+  } catch (error) {
     
-   }) 
+  }
 }
 
 module.exports={

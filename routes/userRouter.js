@@ -2,13 +2,15 @@ const express=require("express");
 const router=express.Router();
 const userController=require("../controllers/user/userController");
 const passport = require("passport");
-// const forgotPasswordController=require("../controllers/user/forgotPasswordController.js")
+const forgotPasswordController=require("../controllers/user/forgotPasswordController.js")
 const checkBan=require("../middlewares/checkBan.js");
-const categoryController=require("../controllers/user/cartCotroller.js")
+const categoryController=require("../controllers/user/cartController.js")
 
 const {userAuth,already} = require('../middlewares/auth');
 const { getForgotPassPage } = require("../controllers/user/forgotPasswordController.js");
 const profileController=require("../controllers/user/profileController.js")
+const cartController=require("../controllers/user/cartController.js")
+const aboutController = require('../controllers/user/aboutController.js')
 
 // Banned Page
 router.get("/banned", (req, res) => {
@@ -61,20 +63,23 @@ router.get('/logout', async (req,res)=>{
 })
 
 
-router.get('/cart',userAuth,categoryController.cartPage);
+//---------------cart section-----------//
+router.get("/cart",cartController.loadCartPage)
+
 
 //forgot password//
 
 // router.get("/forgot-password", forgotPasswordController.getForgotPassPage);
 // router.post("/forgot-email-otp", forgotPasswordController.sendForgotOtp);
+// router.get("/forgot-email-otp",forgotPasswordController.sendForgotOtp)
 // router.post("/verify-forgot-otp", forgotPasswordController.verifyForgotOtp);
 // router.post("/resend-otp", forgotPasswordController.resendOtp);
 // router.get("/enter-otp", forgotPasswordController.loadEmailPage);
 
 
 
-// router.get("/about-us", userController.aboutUsPage);
-
+router.get("/about-us", aboutController.aboutUsPage);
+router.get('/contact',userController.loadContactPage)
 
 
 
