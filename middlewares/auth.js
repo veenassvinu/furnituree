@@ -5,7 +5,6 @@ const userAuth = async (req, res, next) => {
   try {
     const userId = req.session.userId;
 
-    // If no user session, redirect to login
     if (!userId) {
       console.log("User ID from session: undefined");
       return res.redirect("/login");
@@ -13,7 +12,7 @@ const userAuth = async (req, res, next) => {
 
     const user = await User.findById(userId);
 
-    // If user doesn't exist or got deleted
+    
     if (!user) {
       req.session.destroy(() => {
         return res.redirect("/login");
@@ -21,10 +20,9 @@ const userAuth = async (req, res, next) => {
       return;
     }
 
-    // If user is blocked, destroy session and redirect to banned page
     if (user.isBlocked) {
       req.session.destroy(() => {
-        return res.redirect("/banned"); // 👈 Redirect to banned page
+        return res.redirect("/banned"); 
       });
       return;
     }
