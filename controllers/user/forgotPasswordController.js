@@ -1,32 +1,32 @@
-// const User=require("../../models/userSchema");
-// const nodemailer=require("nodemailer");
-// const bcrypt=require("bcrypt");
-// const env=require("dotenv").config();
-// const session=require("express-session");
+const User=require("../../models/userSchema");
+const nodemailer=require("nodemailer");
+const bcrypt=require("bcrypt");
+const env=require("dotenv").config();
+const session=require("express-session");
 
 
 
-// const otpStore = {}; 
+const otpStore = {}; 
 
-// const getForgotPassPage = async (req, res) => {
-//   try {
-//     res.render("forgot-password/forgot-password");
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Server error");
-//   }
-// };
+const getForgotPassPage = async (req, res) => {
+  try {
+    res.render("forgot-password/forgot-password");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server error");
+  }
+};
 
 // // Load OTP page
-// const loadEmailPage = async (req, res) => {
-//   try {
+const loadEmailPage = async (req, res) => {
+  try {
     
-//     res.render("forgot-password/forgot-email-otp");
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Server error");
-//   }
-// };
+    res.render("forgot-password/forgot-email-otp");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server error");
+  }
+};
 
 
 // const sendForgotOtp = async (req, res) => {
@@ -281,10 +281,10 @@
 //   }
 // };
 
-// module.exports = {
-//   getForgotPassPage,
-//   loadEmailPage,
+module.exports = {
+  getForgotPassPage,
+  loadEmailPage,
 //   sendForgotOtp,
 //   verifyForgotOtp,
 //   resendOtp,
-// };
+};

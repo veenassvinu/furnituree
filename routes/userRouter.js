@@ -69,7 +69,7 @@ router.get("/cart",cartController.loadCartPage)
 
 //forgot password//
 
-// router.get("/forgot-password", forgotPasswordController.getForgotPassPage);
+router.get("/forgot-password", forgotPasswordController.getForgotPassPage);
 // router.post("/forgot-email-otp", forgotPasswordController.sendForgotOtp);
 // router.get("/forgot-email-otp",forgotPasswordController.sendForgotOtp)
 // router.post("/verify-forgot-otp", forgotPasswordController.verifyForgotOtp);
