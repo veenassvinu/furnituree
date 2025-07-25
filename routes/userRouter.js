@@ -27,11 +27,34 @@ router.post('/verify',already,userController.verifyOtp);
 router.post('/resend-otp',userController.sendOtpEmail);
 router.post("/resend-otp",already,userController.resendOtp);
 
-router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
+// router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
 
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
-    res.redirect('/')
-});
+// router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
+//     res.redirect('/')
+// });
+
+router.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/signup' }),
+  (req, res) => {
+    // Store session for logged-in user
+    req.session.user = req.user._id;
+
+    // Redirect to home or dashboard
+    res.redirect('/');
+  }
+);
+
+router.get('/auth/google', (req, res, next) => {
+  if (req.session.user) {
+    return res.redirect('/'); // or any other route
+  }
+  next();
+}, passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+
+
+
+
 router.get('/login',checkBan,userController.loadLogin);
 router.post('/login',userController.login);
 router.get('/shop',checkBan,userController.loadShopPage);

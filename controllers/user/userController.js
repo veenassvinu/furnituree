@@ -72,7 +72,7 @@ async function sendVerificationEmail(email, otp) {
 
 const signup = async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -91,7 +91,7 @@ const signup = async (req, res) => {
     // Store OTP and user data in session
     req.session.userOtp = otp;
     req.session.otpExpiration = otpExpiration;
-    req.session.userData = { name, email, password, phone };
+    req.session.userData = { name, email, password };
 
     console.log("✅ OTP Sent to:", email, "OTP:", otp);
     res.redirect("/verify");
@@ -191,7 +191,6 @@ const verifyOtp = async (req, res) => {
       const saveUserData = new User({
         name: user.name,
         email: user.email,
-        phone: user.phone,
         password: passwordHash,
         otp: otp, // Optionally, you can remove this if not needed in DB
         otpExpiration: new Date(Date.now() + 5 * 60 * 1000),
@@ -235,9 +234,11 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+
 const resendOtp = async (req, res) => {
   try {
     if (!req.session.userData) {
+      console.error("❌ No user data in session");
       return res.status(400).json({
         success: false,
         message: "No user data found in session.",
@@ -248,11 +249,14 @@ const resendOtp = async (req, res) => {
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpiration = Date.now() + 5 * 60 * 1000;
 
-    // Save new OTP in session
     req.session.userOtp = newOtp;
     req.session.otpExpiration = otpExpiration;
 
-    // Send email using nodemailer
+    console.log("📧 Preparing to resend OTP...");
+    console.log("EMAIL_USER:", process.env.EMAIL_USER);
+    console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Exists ✅" : "Missing ❌");
+    console.log("Sending OTP to:", user.email, "| OTP:", newOtp);
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -263,14 +267,22 @@ const resendOtp = async (req, res) => {
 
     const mailOptions = {
       from: `"Furniture App" <${process.env.EMAIL_USER}>`,
-      to: "veenavinu812@gmail.com",
+      to: user.email,
       subject: "Resent OTP Code",
       text: `Hello ${user.name},\n\nYour new OTP is: ${newOtp}\nIt is valid for 5 minutes.`,
       html: `<p>Hello <b>${user.name}</b>,</p><p>Your new OTP is: <b>${newOtp}</b></p><p>This code is valid for 5 minutes.</p>`,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log("✅ New OTP sent via email:", newOtp);
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log("✅ New OTP sent via email:", newOtp);
+    } catch (emailError) {
+      console.error("❌ Email sending failed:", emailError);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email. Try again.",
+      });
+    }
 
     return res.json({
       success: true,
@@ -284,6 +296,7 @@ const resendOtp = async (req, res) => {
     });
   }
 };
+
 
 const registerUser = async (req, res) => {
   try {
@@ -411,7 +424,7 @@ const sendOtpEmail = async (req, res) => {
 
     const mailOptions = {
       from: `"Furniture App" <${process.env.EMAIL_USER}>`,
-      to: "veenavinu812@gmail.com", // ✅ Send to the actual user
+      to: user.email, // ✅ Send to the actual user
       subject: "Your OTP Code",
       text: `Hello ${user.name},\n\nYour OTP is: ${otp}\nIt is valid for 5 minutes.`,
       html: `<p>Hello <b>${user.name}</b>,</p><p>Your OTP is: <b>${otp}</b></p><p>This code is valid for 5 minutes.</p>`,
@@ -428,84 +441,6 @@ const sendOtpEmail = async (req, res) => {
   }
 };
 
-// const loadShopPage = async (req, res) => {
-//   try {
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 4;
-//     const skip = (page - 1) * limit;
-
-//     const search = req.query.search || "";
-//     const sortOption = req.query.sort || "";
-//     const categoryName = req.query.category;
-//     const minPrice = parseFloat(req.query.minPrice);
-//     const maxPrice = parseFloat(req.query.maxPrice);
-
-//     const filter = {
-//       isBlocked: false,
-//       productName: { $regex: search, $options: "i" },
-//     };
-
-//     // Category filter
-//     if (categoryName) {
-//       const categoryDoc = await Category.findOne({ name: categoryName.trim(),isListed:true });
-//       if (categoryDoc) {
-//         filter.category = categoryDoc._id;
-//       }
-//     }
-
-//     // Price filter
-//     if (!isNaN(minPrice)) {
-//       filter.salePrice = { ...filter.salePrice, $gte: minPrice };
-//     }
-//     if (!isNaN(maxPrice)) {
-//       filter.salePrice = { ...filter.salePrice, $lte: maxPrice };
-//     }
-
-//     // Sorting logic
-//     let sort = {};
-//     if (sortOption === "name-asc") sort = { productName: 1 };
-//     else if (sortOption === "name-desc") sort = { productName: -1 };
-//     else if (sortOption === "price-asc") sort = { salePrice: 1 };
-//     else if (sortOption === "price-desc") sort = { salePrice: -1 };
-//     else if (sortOption === "newest") sort = { createdAt: -1 };
-
-//     // Get total count & products
-//     const totalProducts = await Product.countDocuments(filter);
-//     const totalPages = Math.ceil(totalProducts / limit);
-//     const products = await Product.find(filter)
-//       .sort(sort)
-//       .skip(skip)
-//       .limit(limit)
-//       .populate("category");
-
-//     const categories = await Category.find({ isListed: true });
-
-//     // Respond with JSON for AJAX requests
-//     if (req.xhr || req.headers.accept.includes('application/json')) {
-//       res.json({
-//         products,
-//         totalPages,
-//         currentPage: page
-//       });
-//     } else {
-//       // Render the page for non-AJAX requests
-//       res.render("shop", {
-//         product: products,
-//         currentPage: page,
-//         totalPages,
-//         search,
-//         sort: sortOption,
-//         category: categoryName,
-//         minPrice,
-//         maxPrice,
-//         categories,
-//       });
-//     }
-//   } catch (err) {
-//     console.error("Error loading shop page:", err);
-//     res.status(500).send("Internal Server Error");
-//   }
-// };
 
 const loadShopPage = async (req, res) => {
   try {
