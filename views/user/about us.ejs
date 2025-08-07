@@ -1,11 +1,7 @@
- <%- include("../../views/partials/user/header.ejs") %>
-        <%- include("../../views/partials/user/navBar") %>
+<%- include("../../views/partials/user/header.ejs") %>
+<%- include("../../views/partials/user/navBar") %>
 
-
-
-
-
-<link rel="stylesheet"href="/css/about-us.css">
+<link rel="stylesheet" href="/css/about-us.css">
 </head>
 <body>
 
@@ -15,8 +11,9 @@
     <a href="/shop" class="btn">Shop Now</a>
   </header>
 
+  <!-- ✅ Why Choose Us Section -->
   <section class="why-choose">
-    <div class="text">
+    <div class="why-left">
       <h2>Why Choose Us</h2>
       <div class="feature">
         <h4><i class="fas fa-couch"></i> Premium Quality</h4>
@@ -31,32 +28,35 @@
         <p>Hassle-free returns and customer-first policies.</p>
       </div>
     </div>
-    <img src="https://i.ibb.co/qBkVDL5/interior.jpg" alt="Furniture Room" />
+    <div class="why-right">
+      <img src="/images/about img2.webp" alt="Furniture Room" />
+    </div>
   </section>
 
+  <!-- Team Section -->
   <section class="team-section">
     <h2>Our Team</h2>
     <div class="team-members">
       <div class="member">
-        <img src="https://i.ibb.co/wcMJfKm/team1.jpg" alt="Team Member" />
+        <img src="/images/team 1.webp" alt="Team Member" />
         <h4>Lawson Arnold</h4>
         <p>Design Head</p>
         <small>New York</small>
       </div>
       <div class="member">
-        <img src="https://i.ibb.co/gdjdGy2/team2.jpg" alt="Team Member" />
+        <img src="/images/team 2.webp" alt="Team Member" />
         <h4>Jeremy Weber</h4>
         <p>Marketing Lead</p>
         <small>London</small>
       </div>
       <div class="member">
-        <img src="https://i.ibb.co/3CTwkP3/team3.jpg" alt="Team Member" />
+        <img src="/images/team 3.webp" alt="Team Member" />
         <h4>Patrik White</h4>
         <p>Operations Manager</p>
         <small>Los Angeles</small>
       </div>
       <div class="member">
-        <img src="https://i.ibb.co/vDC0KcR/team4.jpg" alt="Team Member" />
+        <img src="/images/team 4.webp" alt="Team Member" />
         <h4>Kathryn Ryan</h4>
         <p>Creative Director</p>
         <small>London</small>
@@ -101,6 +101,5 @@
       <a href="#">Terms</a>
     </div>
   </footer>
-
 </body>
 </html>

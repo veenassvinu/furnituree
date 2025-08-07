@@ -275,21 +275,24 @@
                         <h3>Pricing & Inventory</h3>
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label class="form-label">original Price</label>
+                                <label class="form-label">Original Price</label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
                                     <input type="text" name="regularPrice" class="form-control"
-                                        value="<%= product.originalPrice  %>">
+                                        value="<%= product.originalPrice %>">
                                 </div>
+                                <span id="regularPrice-error" class="error-message text-danger"
+                                    style="display:none;"></span>
                             </div>
-
                             <div class="col-md-6 mb-4">
                                 <label class="form-label">Sale Price</label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
                                     <input type="text" name="salePrice" class="form-control"
-                                        value="<%= product.salePrice  %>">
+                                        value="<%= product.salePrice %>">
                                 </div>
+                                <span id="salePrice-error" class="error-message text-danger"
+                                    style="display:none;"></span>
                             </div>
                         </div>
 
@@ -310,7 +313,7 @@
                             <div class="image-inputs">
                                 <p class="text-muted mb-4">Upload or edit 4 product images</p>
                                 <div class="row">
-                                   
+
                                     <% for (let i=0; i < 4; i++) { %>
                                         <div class="col-md-3 mb-3">
                                             <input type="file" name="productImages" id="image<%= i %>"
@@ -377,7 +380,7 @@
 
 
 
-    
+    <!--     
      <script>
 
         document.querySelector("#imagePreview").addEventListener("click", function (event) {
@@ -548,35 +551,135 @@
 
 
 
-    </script>  
+    </script>   -->
 
 
+    <script>
+        // Delete Image with SweetAlert
+        document.querySelector("#imagePreview").addEventListener("click", function (event) {
+            if (event.target.classList.contains("delete-image-btn")) {
+                deleteImage(event);
+            }
+        });
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const urlParams = new URLSearchParams(window.location.search);
- const updated = urlParams.get("updated");
+        async function deleteImage(event) {
+            const button = event.target;
+            const imageIndex = button.getAttribute("data-index");
+            const productId = "<%= product._id %>";
 
-    if (urlParams.get("updated") === "success") {
-      Swal.fire({
-        icon: "success",
-        title: "Product Updated",
-        text: "Your product was successfully updated!",
-        confirmButtonColor: "#2c7a7b"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Redirect to Product Management page
-          window.location.href = "/admin/product";
+            const confirmation = await Swal.fire({
+                title: "Are you sure?",
+                text: "Do you really want to delete this image?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "Cancel"
+            });
+
+            if (!confirmation.isConfirmed) return;
+
+            try {
+                const response = await fetch("/admin/delete-image", {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ productId, imageIndex })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    button.closest(".image-container").remove();
+                    Swal.fire({ title: "Deleted!", text: result.message || "Image deleted successfully.", icon: "success" });
+                } else {
+                    Swal.fire({ title: "Error", text: result.error || "Failed to delete the image.", icon: "error" });
+                }
+            } catch (error) {
+                console.error("Error deleting image:", error);
+                Swal.fire({ title: "Error", text: "An error occurred while deleting the image.", icon: "error" });
+            }
         }
-      });
 
-      // Optionally clean the URL
-      const url = new URL(window.location);
-      url.searchParams.delete("updated");
-      window.history.replaceState({}, document.title, url.pathname);
-    }
-  });
-</script>
+        // ✅ Form Validation for Edit Product
+        function validateForm() {
+            let isValid = true;
+
+            // Clear previous error messages
+            document.querySelectorAll(".error-message").forEach((element) => {
+                element.style.display = "none";
+                element.textContent = "";
+            });
+
+            // Get form field values
+            const regularPrice = parseFloat(document.querySelector("input[name='regularPrice']").value.trim()) || 0;
+            const salePrice = parseFloat(document.querySelector("input[name='salePrice']").value.trim()) || 0;
+
+            // ✅ Regular Price Validation
+            if (regularPrice <= 0 || isNaN(regularPrice)) {
+                showError("regularPrice-error", "Regular price must be greater than 0.");
+                isValid = false;
+            }
+
+            // ✅ Sale Price Validation (check only if regular price is valid)
+            if (salePrice <= 0 || isNaN(salePrice)) {
+                showError("salePrice-error", "Sale price must be greater than 0.");
+                isValid = false;
+            } else if (regularPrice > 0 && salePrice >= regularPrice) {
+                showError("salePrice-error", "Sale price must be less than the regular price.");
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Utility function: Show inline error message
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.style.display = "block";
+                errorElement.textContent = message;
+            } else {
+                console.warn(`Error element with ID '${elementId}' not found.`);
+            }
+        }
+
+        // ✅ Attach validation to form submit
+        document.querySelector("form").addEventListener("submit", function (e) {
+            if (!validateForm()) {
+                e.preventDefault(); // Stop form from submitting if invalid
+            }
+        });
+    </script>
+
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const updated = urlParams.get("updated");
+
+            if (urlParams.get("updated") === "success") {
+                Swal.fire({
+                    icon: "success",
+                    title: "Product Updated",
+                    text: "Your product was successfully updated!",
+                    confirmButtonColor: "#2c7a7b"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to Product Management page
+                        window.location.href = "/admin/product";
+                    }
+                });
+
+                // Optionally clean the URL
+                const url = new URL(window.location);
+                url.searchParams.delete("updated");
+                window.history.replaceState({}, document.title, url.pathname);
+            }
+        });
+    </script>
 
 
 

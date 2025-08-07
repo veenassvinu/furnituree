@@ -1,240 +1,180 @@
 <%- include("../../views/partials/user/header.ejs")%>
 
+<style>
+  .zoom-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
 
-  <style>
-    .zoom-container {
-      position: relative;
-      width: 400px;
-      height: 400px;
-      overflow: hidden;
-      cursor: zoom-in;
-    }
+  .zoom-container.zoomed {
+    cursor: zoom-out;
+  }
 
-    .zoom-container.zoomed {
-      cursor: zoom-out;
-    }
+  .main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
 
-    .main-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
+  .zoom-container.zoomed .main-image {
+    transform: scale(2);
+    transform-origin: center center;
+  }
 
-    .zoom-container.zoomed .main-image {
-      transform: scale(2);
-      /* Zoom in */
-      transform-origin: center center;
-      /* Will be updated dynamically */
-    }
-  </style>
+  .regular-price {
+    font-size: 18px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 8px;
+  }
 
+  .sale-price {
+    font-size: 22px;
+    color: #d9534f;
+    font-weight: bold;
+  }
+</style>
 
+<body>
+  <header>
+    <%- include("../../views/partials/user/navBar.ejs")%>
+  </header>
 
-  <body>
-    <!-- Start Header/Navigation -->
-    <header>
-
-      <%- include("../../views/partials/user/navBar.ejs")%>
-
-
-    </header>
-    <!-- End Header/Navigation -->
-
-    <!-- Start Hero Section -->
-    <div class="hero">
-      <div class="container">
-        <div class="row justify-content-between">
-          <div class="col-lg-5">
-            <div class="intro-excerpt">
-              <h1>Product Details</h1>
-            </div>
-          </div>
-          <div class="col-lg-7">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="container">
+      <div class="row justify-content-between">
+        <div class="col-lg-5">
+          <div class="intro-excerpt">
+            <h1>Product Details</h1>
           </div>
         </div>
       </div>
     </div>
-    <!-- End Hero Section -->
+  </div>
 
-    <!-- Product Details Section -->
-    <div class="container my-5">
-      <!-- Product Details Section -->
-<div class="container my-5">
-  <div class="row">
-    
-    <!-- Product Images (Left Column) -->
-    <div class="col-12 col-md-6 mb-4">
-      <div class="zoom-container">
-        <% if (product.productImages && product.productImages.length > 0) { %>
-          <img src="/uploads/product-images/<%= product.productImages[0] %>" class="img-fluid main-image" alt="Main Image">
-        <% } else { %>
-          <img src="/images/default-product.jpg" class="img-fluid main-image" alt="No Image">
-        <% } %>
-      </div>
+  <!-- Product Details Section -->
+  <div class="container my-5">
+    <div class="row">
 
-      <div class="small-images mt-3">
-        <div class="row">
-          <% for (let i = 1; i < product.productImages.length; i++) { %>
-            <div class="col-4">
-              <img src="/uploads/product-images/<%= product.productImages[i] %>" class="img-fluid small-image"
-                alt="Alternate View <%= i %>">
-            </div>
+      <!-- Product Images -->
+      <div class="col-12 col-md-6 mb-4">
+        <div class="zoom-container">
+          <% if (product.productImages && product.productImages.length > 0) { %>
+            <img src="/uploads/product-images/<%= product.productImages[0] %>" class="img-fluid main-image" alt="Main Image">
+          <% } else { %>
+            <img src="/images/default-product.jpg" class="img-fluid main-image" alt="No Image">
           <% } %>
         </div>
-      </div>
-    </div>
 
-    <!-- Product Info (Right Column) -->
-    <div class="col-12 col-md-6 mb-4">
-      <h2 class="product-title">
-        <%= product.productName.toUpperCase() %>
-      </h2>
-      <div class="rating mb-3">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star-half-alt"></i>
-        <span class="ms-2">(4.5/5)</span>
-      </div>
-      <p class="price text-primary mb-4">₹<%= product.salePrice %></p>
-      
-      <div class="product-description mb-4">
-        <p><%= product.description %></p>
-      </div>
-
-      <h4>Stock</h4>
-      <p class="price text-primary mb-4">
-        <% if (product.quantity > 0) { %>
-          In stock: <%= product.quantity %>
-        <% } else { %>
-          <span class="text-danger">Out of stock</span>
-        <% } %>
-      </p>
-
-      <button class="btn btn-primary btn-lg w-100 mb-4">Add to Cart</button>
-
-      <div class="product-features">
-        <h4>Features</h4>
-        <ul>
-          <li>Adjustable height</li>
-          <li>Ergonomic design</li>
-          <li>Premium upholstery</li>
-          <li>Lumbar support</li>
-        </ul>
-      </div>
-    </div>
-
-  </div> <!-- END .row -->
-</div>
-<!-- End Product Details Section -->
-
-
-      <!-- Product Description Tabs -->
-      <div class="row">
-        <div class="col-12">
-          <ul class="nav nav-tabs" id="productTabs" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link active" id="description-tab" data-bs-toggle="tab" href="#description"
-                role="tab">Description</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab">Reviews</a>
-            </li>
-          </ul>
-          <div class="tab-content" id="productTabsContent">
-            <div class="tab-pane fade show active p-4" id="description" role="tabpanel">
-              <p>Ergonomic chairs are designed to support the natural curve of your spine, providing back support and
-                improving posture for long hours of work or study.</p>
-            </div>
-            <div class="tab-pane fade p-4" id="reviews" role="tabpanel">
-              <div class="review">
-                <strong>John D.</strong>
-                <div class="rating">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                </div>
-                <p>Great chair for long work hours. Very comfortable and supportive.</p>
+        <div class="small-images mt-3">
+          <div class="row">
+            <% for (let i = 1; i < product.productImages.length; i++) { %>
+              <div class="col-4">
+                <img src="/uploads/product-images/<%= product.productImages[i] %>" class="img-fluid small-image" alt="Alternate View <%= i %>">
               </div>
-            </div>
+            <% } %>
           </div>
         </div>
-
       </div>
-    </div>
 
-
-    <div class="untree_co-section product-section before-footer-section">
-      <div class="container">
-        <h2 class="text-center pb-5">Similar Products</h2>
-        <div class="row">
-
-          <!-- Start Column 1 -->
-          <%for(let i=0 ; i< products.length ;i++){ %>
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-              <a class="product-item" href="/productDetails/<%=products[i]._id  %>">
-                <img src="/uploads/product-images/<%= products[i].productImages[0]  %>"
-                  class="img-fluid product-thumbnail">
-                <h3 class="product-title">
-                  <%=products[i].productName %>
-                </h3>
-                <strong class="product-price">₹<%=products[i].salePrice %></strong>
-
-                <span class="icon-cross">
-                  <img src="images/cross.svg" class="img-fluid">
-
-                </span>
-              </a>
-            </div>
-            <% } %>
-              <!-- End Column 1 -->
-
-
-
+      <!-- Product Info -->
+      <div class="col-12 col-md-6 mb-4">
+        <h2 class="product-title"><%= product.productName.toUpperCase() %></h2>
+        <div class="rating mb-3">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          <span class="ms-2">(4.5/5)</span>
         </div>
+
+        <!-- ✅ Price with strike-through -->
+        <p class="mb-4">
+          <% if (product.originalPrice && product.salePrice && product.salePrice < product.originalPrice) { %>
+            <span class="regular-price">₹<%= product.originalPrice.toLocaleString('en-IN') %></span>
+          <% } %>
+          <span class="sale-price">₹<%= product.salePrice.toLocaleString('en-IN') %></span>
+        </p>
+
+        <div class="product-description mb-4">
+          <p><%= product.description %></p>
+        </div>
+
+        <h4>Stock</h4>
+        <p class="price text-primary mb-4">
+          <% if (product.quantity > 0) { %>
+            In stock: <%= product.quantity %>
+          <% } else { %>
+            <span class="text-danger">Out of stock</span>
+          <% } %>
+        </p>
+
+        <button class="btn btn-primary btn-lg w-100 mb-4">Add to Cart</button>
       </div>
     </div>
-    <!-- End Product Details Section -->
+  </div>
 
-    <!-- Footer -->
-    <footer>
-      <%- include("../../views/partials/user/footer.ejs") %>
-    </footer>
+  <!-- Similar Products -->
+  <div class="untree_co-section product-section before-footer-section">
+    <div class="container">
+      <h2 class="text-center pb-5">Similar Products</h2>
+      <div class="row">
+        <% for(let i=0; i<products.length; i++){ %>
+          <div class="col-12 col-md-4 col-lg-3 mb-5">
+            <a class="product-item" href="/productDetails/<%= products[i]._id %>">
+              <img src="/uploads/product-images/<%= products[i].productImages[0] %>" class="img-fluid product-thumbnail">
+              <h3 class="product-title"><%= products[i].productName %></h3>
+              
+              <!-- ✅ Price display for similar products -->
+              <p>
+                <% if (products[i].originalPrice && products[i].salePrice && products[i].salePrice < products[i].originalPrice) { %>
+                  <span class="regular-price">₹<%= products[i].originalPrice.toLocaleString('en-IN') %></span>
+                <% } %>
+                <span class="sale-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span>
+              </p>
 
-    <!-- Scripts -->
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <script>
-      const zoomContainer = document.querySelector('.zoom-container');
-      const mainImage = document.querySelector('.main-image');
+              <span class="icon-cross">
+                <img src="images/cross.svg" class="img-fluid">
+              </span>
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
 
-      // Change image on small image click
-      document.querySelectorAll('.small-image').forEach(image => {
-        image.addEventListener('click', () => {
-          mainImage.src = image.src;
-          zoomContainer.classList.remove('zoomed'); // Reset zoom
-        });
+  <!-- Footer -->
+  <footer>
+    <%- include("../../views/partials/user/footer.ejs") %>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const zoomContainer = document.querySelector('.zoom-container');
+    const mainImage = document.querySelector('.main-image');
+
+    document.querySelectorAll('.small-image').forEach(image => {
+      image.addEventListener('click', () => {
+        mainImage.src = image.src;
+        zoomContainer.classList.remove('zoomed');
       });
+    });
 
-      // Toggle zoom and adjust origin on mouse move
-      zoomContainer.addEventListener('click', () => {
-        zoomContainer.classList.toggle('zoomed');
-      });
+    zoomContainer.addEventListener('click', () => {
+      zoomContainer.classList.toggle('zoomed');
+    });
 
-      zoomContainer.addEventListener('mousemove', function (e) {
-        if (!zoomContainer.classList.contains('zoomed')) return;
-
-        const rect = zoomContainer.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-        mainImage.style.transformOrigin = `₹{x}% ₹{y}%`;
-      });
-    </script>
-
-  </body>
-
-  </html>
+    zoomContainer.addEventListener('mousemove', function (e) {
+      if (!zoomContainer.classList.contains('zoomed')) return;
+      const rect = zoomContainer.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      mainImage.style.transformOrigin = `${x}% ${y}%`;
+    });
+  </script>
+</body>
+</html>
