@@ -441,7 +441,6 @@ const sendOtpEmail = async (req, res) => {
   }
 };
 
-
 const loadShopPage = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -454,18 +453,15 @@ const loadShopPage = async (req, res) => {
     const minPrice = parseFloat(req.query.minPrice);
     const maxPrice = parseFloat(req.query.maxPrice);
 
-    // ✅ Step 1: Get only listed category IDs
     const listedCategories = await Category.find({ isListed: true }).select("_id");
     const listedCategoryIds = listedCategories.map((cat) => cat._id);
 
-    // ✅ Step 2: Base filter: only listed categories + not blocked
     const filter = {
       isBlocked: false,
-      category: { $in: listedCategoryIds }, // Filter only listed categories
+      category: { $in: listedCategoryIds }, 
       productName: { $regex: search, $options: "i" },
     };
 
-    // ✅ Step 3: If category filter is selected
     if (categoryName) {
       const selectedCategory = await Category.findOne({
         name: categoryName.trim(),
@@ -475,12 +471,10 @@ const loadShopPage = async (req, res) => {
       if (selectedCategory) {
         filter.category = selectedCategory._id;
       } else {
-        // If the category is not listed, show no products
         filter.category = null;
       }
     }
 
-    // ✅ Step 4: Price filter
     if (!isNaN(minPrice)) {
       filter.salePrice = { ...filter.salePrice, $gte: minPrice };
     }
@@ -488,15 +482,14 @@ const loadShopPage = async (req, res) => {
       filter.salePrice = { ...filter.salePrice, $lte: maxPrice };
     }
 
-    // ✅ Step 5: Sorting
-    let sort = {};
+    let sort = { createdAt: -1 }; 
     if (sortOption === "name-asc") sort = { productName: 1 };
     else if (sortOption === "name-desc") sort = { productName: -1 };
     else if (sortOption === "price-asc") sort = { salePrice: 1 };
     else if (sortOption === "price-desc") sort = { salePrice: -1 };
     else if (sortOption === "newest") sort = { createdAt: -1 };
+    else if (sortOption === "oldest") sort = { createdAt: 1 }; 
 
-    // ✅ Step 6: Fetch products
     const totalProducts = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalProducts / limit);
     const products = await Product.find(filter)
@@ -507,7 +500,6 @@ const loadShopPage = async (req, res) => {
 
     const categories = await Category.find({ isListed: true });
 
-    // ✅ Step 7: Respond
     if (req.xhr || req.headers.accept.includes("application/json")) {
       res.json({
         products,
