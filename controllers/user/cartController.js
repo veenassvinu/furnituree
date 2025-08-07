@@ -10,9 +10,6 @@ const loadCartPage = async(req,res)=>{
 
 
 
-
-
-
 module.exports={
   loadCartPage,
   

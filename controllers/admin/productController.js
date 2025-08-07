@@ -28,8 +28,10 @@ const loadProduct = async (req, res) => {
     const totalPages = Math.max(Math.ceil(totalProducts / limit), 1);
     const currentPage = Math.min(page, totalPages);
 
+  
     const products = await Product.find(searchFilter)
       .populate("category")
+      .sort({ createdAt: -1 }) 
       .skip((currentPage - 1) * limit)
       .limit(limit);
 
@@ -203,13 +205,12 @@ const editproduct = async (req, res) => {
     }
 
     await product.save();
-    
+
     // Redirect to edit page with success parameter instead of directly to product list
     res.redirect(`/admin/edit-product/${req.params.id}?updated=success`);
-
   } catch (err) {
     console.error("Edit Product Error:", err);
-    
+
     // Optional: redirect with error parameter
     res.redirect(`/admin/edit-product/${req.params.id}?updated=error`);
   }
