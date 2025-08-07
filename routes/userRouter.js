@@ -14,7 +14,7 @@ const aboutController = require('../controllers/user/aboutController.js')
 
 // Banned Page
 router.get("/banned", (req, res) => {
-  res.render("checkBan"); // render bannedPage.ejs
+  res.render("checkBan"); 
 });
 
 
@@ -36,17 +36,15 @@ router.post("/resend-otp",already,userController.resendOtp);
 router.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/signup' }),
   (req, res) => {
-    // Store session for logged-in user
     req.session.user = req.user._id;
 
-    // Redirect to home or dashboard
     res.redirect('/');
   }
 );
 
 router.get('/auth/google', (req, res, next) => {
   if (req.session.user) {
-    return res.redirect('/'); // or any other route
+    return res.redirect('/'); 
   }
   next();
 }, passport.authenticate('google', { scope: ['profile', 'email'] }));

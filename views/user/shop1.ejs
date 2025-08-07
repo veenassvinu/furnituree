@@ -369,12 +369,12 @@
 						<div id="paginationContainer">
 							<% if (typeof totalPages !=='undefined' && totalPages> 1) { %>
 								<div class="pagination d-flex justify-content-center mt-4">
-									<!-- Previous Button -->
+									
 									<button class="pagination-button btn btn-secondary me-2"
 										onclick="changePage('<%= currentPage - 1 %>')" <%=currentPage===1 ? 'disabled'
 										: '' %>>Previous</button>
 
-									<!-- Page Numbers -->
+									
 									<% for (let page=1; page <=totalPages; page++) { %>
 										<button
 											class="pagination-button btn <%= currentPage === page ? 'btn-primary' : 'btn-outline-primary' %> mx-1"
@@ -383,7 +383,7 @@
 										</button>
 										<% } %>
 
-											<!-- Next Button -->
+											
 											<button class="pagination-button btn btn-secondary ms-2"
 												onclick="changePage('<%= currentPage + 1 %>')"
 												<%=currentPage===totalPages ? 'disabled' : '' %>>Next</button>
@@ -406,17 +406,14 @@
 			<script>
 				let currentPage = 1;
 
-				// Show loading overlay
 				function showLoading() {
 					document.getElementById('loadingOverlay').style.display = 'flex';
 				}
 
-				// Hide loading overlay
 				function hideLoading() {
 					document.getElementById('loadingOverlay').style.display = 'none';
 				}
 
-				// Get all form data including multiple checkbox values
 				function getFormData() {
 					const formData = {
 						search: document.getElementById('searchInput').value,
@@ -426,13 +423,11 @@
 						page: currentPage
 					};
 
-					// Get all checked categories
 					const categoryCheckboxes = document.querySelectorAll('input[name="category"]:checked');
 					if (categoryCheckboxes.length > 0) {
 						formData.category = Array.from(categoryCheckboxes).map(cb => cb.value);
 					}
 
-					// Get all checked availability options
 					const availabilityCheckboxes = document.querySelectorAll('input[name="availability"]:checked');
 					if (availabilityCheckboxes.length > 0) {
 						formData.availability = Array.from(availabilityCheckboxes).map(cb => cb.value);
@@ -441,7 +436,6 @@
 					return formData;
 				}
 
-				// Apply filters with AJAX
 				async function applyFilters(resetPage = true) {
 					if (resetPage) {
 						currentPage = 1;
@@ -453,7 +447,6 @@
 						const formData = getFormData();
 						const params = new URLSearchParams();
 
-						// Add all form data to params
 						Object.keys(formData).forEach(key => {
 							if (Array.isArray(formData[key])) {
 								formData[key].forEach(value => params.append(key, value));
@@ -479,7 +472,6 @@
 
 					} catch (error) {
 						console.error('Error applying filters:', error);
-						// Fallback to page reload if AJAX fails
 						const formData = getFormData();
 						const params = new URLSearchParams();
 						Object.keys(formData).forEach(key => {
@@ -495,7 +487,6 @@
 					}
 				}
 
-				// Update product grid
 				function updateProductGrid(products, totalPages, currentPageNum) {
 					const container = document.getElementById('productsGrid');
 					currentPage = currentPageNum;
@@ -528,7 +519,6 @@
 					updatePagination(totalPages, currentPageNum);
 				}
 
-				// Update pagination
 				function updatePagination(totalPages, currentPageNum) {
 					const paginationContainer = document.getElementById('paginationContainer');
 
@@ -539,18 +529,16 @@
 
 					let html = '<div class="pagination d-flex justify-content-center mt-4">';
 
-					// Previous button
 					html += `<button class="pagination-button btn btn-secondary me-2" 
 						onclick="changePage(₹{currentPageNum - 1})" 
 						₹{currentPageNum === 1 ? 'disabled' : ''}>Previous</button>`;
 
-					// Page numbers
 					for (let page = 1; page <= totalPages; page++) {
 						html += `<button class="pagination-button btn ₹{currentPageNum === page ? 'btn-primary' : 'btn-outline-primary'} mx-1" 
 							onclick="changePage(₹{page})">₹{page}</button>`;
 					}
 
-					// Next button
+					
 					html += `<button class="pagination-button btn btn-secondary ms-2" 
 						onclick="changePage(₹{currentPageNum + 1})" 
 						₹{currentPageNum === totalPages ? 'disabled' : ''}>Next</button>`;
@@ -559,63 +547,49 @@
 					paginationContainer.innerHTML = html;
 				}
 
-				// Update results count
 				function updateResultsCount(count) {
 					document.getElementById('resultsCount').textContent = `Showing ₹{count} products`;
 				}
 
-				// Change page
 				function changePage(page) {
 					if (page < 1) return;
 					currentPage = page;
 					applyFilters(false);
 				}
 
-				// Clear filters
 				function clearFilters() {
-					// Clear search
 					document.getElementById('searchInput').value = '';
 
-					// Clear all checkboxes
 					document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
-					// Clear price inputs
 					document.getElementById('minPrice').value = '';
 					document.getElementById('maxPrice').value = '';
 
-					// Clear sort
 					document.getElementById('sortSelect').value = '';
 
-					// Apply filters (which will show all products)
 					applyFilters();
 				}
 
-				// Toggle mobile filters
 				function toggleMobileFilters() {
 					const sidebar = document.getElementById('filterSidebar');
 					sidebar.classList.toggle('show');
 				}
 
-				// Event listeners
 				document.addEventListener('DOMContentLoaded', function () {
-					// Filter form submission
 					document.getElementById('filterForm').addEventListener('submit', function (e) {
 						e.preventDefault();
 						applyFilters();
 					});
 
-					// Search form submission
 					document.getElementById('searchForm').addEventListener('submit', function (e) {
 						e.preventDefault();
 						applyFilters();
 					});
 
-					// Sort change
 					document.getElementById('sortSelect').addEventListener('change', function () {
 						applyFilters();
 					});
 
-					// Filter changes (debounced)
 					let filterTimeout;
 					const filterInputs = document.querySelectorAll('#filterForm input, #filterForm select');
 					filterInputs.forEach(input => {

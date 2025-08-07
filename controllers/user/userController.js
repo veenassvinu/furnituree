@@ -234,7 +234,6 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-
 const resendOtp = async (req, res) => {
   try {
     if (!req.session.userData) {
@@ -296,7 +295,6 @@ const resendOtp = async (req, res) => {
     });
   }
 };
-
 
 const registerUser = async (req, res) => {
   try {
