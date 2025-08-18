@@ -1,0 +1,475 @@
+<%- include("../../views/partials/user/header.ejs") %>
+<%- include("../../views/partials/user/navBar") %>
+<link rel="stylesheet" href="/css/profile.css">
+<link rel="stylesheet" href="/css/address.css">
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="main-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar" style="margin-top: 100px;">
+        <a href="/dashboard" class="text-decoration-none">
+            <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+                </svg>
+                Dashboard
+            </button>
+        </a>
+        <a href="/orders" class="text-decoration-none">
+            <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+                Orders
+            </button>
+        </a>
+        <a href="/profile" class="text-decoration-none">
+            <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                </svg>
+                Update Profile
+            </button>
+        </a>
+        <a href="/address" class="text-decoration-none">
+            <button class="nav-button active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                    <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                    <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                </svg>
+                My Address
+            </button>
+        </a>
+        <a href="/wallet" class="text-decoration-none">
+            <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wallet" viewBox="0 0 16 16">
+                    <path d="M0 3a2 2 0 0 1 2-2h13.5a.5.5 0 0 1 0 1H15v2a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1H2a2 2 0 0 1-2-2V3zm1 1.732V11a1 1 0 0 0 1 1h12V5H2a1 1 0 0 0-1 1v-.268A2 2 0 0 1 1 4zm14 6.268h-1a.5.5 0 0 1 0-1h1v1z"/>
+                </svg>
+                Wallet
+            </button>
+        </a>
+        <a href="/Change Password" class="text-decoration-none">
+            <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                </svg>
+                Change Password
+            </button>
+        </a>
+        <a href="/logout" class="text-decoration-none">
+            <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                    <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                </svg>
+                Logout
+            </button>
+        </a>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="content-area">
+        <header class="header">
+            <h1>Address Management</h1>
+            <p>Organize and manage all your addresses in one place</p>
+        </header>
+
+        <div class="content-grid">
+            <!-- Address Form -->
+            <div class="form-section">
+                <div class="success-message" id="successMessage" style="display: none;">
+                    Address saved successfully! ✅
+                </div>
+
+                <h2><span id="formTitle">📝 Add New Address</span></h2>
+
+                <form id="addressForm" method="post" action="/save-address">
+                    <div class="form-group">
+                        <label for="addressType">Address Type</label>
+                        <select id="addressType" name="addressType" required>
+                            <option value="">Select Type</option>
+                            <option value="home">🏠 Home</option>
+                            <option value="work">🏢 Work</option>
+                            <option value="other">📍 Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fullName">Name</label>
+                        <input type="text" id="fullName" name="name" placeholder="Enter name" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="Enter email address">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streetAddress">Landmark</label>
+                        <textarea id="streetAddress" name="landMark" placeholder="Enter landmark" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" name="city" placeholder="Enter city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" id="state" name="state" placeholder="Enter state" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="zipCode">Pincode</label>
+                            <input type="text" id="PinCode" name="pincode" placeholder="Enter pincode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <input type="text" id="country" name="country" placeholder="Enter country" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span id="submitText">💾 Save Address</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">
+                            ❌ Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Saved Addresses -->
+            <div class="addresses-section">
+                <h2>📋 Saved Addresses</h2>
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search addresses...">
+                <div id="addressesList">
+                    <% if (addresses && addresses.length > 0) { %>
+                        <% addresses.forEach((addr, index) => { %>
+                            <div class="address-card" style="border:1px solid #ddd; padding:15px; margin-bottom:15px; border-radius:8px;">
+                                <h4><%= addr.addressType %></h4>
+                                <p><strong><%= addr.name %></strong></p>
+                                <p><%= addr.landMark %>, <%= addr.city %>, <%= addr.state %> - <%= addr.pincode %>, <%= addr.country %></p>
+                                <p>📞 <%= addr.phone %></p>
+                                <% if (addr.email) { %><p>📧 <%= addr.email %></p><% } %>
+
+                                <div class="btn-group mt-2">
+                                    <!-- Edit Button -->
+                                    <button class="btn btn-sm btn-warning editAddressBtn" data-id="<%= addr._id %>" data-index="<%= index %>" data-bs-toggle="modal" data-bs-target="#editAddressModal">
+                                        ✏️ Edit
+                                    </button>
+
+                                    <!-- Delete Button -->
+                                    <button class="btn btn-sm btn-danger deleteAddressBtn" data-id="<%= addr._id %>" data-index="<%= index %>">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C8.13 2 5 5.13 ..." />
+                            </svg>
+                            <h3>No addresses yet</h3>
+                            <p>Start by adding your first address using the form on the left</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Address Modal (Outside the loop) -->
+        <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editAddressLabel">Edit Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editAddressForm">
+                            <input type="hidden" id="editAddressId" name="addressId">
+
+                            <div class="mb-3">
+                                <label class="form-label">Address Type</label>
+                                <select id="editAddressType" name="addressType" class="form-control" required>
+                                    <option value="">Select Type</option>
+                                    <option value="home">🏠 Home</option>
+                                    <option value="work">🏢 Work</option>
+                                    <option value="other">📍 Other</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" id="editName" name="name" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="text" id="editPhone" name="phone" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" id="editEmail" name="email" class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Landmark</label>
+                                <input type="text" id="editLandmark" name="landMark" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">City</label>
+                                <input type="text" id="editCity" name="city" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">State</label>
+                                <input type="text" id="editState" name="state" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Pincode</label>
+                                <input type="text" id="editPincode" name="pincode" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Country</label>
+                                <input type="text" id="editCountry" name="country" class="form-control" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Update Address</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Make addresses available in JS
+    window.addresses = `<%- JSON.stringify(addresses || []) %>`; // Correct EJS syntax
+
+    // Prefill Add Form with User Data (Optional)
+    document.addEventListener("DOMContentLoaded", () => {
+        const userName = "<%= typeof user !== 'undefined' ? user.name : '' %>";
+        const userEmail = "<%= typeof user !== 'undefined' ? user.email : '' %>";
+        if (userName) document.getElementById("fullName").value = userName;
+        if (userEmail) document.getElementById("email").value = userEmail;
+        document.getElementById("country").value = "India"; // Default country
+    });
+
+    // Handle Edit Button Click
+    document.addEventListener("DOMContentLoaded", () => {
+        window.addresses = window.addresses || [];
+
+        document.querySelectorAll(".editAddressBtn").forEach(button => {
+            button.addEventListener("click", function () {
+                const addressId = this.dataset.id;
+                const index = parseInt(this.dataset.index);
+
+                console.log("Edit Button Clicked - Index:", index, "Addresses:", JSON.stringify(window.addresses));
+
+                if (!window.addresses || index >= window.addresses.length || !window.addresses[index]) {
+                    console.error("Address not found for index:", index, "Addresses length:", window.addresses.length);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Address data not found!',
+                        confirmButtonColor: '#d33'
+                    });
+                    return;
+                }
+
+                const address = window.addresses[index];
+
+                // Populate modal fields with existing address data
+                document.getElementById("editAddressId").value = addressId;
+                document.getElementById("editAddressType").value = address.addressType || "";
+                document.getElementById("editName").value = address.name || "";
+                document.getElementById("editPhone").value = address.phone || "";
+                document.getElementById("editEmail").value = address.email || "";
+                document.getElementById("editLandmark").value = address.landMark || "";
+                document.getElementById("editCity").value = address.city || "";
+                document.getElementById("editState").value = address.state || "";
+                document.getElementById("editPincode").value = address.pincode || "";
+                document.getElementById("editCountry").value = address.country || "";
+
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById("editAddressModal"));
+                modal.show();
+            });
+        });
+
+        // Handle Update Form Submit
+        document.getElementById("editAddressForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            console.log("Update Data:", data);
+
+            try {
+                const res = await fetch(`/update-address/${data.addressId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                    credentials: "include"
+                });
+
+                const result = await res.json();
+                console.log("Update Response:", result);
+
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Address Updated',
+                        text: 'Address updated successfully!',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message || 'Failed to update address',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (err) {
+                console.error("Error updating address:", err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong! Check console for details.',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+    // Handle Add Address Form Submission
+    document.getElementById("addressForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const formObj = Object.fromEntries(formData.entries());
+
+        try {
+            const res = await fetch("/save-address", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formObj),
+                credentials: "include"
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Address Saved',
+                    text: '✅ Address saved successfully!',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    e.target.reset(); // Reset form before reload
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || 'Failed to save address',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong!',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+
+    // Handle Delete Button Click
+    document.querySelectorAll(".deleteAddressBtn").forEach(button => {
+        button.addEventListener("click", async function () {
+            const addressId = this.dataset.id;
+
+            const confirmDelete = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            });
+
+            if (confirmDelete.isConfirmed) {
+                try {
+                    const res = await fetch(`/delete-address/${addressId}`, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include"
+                    });
+
+                    const data = await res.json();
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted',
+                            text: 'Address deleted successfully!',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Failed to delete address',
+                            confirmButtonColor: '#d33',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                } catch (err) {
+                    console.error("Error deleting address:", err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong!',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
+        });
+    });
+</script>

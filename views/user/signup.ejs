@@ -71,7 +71,7 @@
 
 
 
-
+<!-- 
     <script>
         const nameid = document.getElementById("name");
         const emailid = document.getElementById("email");
@@ -223,7 +223,142 @@
                 }
             });
         });
-    </script>
+    </script> -->
+
+<script>
+    const nameid = document.getElementById("name");
+    const emailid = document.getElementById("email");
+    const passwordid = document.getElementById("password");
+    const confirmPasswordid = document.getElementById("confirmPassword");
+
+    const nameError = document.getElementById("nameError");
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+    const confirmPasswordError = document.getElementById("confirmPasswordError");
+
+    const signform = document.getElementById("signform");
+
+    let nameTouched = false;
+    let emailTouched = false;
+    let passwordTouched = false;
+    let confirmTouched = false;
+
+    // ✅ Improved Name Validation
+  function nameValidate() {
+    const value = nameid.value; 
+    const trimmedValue = value.trim();
+
+    if (trimmedValue === "") {
+        nameError.innerHTML = "Name cannot be empty.";
+    } else if (/^\d+$/.test(trimmedValue)) { 
+        nameError.innerHTML = "Name cannot be only numbers.";
+    } else if (/[^A-Za-z\s]/.test(trimmedValue)) {
+        nameError.innerHTML = "Special characters are not allowed in the name.";
+    } else if (/\s{2,}/.test(trimmedValue)) {
+        nameError.innerHTML = "Name cannot contain extra spaces.";
+    } else if (trimmedValue.length < 2) {
+        nameError.innerHTML = "Name must be at least 2 characters long.";
+    } else {
+        nameError.style.display = "none";
+        return;
+    }
+    nameError.style.display = "block";
+}
+
+
+    function emailValidate() {
+        const value = emailid.value.trim();
+        const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (value === "") {
+            emailError.innerHTML = "Please enter your email address.";
+        } else if (!pattern.test(value)) {
+            emailError.innerHTML = "Please enter a valid email address (e.g., example@mail.com).";
+        } else {
+            emailError.style.display = "none";
+            return;
+        }
+        emailError.style.display = "block";
+    }
+
+function passwordValidate() {
+    const password = passwordid.value;
+    const confirm = confirmPasswordid.value;
+
+    // Trimming to check for empty or spaces-only
+    const trimmedPassword = password.trim();
+    const trimmedConfirm = confirm.trim();
+
+    // Regex patterns
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasDigit = /\d/.test(password);
+    const hasSpecial = /[^A-Za-z0-9]/.test(password);
+
+    // ✅ Password checks
+    if (trimmedPassword === "") {
+        passwordError.innerHTML = "Password cannot be empty .";
+        passwordError.style.display = "block";
+    } else if (password.length < 8) {
+        passwordError.innerHTML = "Password must be at least 8 characters long.";
+        passwordError.style.display = "block";
+    } else if (!hasUpper) {
+        passwordError.innerHTML = "Password must contain at least one uppercase letter.";
+        passwordError.style.display = "block";
+    } else if (!hasLower) {
+        passwordError.innerHTML = "Password must contain at least one lowercase letter.";
+        passwordError.style.display = "block";
+    } else if (!hasDigit) {
+        passwordError.innerHTML = "Password must contain at least one number.";
+        passwordError.style.display = "block";
+    } else if (!hasSpecial) {
+        passwordError.innerHTML = "Password must contain at least one special character.";
+        passwordError.style.display = "block";
+    } else {
+        passwordError.style.display = "none";
+    }
+
+    // ✅ Confirm password checks
+    if (trimmedConfirm === "") {
+        confirmPasswordError.innerHTML = "Please confirm your password.";
+        confirmPasswordError.style.display = "block";
+    } else if (password !== confirm) {
+        confirmPasswordError.innerHTML = "Passwords do not match.";
+        confirmPasswordError.style.display = "block";
+    } else {
+        confirmPasswordError.style.display = "none";
+    }
+}
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        nameid.addEventListener("blur", () => { nameTouched = true; nameValidate(); });
+        emailid.addEventListener("blur", () => { emailTouched = true; emailValidate(); });
+        passwordid.addEventListener("blur", () => { passwordTouched = true; passwordValidate(); });
+        confirmPasswordid.addEventListener("blur", () => { confirmTouched = true; passwordValidate(); });
+
+        nameid.addEventListener("input", () => { if (nameTouched) nameValidate(); });
+        emailid.addEventListener("input", () => { if (emailTouched) emailValidate(); });
+        passwordid.addEventListener("input", () => { if (passwordTouched) passwordValidate(); });
+        confirmPasswordid.addEventListener("input", () => { if (confirmTouched) passwordValidate(); });
+
+        signform.addEventListener("submit", function (e) {
+            nameTouched = emailTouched = passwordTouched = confirmTouched = true;
+            nameValidate();
+            emailValidate();
+            passwordValidate();
+
+            if (
+                nameError.style.display === "block" ||
+                emailError.style.display === "block" ||
+                passwordError.style.display === "block" ||
+                confirmPasswordError.style.display === "block"
+            ) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
 
 
 

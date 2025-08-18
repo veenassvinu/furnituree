@@ -731,6 +731,10 @@
                 document.getElementById('quantity-error').textContent = 'Please enter a valid quantity';
                 document.getElementById('quantity-error').classList.add('show');
                 isValid = false;
+            }else if(isNaN(quantity)|| Number(quantity)<5){
+                document.getElementById('quantity-error').textContent="add more than 5 quantity";
+                document.getElementById('quantity-error').classList.add('show');
+                isValid=false;
             }
 
             // Validate Images

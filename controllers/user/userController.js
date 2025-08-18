@@ -380,6 +380,8 @@ const login = async (req, res) => {
 
     // If everything is correct, set the session and redirect
     req.session.user = findUser._id;
+    
+    
     console.log("Session set for user:", req.session.user);
     res.redirect("/");
   } catch (error) {

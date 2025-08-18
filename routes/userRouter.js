@@ -68,6 +68,13 @@ router.get('/productDetails/:id([a-fA-F0-9]{24})', userController.productDetails
 router.get('/profile' , profileController.loadProfilePage)
 
 
+router.get('/address',profileController.loadAddressPage);
+router.post('/save-address', profileController.addAddress);
+router.put('/update-address/:id', profileController.updateAddress);
+router.delete('/delete-address/:id', profileController.deleteAddress);
+
+
+
 
 router.get('/logout', async (req,res)=>{
     try {
@@ -85,12 +92,14 @@ router.get('/logout', async (req,res)=>{
 
 
 //---------------cart section-----------//
-router.get("/cart",cartController.loadCartPage)
-
+router.get("/cart",cartController.loadCartPage);
+router.post("/add-to-cart/:productId", cartController.addToCart);
+router.get("/remove-from-cart/:id", cartController.removeFromCart);
+router.put("/update-cart-quantity", cartController.updateQuantity);
 
 //forgot password//
 
-router.get("/forgot-password", forgotPasswordController.getForgotPassPage);
+// router.get("/forgot-password", forgotPasswordController.getForgotPassPage);
 // router.post("/forgot-email-otp", forgotPasswordController.sendForgotOtp);
 // router.get("/forgot-email-otp",forgotPasswordController.sendForgotOtp)
 // router.post("/verify-forgot-otp", forgotPasswordController.verifyForgotOtp);

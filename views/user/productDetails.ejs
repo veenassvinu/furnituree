@@ -116,11 +116,14 @@
                   <span class="text-danger">Out of stock</span>
                   <% } %>
           </p>
-          <a href="/cart" class="btn btn-primary btn-lg w-100 mb-4">Add to Cart</a>
+          <!-- <a href="/cart" class="btn btn-primary btn-lg w-100 mb-4">Add to Cart</a> -->
+          <button class="btn btn-primary add-to-cart-btn" data-id="<%= product._id %>">
+            Add to Cart
+          </button>
 
         </div>
       </div>
-    </div> 
+    </div>
 
     <!-- Similar Products -->
     <div class="untree_co-section product-section before-footer-section">
@@ -184,6 +187,26 @@
         mainImage.style.transformOrigin = `${x}% ${y}%`;
       });
     </script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const productId =  e.currentTarget.dataset.id;;
+
+            const res = await fetch(`/add-to-cart/${productId}`, { method: "POST" });
+            const data = await res.json();
+
+            if (data.success) {
+                alert("Product added to cart!");
+            } else {
+                alert(data.message || "Something went wrong");
+            }
+        });
+    });
+});
+</script>
+
   </body>
 
   </html>

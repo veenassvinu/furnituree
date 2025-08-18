@@ -1,235 +1,384 @@
 <%- include("../../views/partials/user/header.ejs")%>
 
-<body>
+    <body>
 
-    <!-- Start Header/Navigation -->
-    <%- include("../../views/partials/user/navBar.ejs")%>
+        <!-- Start Header/Navigation -->
+        <%- include("../../views/partials/user/navBar.ejs")%>
+            <!-- End Header/Navigation -->
 
-    <!-- End Header/Navigation -->
-
-    <!-- Start Hero Section -->
-    <div class="hero">
-        <div class="container">
-            <div class="row justify-content-between">
-                <div class="col-lg-5">
-                    <div class="intro-excerpt">
-                        <h1>Cart</h1>
-                    </div>
-                </div>
-                <div class="col-lg-7">
-
-                </div>
-            </div>
+   <!-- Start Hero Section -->
+  <div class="hero">
+    <div class="container">
+      <div class="row justify-content-between">
+        <div class="col-lg-5">
+          <div class="intro-excerpt">
+            <h1>Cart</h1>
+          </div>
         </div>
+        <div class="col-lg-7"></div>
+      </div>
     </div>
-    <!-- End Hero Section -->
+  </div>
+  <!-- End Hero Section -->
 
+  <div class="untree_co-section before-footer-section">
+    <div class="container">
+      <div class="row mb-5">
+        <form class="col-md-12" method="post">
+          <div class="site-blocks-table">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="product-thumbnail">Product Image</th>
+                  <th class="product-name">Product Name</th>
+                  <th class="product-price">Price</th>
+                  <th class="product-quantity">Quantity</th>
+                  <th class="product-total">Total</th>
+                  <th class="product-remove">Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (cartItems.length > 0) { %>
+                  <% cartItems.forEach(item => { %>
+                    <tr data-id="<%= item._id %>">
+                      <td class="product-thumbnail">
+                        <img src="/Uploads/product-images/<%= item.image %>" alt="Image" class="img-fluid">
+                      </td>
+                      <td class="product-name">
+                        <%= item.productName %>
+                      </td>
+                      <td>₹<%= item.price.toFixed(2) %></td>
+                      <td>
+                        <input type="number" value="<%= item.quantity %>" min="1" class="form-control quantity-input" style="width:80px;">
+                      </td>
+                      <td class="item-total">₹<%= item.total.toFixed(2) %></td>
+                      <td>
+                        <button class="btn btn-black btn-sm remove-btn">X</button>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="6" class="text-center">Your cart is empty</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
 
-
-    <div class="untree_co-section before-footer-section">
-        <div class="container">
-            <div class="row mb-5">
-                <form class="col-md-12" method="post">
-                    <div class="site-blocks-table">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="product-thumbnail">Image</th>
-                                    <th class="product-name">Product</th>
-                                    <th class="product-price">Price</th>
-                                    <th class="product-quantity">Quantity</th>
-                                    <th class="product-total">Total</th>
-                                    <th class="product-remove">Remove</th>
-                                </tr>
-                            </thead>
-                            
-                        </table>
-                    </div>
-                </form>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row mb-5">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <button class="btn btn-black btn-sm btn-block">Update Cart</button>
             </div>
+            <div class="col-md-6">
+              <button class="btn btn-outline-black btn-sm btn-block" onclick="window.location='/shop'">Continue Shopping</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label class="text-black h4" for="coupon">Coupon</label>
+              <p>Enter your coupon code if you have one.</p>
+            </div>
+            <div class="col-md-8 mb-3 mb-md-0">
+              <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-black">Apply Coupon</button>
+            </div>
+          </div>
+        </div>
 
-            <div class="row">
+        <div class="col-md-6 pl-5">
+          <div class="row justify-content-end">
+            <div class="col-md-7">
+              <div class="row">
+                <div class="col-md-12 text-right border-bottom mb-5">
+                  <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                </div>
+              </div>
+              <div class="row mb-3">
                 <div class="col-md-6">
-                    <div class="row mb-5">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <button class="btn btn-black btn-sm btn-block">Update Cart</button>
-                        </div>
-                        <div class="col-md-6">
-                            <button class="btn btn-outline-black btn-sm btn-block">Continue Shopping</button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="text-black h4" for="coupon">Coupon</label>
-                            <p>Enter your coupon code if you have one.</p>
-                        </div>
-                        <div class="col-md-8 mb-3 mb-md-0">
-                            <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-black">Apply Coupon</button>
-                        </div>
-                    </div>
+                  <span class="text-black">Subtotal</span>
                 </div>
-                <div class="col-md-6 pl-5">
-                    <div class="row justify-content-end">
-                        <div class="col-md-7">
-                            <div class="row">
-                                <div class="col-md-12 text-right border-bottom mb-5">
-                                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <span class="text-black">Subtotal</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <strong class="text-black">₹230.00</strong>
-                                </div>
-                            </div>
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                    <span class="text-black">Total</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <strong class="text-black">₹230.00</strong>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <button class="btn btn-black btn-lg py-3 btn-block"
-                                        onclick="window.location='checkout.html'">Proceed To Checkout</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-6 text-right">
+                  <strong class="text-black">₹<%= totalPrice.toFixed(2) %></strong>
                 </div>
+              </div>
+              <div class="row mb-5">
+                <div class="col-md-6">
+                  <span class="text-black">Total</span>
+                </div>
+                <div class="col-md-6 text-right">
+                  <strong class="text-black">₹<%= totalPrice.toFixed(2) %></strong>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <button class="btn btn-black btn-lg py-3 btn-block" onclick="window.location='/checkout'">Proceed To Checkout</button>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-
-
-    <!-- Start Footer Section -->
-    <footer class="footer-section">
-        <div class="container relative">
-
-            <div class="sofa-img">
-                <img src="images/sofa.png" alt="Image" class="img-fluid">
-            </div>
-
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="subscription-form">
-                        <h3 class="d-flex align-items-center"><span class="me-1"><img src="images/envelope-outline.svg"
-                                    alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
-
-                        <form action="#" class="row g-3">
-                            <div class="col-auto">
-                                <input type="text" class="form-control" placeholder="Enter your name">
-                            </div>
-                            <div class="col-auto">
-                                <input type="email" class="form-control" placeholder="Enter your email">
-                            </div>
-                            <div class="col-auto">
-                                <button class="btn btn-primary">
-                                    <span class="fa fa-paper-plane"></span>
-                                </button>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="row g-5 mb-5">
-                <div class="col-lg-4">
-                    <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Furniure<span>.</span></a></div>
-                    <p class="mb-4">Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus
-                        malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.
-                        Pellentesque habitant</p>
-
-                    <ul class="list-unstyled custom-social">
-                        <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
-                        <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
-                        <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
-                        <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-8">
-                    <div class="row links-wrap">
-                        <div class="col-6 col-sm-6 col-md-3">
-                            <ul class="list-unstyled">
-                                <li><a href="#">About us</a></li>
-                                <li><a href="#">Services</a></li>
-                                <li><a href="#">Blog</a></li>
-                                <li><a href="#">Contact us</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-6 col-sm-6 col-md-3">
-                            <ul class="list-unstyled">
-                                <li><a href="#">Support</a></li>
-                                <li><a href="#">Knowledge base</a></li>
-                                <li><a href="#">Live chat</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-6 col-sm-6 col-md-3">
-                            <ul class="list-unstyled">
-                                <li><a href="#">Jobs</a></li>
-                                <li><a href="#">Our team</a></li>
-                                <li><a href="#">Leadership</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-6 col-sm-6 col-md-3">
-                            <ul class="list-unstyled">
-                                <li><a href="#">Nordic Chair</a></li>
-                                <li><a href="#">Kruzo Aero</a></li>
-                                <li><a href="#">Ergonomic Chair</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="border-top copyright">
-                <div class="row pt-4">
-                    <div class="col-lg-6">
-                        <p class="mb-2 text-center text-lg-start">Copyright &copy;
-                            <script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash;
-                            Designed with love by <a href="https://untree.co">Untree.co</a> Distributed By <a
-                                hreff="https://themewagon.com">ThemeWagon</a>
-                            
-                        </p>
-                    </div>
-
-                    <div class="col-lg-6 text-center text-lg-end">
-                        <ul class="list-unstyled d-inline-flex ms-auto">
-                            <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </footer>
-    <!-- End Footer Section -->
-
-
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/tiny-slider.js"></script>
-    <script src="js/custom.js"></script>
-</body>
-
-</html>
+  </div>
 
 
 
+<!-- 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Remove item
+      document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", async e => {
+          e.preventDefault();
+          const row = e.target.closest("tr");
+          const productId = row.dataset.id;
 
+          const res = await fetch(`/remove-from-cart/${productId}`, { method: "DELETE" });
+          const data = await res.json();
+
+          if (data.success) {
+            row.remove();
+            updateTotalDisplay();
+          } else {
+            alert(data.message || "Failed to remove item");
+          }
+        });
+      });
+
+      // Update quantity
+      document.querySelectorAll(".quantity-input").forEach(input => {
+        input.addEventListener("change", async e => {
+          const row = e.target.closest("tr");
+          const productId = row.dataset.id;
+          const quantity = parseInt(e.target.value);
+
+          if (isNaN(quantity) || quantity < 1) {
+            e.target.value = 1;
+            return alert("Quantity must be at least 1");
+          }
+
+          const res = await fetch(`/update-cart-quantity`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId, quantity })
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            const price = parseFloat(row.querySelector("td:nth-child(3)").textContent.replace("₹", ""));
+            row.querySelector(".item-total").textContent = `₹${(price * quantity).toFixed(2)}`;
+            updateTotalDisplay(data.totalPrice);
+          } else {
+            alert(data.message || "Failed to update quantity");
+          }
+        });
+      });
+
+      function updateTotalDisplay(totalPrice) {
+        if (totalPrice !== undefined) {
+          document.querySelectorAll(".text-black strong").forEach(el => {
+            el.textContent = `₹${totalPrice.toFixed(2)}`;
+          });
+        }
+      }
+    });
+  </script> -->
+
+
+<!-- Updated Script Section -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Add to cart
+    document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const productId = btn.dataset.id;
+
+        try {
+          const res = await fetch(`/add-to-cart/${productId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quantity: 1 })
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            Swal.fire({
+              icon: "success",
+              title: "Added to Cart!",
+              text: data.message || "Item added to cart successfully",
+              showConfirmButton: false,
+              timer: 1500
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: data.message || "Failed to add item to cart"
+            });
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to add item to cart"
+          });
+        }
+      });
+    });
+
+    // Remove item
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        const row = e.target.closest("tr");
+        const productId = row.dataset.id;
+
+        try {
+          const res = await fetch(`/remove-from-cart/${productId}`, { method: "DELETE" });
+          const data = await res.json();
+
+          if (data.success) {
+            row.remove();
+            updateTotalDisplay();
+            Swal.fire({
+              icon: "success",
+              title: "Item Removed",
+              text: data.message || "Item removed from cart successfully",
+              showConfirmButton: false,
+              timer: 1500
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: data.message || "Failed to remove item"
+            });
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to remove item from cart"
+          });
+        }
+      });
+    });
+
+    // Update quantity
+    document.querySelectorAll(".quantity-input").forEach(input => {
+      input.addEventListener("change", async e => {
+        const row = e.target.closest("tr");
+        const productId = row.dataset.id;
+        const quantity = parseInt(e.target.value);
+
+        if (isNaN(quantity) || quantity < 1) {
+          e.target.value = 1;
+          Swal.fire({
+            icon: "error",
+            title: "Invalid Quantity",
+            text: "Quantity must be at least 1"
+          });
+          return;
+        }
+
+        try {
+          const res = await fetch(`/update-cart-quantity`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId, quantity })
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            const price = parseFloat(row.querySelector("td:nth-child(3)").textContent.replace("₹", ""));
+            row.querySelector(".item-total").textContent = `₹${(price * quantity).toFixed(2)}`;
+            updateTotalDisplay(data.totalPrice);
+            Swal.fire({
+              icon: "success",
+              title: "Quantity Updated",
+              text: data.message || "Cart quantity updated successfully",
+              showConfirmButton: false,
+              timer: 1500
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: data.message || "Failed to update quantity"
+            });
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to update quantity"
+          });
+        }
+      });
+    });
+
+    // Update current time
+    document.getElementById("update-time-btn")?.addEventListener("click", async () => {
+      try {
+        const res = await fetch("/update-time", { method: "GET" });
+        const data = await res.json();
+
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: "Time Updated!",
+            text: data.message || "Current time updated successfully",
+            footer: `Current Time: ${data.currentTime}`,
+            showConfirmButton: false,
+            timer: 1500
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: data.message || "Failed to update time"
+          });
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to update time"
+        });
+      }
+    });
+
+    function updateTotalDisplay(totalPrice) {
+      if (totalPrice !== undefined) {
+        document.querySelectorAll(".text-black strong").forEach(el => {
+          el.textContent = `₹${totalPrice.toFixed(2)}`;
+        });
+      }
+    }
+  });
+</script>
+
+
+
+
+            <!-- Start Footer Section -->
+            <footer class="footer-section">
+                ...
+            </footer>
+            <!-- End Footer Section -->
+
+            <script src="js/bootstrap.bundle.min.js"></script>
+            <script src="js/tiny-slider.js"></script>
+            <script src="js/custom.js"></script>
+    </body>
+
+    </html>
