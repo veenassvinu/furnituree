@@ -8,8 +8,8 @@ const session = require("express-session");
 // Load profile page
 const loadProfilePage = async (req, res) => {
   try {
-    console.log("User ID from session:", req.session.User);
-    const user = await User.findById(req.session.User);
+    console.log("User ID from session:", req.session.user);
+    const user = await User.findById(req.session.user);
     console.log("User found:", user);
     res.render("profile/profile", { userData: user });
   } catch (error) {
@@ -71,6 +71,7 @@ const updateProfileOrPassword = async (req, res) => {
 const loadAddressPage = async (req, res) => {
     try {
         const userId = req.session.user;
+        console.log(userId)
         if (!userId) {
             return res.redirect("/login");
         }

@@ -1,4 +1,4 @@
- <!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,10 +11,10 @@
 <body>
   <div class="container">
     <div class="left-panel">
-      <a href="http://localhost:3005/signup" class="back-arrow">←</a>
+      <a href="http://localhost:3005/forgot-password" class="back-arrow">←</a>
       <h1>Verify your Account</h1>
       <p>The One-Time Password is sent. Please Enter your OTP.</p>
-      <form id="otpForm" method="post" onsubmit="return validateOTPForm(event)">
+      <form id="otpForm" onsubmit="validateOTPForm(event)">
         <input type="hidden" id="userEmail" value="<%= email %>">
         <div id="otp" class="otp-input">
           <input type="text" maxlength="1" name="otp" oninput="moveToNext(this, 1)">
@@ -48,7 +48,7 @@
 
     // Function to validate OTP form
     function validateOTPForm(event) {
-      event.preventDefault();  // Prevent form submission
+      event.preventDefault();  // Prevent default form submission
 
       // Collect the OTP from all the inputs
       const otpFields = document.querySelectorAll('input[name="otp"]');
@@ -71,9 +71,8 @@
     }
 
     // Function to submit OTP to the server
-
     function submitOtp(otp) {
-      fetch('/forgot-email-otp', {
+      fetch('/verify-forgot-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,19 +85,19 @@
             // Handle success: Redirect to the desired page
             Swal.fire({
               icon: 'success',
-              title: 'Verified',
-              text: data.message || 'OTP Verified Successfully!',
+              title: 'Verified!',
+              text: data.message,
               timer: 2000,
               showConfirmButton: false
             }).then(() => {
-              window.location.href = data.redirectUrl || '/home';  // Redirect to home or custom URL
+              window.location.href = data.redirectUrl;  // Redirect to reset password page
             });
           } else {
             // Handle failure: Show error message
             Swal.fire({
               icon: 'error',
               title: 'Verification Failed',
-              text: data.message || 'OTP is incorrect. Please try again.',
+              text: data.message,
             });
           }
         })
@@ -119,15 +118,9 @@
 
       // Reset OTP input fields and countdown
       document.querySelectorAll("#otp input").forEach(input => input.value = '');  // Clear OTP fields
-      document.getElementById("otp").disabled = false;  // Enable OTP input fields
-      document.getElementById("countdown").classList.remove("expired");  // Remove expired class from countdown
-
-      // Disable Resend OTP button temporarily
       const resendButton = document.getElementById("resendOtp");
-      resendButton.style.pointerEvents = "none";
-      resendButton.style.color = "gray";
+      resendButton.disabled = true;  // Temporarily disable resend button
 
-      // Restart the countdown timer
       const countdownDisplay = document.getElementById("countdown");
       const durationInSeconds = 30;  // Timer duration (30 seconds or your choice)
       startTimer(durationInSeconds, countdownDisplay);
@@ -153,8 +146,9 @@
             Swal.fire({
               icon: "error",
               title: "Error",
-              text: "An error occurred while resending OTP. Please try again.",
+              text: data.message,
             });
+            resendButton.disabled = false;  // Re-enable button on error
           }
         })
         .catch(error => {
@@ -163,10 +157,9 @@
             title: "Error",
             text: "An error occurred. Please try again.",
           });
+          resendButton.disabled = false;  // Re-enable button on error
           console.error('Error:', error);
         });
-
-      return false;
     }
 
     // Timer Function to manage countdown
@@ -182,12 +175,10 @@
         // Format time as MM:SS
         display.textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 
-        // If timer reaches zero, stop the countdown and enable resend button
+        // If timer reaches zero, stop the timer and enable resend button
         if (--timer < 0) {
           clearInterval(window.timerId);  // Stop the timer
           document.getElementById("resendOtp").disabled = false;
-          document.getElementById("resendOtp").style.pointerEvents = "auto";
-          document.getElementById("resendOtp").style.color = "blue";  // Make the button visible again
         }
       }, 1000);  // Run every 1 second
     }
@@ -198,13 +189,7 @@
       const durationInSeconds = 30;  // 30 seconds countdown
       startTimer(durationInSeconds, countdownDisplay);
     };
-
-    // Add event listener for resend OTP button
-    document.getElementById("resendOtp").addEventListener("click", function (event) {
-      event.preventDefault();  // Prevent default link behavior (navigation)
-      resendOTP();
-    });
   </script>
 </body>
 
-</html>  -->
+</html>

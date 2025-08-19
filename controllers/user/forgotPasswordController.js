@@ -1,156 +1,221 @@
-// const User = require("../../models/userSchema");
-// const nodemailer = require("nodemailer");
-// const bcrypt = require("bcrypt");
-// const env = require("dotenv").config();
-// const session = require("express-session");
+const User = require("../../models/userSchema");
+const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt");
+const env = require("dotenv").config();
+const session = require("express-session"); // Assume this is configured in app.js
 
-// const otpStore = {};
+// 👉 Render Forgot Password Page (Email Input)
+const getForgotPasswordPage = async (req, res) => {
+  try {
+    res.render("forgot-password/forgot-password");
+  } catch (error) {
+    console.error("Error rendering forgot password page:", error);
+    res.status(500).send("Server error");
+  }
+};
 
-// // 👉 Render Forgot Password Page
-// const getForgotPasswordPage = async (req, res) => {
-//   try {
-//     res.render("forgot-password/forgot-password");
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Server error");
-//   }
-// };
+// 👉 Render Reset Password Page (Change Password)
+const getResetPasswordPage = async (req, res) => {
+  try {
+    const email = req.query.email; // Passed from OTP verification
+    if (!email) {
+      return res.status(400).send("Email not provided");
+    }
+    res.render("forgot-password/reset-password", { email });
+  } catch (error) {
+    console.error("Error rendering reset password page:", error);
+    res.status(500).send("Server error");
+  }
+};
 
-// const getForgotPassPage = (req, res) => {
-//   res.render("forgot-password/forgot-email-otp");
-// };
+// 👉 Render Enter OTP Page (with email passed via query)
+const loadEmailPage = async (req, res) => {
+  try {
+    const email = req.query.email;
+    if (!email) {
+      return res.status(400).send("Email not provided");
+    }
+    res.render("forgot-password/enter-otp", { email });
+  } catch (error) {
+    console.error("Error rendering OTP page:", error);
+    res.status(500).send("Server error");
+  }
+};
 
-// // 👉 Render Enter OTP Page (with email passed via query)
-// const loadEmailPage = async (req, res) => {
-//   try {
-//     const { email } = req.query;
+// 👉 Send OTP to user's email
+const sendForgotOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
 
-//     if (!email) {
-//       return res.status(400).send("Email not provided");
-//     }
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
 
-//     res.render("forgot-password/forgot-email-otp", { email });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Server error");
-//   }
-// };
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found with this email" });
+    }
 
-// // 👉 Send OTP to user's email
-// const sendForgotOtp = async (req, res) => {
-//   const { email } = req.body;
+    // Generate OTP and expiration (5 minutes)
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiration = Date.now() + 5 * 60 * 1000; // 5 minutes
 
-//   if (!email) {
-//     return res
-//       .status(400)
-//       .json({ success: false, message: "Email is required" });
-//   }
+    // Store in session
+    req.session.otp = otp;
+    req.session.otpExpiration = otpExpiration;
+    req.session.forgotEmail = email;
 
-//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//   otpStore[email] = otp;
+    console.log("Sending OTP to:", email, "OTP:", otp);
 
-//   console.log("Sending OTP to:", email, "OTP:", otp);
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
-//   const transporter = nodemailer.createTransport({
-//     service: "gmail",
-//     auth: {
-//       user: process.env.EMAIL_USER,
-//       pass: process.env.EMAIL_PASS,
-//     },
-//   });
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your OTP for Password Reset",
+      text: `Your OTP is ${otp}. It expires in 5 minutes.`,
+    };
 
-//   const mailOptions = {
-//     from: process.env.EMAIL_USER,
-//     to: email,
-//     subject: "Your OTP for Password Reset",
-//     text: `Your OTP is ${otp}`,
-//   };
+    await transporter.sendMail(mailOptions);
 
-//   try {
-//     await transporter.sendMail(mailOptions);
+    return res.json({
+      success: true,
+      message: "OTP sent successfully",
+      redirectUrl: `/enter-otp?email=${encodeURIComponent(email)}`,
+    });
+  } catch (error) {
+    console.error("Send OTP Error:", error);
+    res.status(500).json({ success: false, message: "Failed to send OTP. Please try again." });
+  }
+};
 
-//     return res.json({
-//       success: true,
-//       message: "OTP sent successfully",
-//       redirectUrl: `/enter-otp?email=${encodeURIComponent(email)}`,
-//     });
-//   } catch (error) {
-//     console.error("Send OTP Error:", error);
-//     return res
-//       .status(500)
-//       .json({ success: false, message: "Failed to send OTP" });
-//   }
-// };
+// 👉 Verify OTP
+const verifyForgotOtp = async (req, res) => {
+  try {
+    const { otp } = req.body;
+    const storedOtp = req.session.otp;
+    const otpExpiration = req.session.otpExpiration;
+    const email = req.session.forgotEmail;
 
-// // // 👉 Verify OTP
-// const verifyForgotOtp = async (req, res) => {
-//   try {
-//     const { otp } = req.body;
+    if (!email) {
+      return res.json({ success: false, message: "No email found. Please start the process again." });
+    }
 
-//     const email = Object.keys(otpStore).find((key) => otpStore[key] === otp);
+    if (!storedOtp || storedOtp !== otp) {
+      return res.json({ success: false, message: "Invalid OTP. Please try again." });
+    }
 
-//     if (!email) {
-//       return res.json({ success: false, message: "Invalid OTP" });
-//     }
+    if (Date.now() > otpExpiration) {
+      return res.json({ success: false, message: "OTP has expired. Please resend." });
+    }
 
-//     delete otpStore[email];
+    // Clear OTP from session after verification
+    delete req.session.otp;
+    delete req.session.otpExpiration;
 
-//     return res.json({
-//       success: true,
-//       message: "OTP verified successfully",
-//       redirectUrl: `/reset-password?email=${encodeURIComponent(email)}`,
-//     });
-//   } catch (error) {
-//     console.error("Verify OTP Error:", error);
-//     return res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
+    return res.json({
+      success: true,
+      message: "OTP verified successfully",
+      redirectUrl: `/reset-password?email=${encodeURIComponent(email)}`,
+    });
+  } catch (error) {
+    console.error("Verify OTP Error:", error);
+    res.status(500).json({ success: false, message: "An error occurred during OTP verification." });
+  }
+};
 
-// // 👉 Resend OTP
-// const resendOtp = async (req, res) => {
-//   try {
-//     const { email } = req.body;
+// 👉 Resend OTP
+const resendOtp = async (req, res) => {
+  try {
+    const email = req.session.forgotEmail;
 
-//     if (!email) {
-//       return res.json({ success: false, message: "No email found" });
-//     }
+    if (!email) {
+      return res.json({ success: false, message: "No email found. Please start the process again." });
+    }
 
-//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//     otpStore[email] = otp;
+    // Generate new OTP and expiration
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiration = Date.now() + 5 * 60 * 1000;
 
-//     console.log("Resending OTP to:", email, "OTP:", otp);
+    // Update session
+    req.session.otp = otp;
+    req.session.otpExpiration = otpExpiration;
 
-//     const transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS,
-//       },
-//     });
+    console.log("Resending OTP to:", email, "OTP:", otp);
 
-//     const mailOptions = {
-//       from: process.env.EMAIL_USER,
-//       to: email,
-//       subject: "Resent OTP",
-//       text: `Your new OTP is: ${otp}`,
-//     };
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
-//     await transporter.sendMail(mailOptions);
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Resent OTP for Password Reset",
+      text: `Your new OTP is: ${otp}. It expires in 5 minutes.`,
+    };
 
-//     return res.json({ success: true });
-//   } catch (error) {
-//     console.error("Resend OTP Error:", error);
-//     return res
-//       .status(500)
-//       .json({ success: false, message: "Failed to resend OTP" });
-//   }
-// };
+    await transporter.sendMail(mailOptions);
 
-// module.exports = {
-//   getForgotPasswordPage,
-//   getForgotPassPage,
-//   loadEmailPage,
-//   sendForgotOtp,
-//   verifyForgotOtp,
-//   resendOtp,
-// };
+    return res.json({ success: true, message: "OTP resent successfully" });
+  } catch (error) {
+    console.error("Resend OTP Error:", error);
+    res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again." });
+  }
+};
+
+// 👉 Update Password
+const updatePassword = async (req, res) => {
+  try {
+    const { email, password, confirmPassword } = req.body;
+
+    if (!email || !password || !confirmPassword) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: "Passwords do not match" });
+    }
+
+    if (password.length < 8 || !/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
+      return res.status(400).json({ success: false, message: "Password must be at least 8 characters long and contain both letters and numbers" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    // Clear session data
+    delete req.session.forgotEmail;
+
+    return res.json({ success: true, message: "Password updated successfully", redirectUrl: "/" });
+  } catch (error) {
+    console.error("Update Password Error:", error);
+    res.status(500).json({ success: false, message: "Failed to update password. Please try again." });
+  }
+};
+
+module.exports = {
+  getForgotPasswordPage,
+  loadEmailPage,
+  sendForgotOtp,
+  verifyForgotOtp,
+  resendOtp,
+  getResetPasswordPage,
+  updatePassword,
+};

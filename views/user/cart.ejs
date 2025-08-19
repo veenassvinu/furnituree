@@ -130,70 +130,13 @@
 
 
 
-<!-- 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Remove item
-      document.querySelectorAll(".remove-btn").forEach(btn => {
-        btn.addEventListener("click", async e => {
-          e.preventDefault();
-          const row = e.target.closest("tr");
-          const productId = row.dataset.id;
-
-          const res = await fetch(`/remove-from-cart/${productId}`, { method: "DELETE" });
-          const data = await res.json();
-
-          if (data.success) {
-            row.remove();
-            updateTotalDisplay();
-          } else {
-            alert(data.message || "Failed to remove item");
-          }
-        });
-      });
-
-      // Update quantity
-      document.querySelectorAll(".quantity-input").forEach(input => {
-        input.addEventListener("change", async e => {
-          const row = e.target.closest("tr");
-          const productId = row.dataset.id;
-          const quantity = parseInt(e.target.value);
-
-          if (isNaN(quantity) || quantity < 1) {
-            e.target.value = 1;
-            return alert("Quantity must be at least 1");
-          }
-
-          const res = await fetch(`/update-cart-quantity`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId, quantity })
-          });
-
-          const data = await res.json();
-          if (data.success) {
-            const price = parseFloat(row.querySelector("td:nth-child(3)").textContent.replace("₹", ""));
-            row.querySelector(".item-total").textContent = `₹${(price * quantity).toFixed(2)}`;
-            updateTotalDisplay(data.totalPrice);
-          } else {
-            alert(data.message || "Failed to update quantity");
-          }
-        });
-      });
-
-      function updateTotalDisplay(totalPrice) {
-        if (totalPrice !== undefined) {
-          document.querySelectorAll(".text-black strong").forEach(el => {
-            el.textContent = `₹${totalPrice.toFixed(2)}`;
-          });
-        }
-      }
-    });
-  </script> -->
-
 
 <!-- Updated Script Section -->
+
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     // Add to cart
@@ -214,7 +157,7 @@
             Swal.fire({
               icon: "success",
               title: "Added to Cart!",
-              text: data.message || "Item added to cart successfully",
+              text: data.message,
               showConfirmButton: false,
               timer: 1500
             });
@@ -222,7 +165,7 @@
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text: data.message || "Failed to add item to cart"
+              text: data.message
             });
           }
         } catch (err) {
@@ -241,6 +184,7 @@
         e.preventDefault();
         const row = e.target.closest("tr");
         const productId = row.dataset.id;
+        console.log("Removing product ID:", productId);
 
         try {
           const res = await fetch(`/remove-from-cart/${productId}`, { method: "DELETE" });
@@ -252,7 +196,7 @@
             Swal.fire({
               icon: "success",
               title: "Item Removed",
-              text: data.message || "Item removed from cart successfully",
+              text: data.message,
               showConfirmButton: false,
               timer: 1500
             });
@@ -260,7 +204,7 @@
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text: data.message || "Failed to remove item"
+              text: data.message
             });
           }
         } catch (err) {
@@ -305,7 +249,7 @@
             Swal.fire({
               icon: "success",
               title: "Quantity Updated",
-              text: data.message || "Cart quantity updated successfully",
+              text: data.message,
               showConfirmButton: false,
               timer: 1500
             });
@@ -313,7 +257,7 @@
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text: data.message || "Failed to update quantity"
+              text: data.message
             });
           }
         } catch (err) {
@@ -336,7 +280,7 @@
           Swal.fire({
             icon: "success",
             title: "Time Updated!",
-            text: data.message || "Current time updated successfully",
+            text: data.message,
             footer: `Current Time: ${data.currentTime}`,
             showConfirmButton: false,
             timer: 1500
@@ -345,7 +289,7 @@
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: data.message || "Failed to update time"
+            text: data.message
           });
         }
       } catch (err) {
@@ -366,7 +310,6 @@
     }
   });
 </script>
-
 
 
 

@@ -153,7 +153,7 @@
             <!-- Saved Addresses -->
             <div class="addresses-section">
                 <h2>📋 Saved Addresses</h2>
-                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search addresses...">
+                <!-- <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search addresses..."> -->
                 <div id="addressesList">
                     <% if (addresses && addresses.length > 0) { %>
                         <% addresses.forEach((addr, index) => { %>
@@ -213,8 +213,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Name</label>
-                                <input type="text" id="editName" name="name" class="form-control" required>
+                                <label class="form-label">Name </label>
+                                <input type="text" id="editName" name="name" class="form-control" >
                             </div>
 
                             <div class="mb-3">
@@ -263,7 +263,9 @@
 
 <script>
     // Make addresses available in JS
-    window.addresses = `<%- JSON.stringify(addresses || []) %>`; // Correct EJS syntax
+    window.addresses = JSON.parse('<%- JSON.stringify(addresses || []) %>');
+
+
 
     // Prefill Add Form with User Data (Optional)
     document.addEventListener("DOMContentLoaded", () => {
