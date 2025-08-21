@@ -11,6 +11,7 @@ const { getForgotPassPage } = require("../controllers/user/forgotPasswordControl
 const profileController=require("../controllers/user/profileController.js")
 const cartController=require("../controllers/user/cartController.js")
 const aboutController = require('../controllers/user/aboutController.js')
+const checkoutController=require('../controllers/user/checkoutController.js')
 
 // ---------Banned Page--------//
 
@@ -107,6 +108,11 @@ router.get("/about-us", aboutController.aboutUsPage);
 router.get('/contact',userController.loadContactPage)
 
 
+
+
+//---------orders-------//
+router.get('/checkout',checkoutController.loadCheckout);
+router.post("/place-order", checkoutController.placeOrder);
 
 
 module.exports=router;

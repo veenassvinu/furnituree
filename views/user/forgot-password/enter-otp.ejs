@@ -112,75 +112,130 @@
     }
 
     // Function to handle resend OTP
-    function resendOTP() {
-      // Clear the existing countdown timer
-      clearInterval(window.timerId); // Assuming window.timerId stores the countdown interval ID
+    // function resendOTP() {
+    //   // Clear the existing countdown timer
+    //   clearInterval(window.timerId);
 
-      // Reset OTP input fields and countdown
-      document.querySelectorAll("#otp input").forEach(input => input.value = '');  // Clear OTP fields
-      const resendButton = document.getElementById("resendOtp");
-      resendButton.disabled = true;  // Temporarily disable resend button
+    //   // Reset OTP input fields
+    //   document.querySelectorAll("#otp input").forEach(input => input.value = '');
 
-      const countdownDisplay = document.getElementById("countdown");
-      const durationInSeconds = 30;  // Timer duration (30 seconds or your choice)
-      startTimer(durationInSeconds, countdownDisplay);
+    //   // Disable Resend OTP button temporarily
+    //   const resendButton = document.getElementById("resendOtp");
+    //   resendButton.disabled = true;
 
-      const userEmail = document.getElementById("userEmail").value;
+    //   // Restart the countdown timer
+    //   const countdownDisplay = document.getElementById("countdown");
+    //   const durationInSeconds = 30;  // Timer duration
+    //   startTimer(durationInSeconds, countdownDisplay);
 
-      // Make AJAX request to resend OTP
-      fetch('/resend-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail })
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            Swal.fire({
-              icon: "success",
-              title: "OTP Resent Successfully",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: data.message,
-            });
-            resendButton.disabled = false;  // Re-enable button on error
-          }
-        })
-        .catch(error => {
+    //   const userEmail = document.getElementById("userEmail").value;
+
+    //   // Make AJAX request to resend OTP
+    //   fetch('/resend-otp', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ email: userEmail })
+    //   })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       resendButton.disabled = false;  // Re-enable button after fetch completes
+    //       if (data.success) {
+    //         Swal.fire({
+    //           icon: "success",
+    //           title: "OTP Resent",
+    //           text: data.message || "A new OTP has been sent to your email.",
+    //           showConfirmButton: false,
+    //           timer: 1500,
+    //         });
+    //       } else {
+    //         Swal.fire({
+    //           icon: "error",
+    //           title: "Error",
+    //           text: data.message || "Failed to resend OTP. Please try again.",
+    //         });
+    //       }
+    //     })
+    //     .catch(error => {
+    //       resendButton.disabled = false;  // Re-enable button on error
+    //       Swal.fire({
+    //         icon: "error",
+    //         title: "Error",
+    //         text: "An error occurred while resending OTP. Please try again.",
+    //       });
+    //       console.error('Error:', error);
+    //     });
+    // }
+
+function resendOTP() {
+    // Clear the existing countdown timer
+    clearInterval(window.timerId);
+
+    // Reset OTP input fields
+    document.querySelectorAll("#otp input").forEach(input => input.value = '');
+
+    // Disable Resend OTP button temporarily
+    const resendButton = document.getElementById("resendOtp");
+    resendButton.disabled = true;
+
+    // Restart the countdown timer
+    const countdownDisplay = document.getElementById("countdown");
+    const durationInSeconds = 30;
+    startTimer(durationInSeconds, countdownDisplay);
+
+    const userEmail = document.getElementById("userEmail").value;
+
+    // Make AJAX request to resend OTP
+    fetch('/resend-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: userEmail }) // Ensure email is sent
+    })
+      .then(response => response.json())
+      .then(data => {
+        resendButton.disabled = false; // Re-enable button after fetch
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: "OTP Resent",
+            text: data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } else {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "An error occurred. Please try again.",
+            text: data.message || "Failed to resend OTP. Please try again.", // Use server message
           });
-          resendButton.disabled = false;  // Re-enable button on error
-          console.error('Error:', error);
+        }
+      })
+      .catch(error => {
+        resendButton.disabled = false; // Re-enable on error
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An error occurred while resending OTP. Please try again.",
         });
-    }
+        console.error('Error:', error);
+      });
+  }
 
     // Timer Function to manage countdown
     function startTimer(duration, display) {
       let timer = duration;  // Duration in seconds
       let minutes, seconds;
 
-      // Store the countdown ID globally to clear the interval later
       window.timerId = setInterval(function () {
         minutes = Math.floor(timer / 60);
         seconds = timer % 60;
 
-        // Format time as MM:SS
         display.textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 
-        // If timer reaches zero, stop the timer and enable resend button
         if (--timer < 0) {
-          clearInterval(window.timerId);  // Stop the timer
-          document.getElementById("resendOtp").disabled = false;
+          clearInterval(window.timerId);
+          document.getElementById("resendOtp").disabled = false; // Re-enable button when timer ends
         }
-      }, 1000);  // Run every 1 second
+      }, 1000);
     }
 
     // Start Timer When Page Loads

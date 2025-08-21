@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Furniture Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/checkout.css">
+</head>
+
+<%- include("../../views/partials/user/header.ejs") %>
+
+    <body>
+        <%- include("../../views/partials/user/navBar.ejs") %>
+
+            <!-- Main Checkout Content -->
+            <div class="checkout-container">
+                <h1 class="checkout-title">Checkout</h1>
+
+                <div class="checkout-content">
+                    <!-- Billing Details -->
+                    <div class="billing-section">
+                        <h2 class="section-title">Billing Details</h2>
+
+                        <form id="addressForm" method="post" action="/save-address">
+                            <div class="form-group">
+                                <label for="addressType">Address Type</label>
+                                <select id="addressType" name="addressType" class="form-control" required>
+                                    <option value="">Select Type</option>
+                                    <option value="home">🏠 Home</option>
+                                    <option value="work">🏢 Work</option>
+                                    <option value="other">📍 Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fullName">Name</label>
+                                <input type="text" id="fullName" name="name" class="form-control"
+                                    placeholder="Enter name" value="<%= user ? user.name : '' %>" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone" class="form-control"
+                                        placeholder="Enter phone number" value="<%= user ? user.phone : '' %>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" id="email" name="email" class="form-control"
+                                        placeholder="Enter email address" value="<%= user ? user.email : '' %>">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="streetAddress">Landmark</label>
+                                <textarea id="streetAddress" name="landMark" class="form-control"
+                                    placeholder="Enter landmark"></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <input type="text" id="city" name="city" class="form-control"
+                                        placeholder="Enter city">
+                                </div>
+                                <div class="form-group">
+                                    <label for="state">State</label>
+                                    <input type="text" id="state" name="state" class="form-control"
+                                        placeholder="Enter state">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="zipCode">Pincode</label>
+                                    <input type="text" id="PinCode" name="pincode" class="form-control"
+                                        placeholder="Enter pincode">
+                                </div>
+                                <div class="form-group">
+                                    <label for="country">Country</label>
+                                    <input type="text" id="country" name="country" class="form-control"
+                                        placeholder="Enter country">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    💾 Save Address
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="order-section">
+                        <h2 class="section-title">Your Order</h2>
+
+                        <div id="orderItems">
+                            <% if(cartItems && cartItems.length> 0) { %>
+                                <% cartItems.forEach(item=> { %>
+                                    <div class="order-item">
+                                        <div class="item-details">
+                                            <div class="item-name">
+                                                <%= item.name %>
+                                            </div>
+                                            <div class="item-qty">Qty: <%= item.quantity %>
+                                            </div>
+                                        </div>
+                                        <div class="item-price">₹<%= (item.price * item.quantity).toFixed(2) %>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <p>Your cart is empty.</p>
+                                            <% } %>
+                        </div>
+
+                        <div class="order-total">
+                            <div class="total-row">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">₹<%= total %></span>
+                            </div>
+                            <div class="total-row">
+                                <span>Shipping:</span>
+                                <span id="shipping">Free</span>
+                            </div>
+                            <div class="total-row">
+                                <span>Discount:</span>
+                                <span id="discount">₹0.00</span>
+                            </div>
+                            <div class="total-row final">
+                                <span>Grand Total:</span>
+                                <span id="grandTotal">₹<%= total %></span>
+                            </div>
+                        </div>
+
+                        <div class="payment-methods">
+                            <h3>Payment Methods</h3>
+                            <div class="payment-method selected" data-method="cod">
+                                <input type="radio" name="payment" value="cod" checked>
+                                <span>Cash on Delivery</span>
+                            </div>
+                            <div class="payment-method" data-method="card">
+                                <input type="radio" name="payment" value="card">
+                                <span>Credit / Debit Card</span>
+                            </div>
+                        </div>
+
+                        <button type="button" class="place-order-btn" id="placeOrderBtn">
+                            Place Order
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Saved Addresses -->
+                <h2>Select Shipping Address</h2>
+
+                <% if (addresses && addresses.length> 0) { %>
+                    <% addresses.forEach((addr, index)=> { %>
+                        <div class="address-box">
+                            <label for="addr-<%= index %>">
+                                <input type="radio" name="selectedAddress" value="<%= index %>" id="addr-<%= index %>"
+                                    <%=index===0 ? "checked" : "" %>>
+                                <strong>
+                                    <%= addr.addressType %>
+                                </strong><br>
+                                <%= addr.name %> | <%= addr.phone %><br>
+                                        <%= addr.landMark %>, <%= addr.city %>, <%= addr.state %> - <%= addr.pincode %>,
+                                                        <%= addr.country %>
+                            </label>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <p>No saved addresses found. Please add an address.</p>
+                                <% } %>
+
+
+
+
+                                    <!-- Cart Items -->
+
+            </div>
+
+            <!-- Footer -->
+            <%- include("../../views/partials/user/footer.ejs") %>
+
+
+
+
+                <!-- 
+                <script>
+                    document.getElementById("placeOrderBtn").addEventListener("click", async () => {
+                        const selectedAddress = document.querySelector("input[name='selectedAddress']:checked");
+
+                        if (!selectedAddress) {
+                            alert("Please select an address");
+                            return;
+                        }
+
+                        const selectedAddressIndex = selectedAddress.value;  // ✅ Get index
+
+                        const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value;
+
+                        if (!paymentMethod) {
+                            alert("Please select a payment method");
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch("/place-order", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    selectedAddressIndex,   // ✅ send index to backend
+                                    paymentMethod
+                                })
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                alert("Order placed successfully!");
+                                window.location.href = "/orders";
+                            } else {
+                                alert(data.error || "Error placing order");
+                            }
+                        } catch (err) {
+                            console.error("Error placing order:", err);
+                            alert("Something went wrong");
+                        }
+                    });
+                </script> -->
+
+                <script>
+                    document.getElementById("placeOrderBtn").addEventListener("click", async () => {
+                        // Get selected address
+                        const selectedAddressEl = document.querySelector("input[name='selectedAddress']:checked");
+
+                        if (!selectedAddressEl) {
+                            alert("Please select an address");
+                            return;
+                        }
+
+                        const selectedAddressIndex = selectedAddressEl.value; // ✅ defined properly
+
+                        // Get selected payment method
+                        const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value;
+
+                        if (!paymentMethod) {
+                            alert("Please select a payment method");
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch("/place-order", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    selectedAddressIndex,  // ✅ sending correct field
+                                    paymentMethod
+                                })
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok) {
+                                alert("Order placed successfully!");
+                                window.location.href = "/orders";
+                            } else {
+                                alert(data.message || "Error placing order");
+                            }
+                        } catch (err) {
+                            console.error("Error placing order:", err);
+                            alert("Something went wrong");
+                        }
+                    });
+                </script>
+
+
+    </body>
+
+</html>

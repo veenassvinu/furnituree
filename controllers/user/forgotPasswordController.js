@@ -45,9 +45,12 @@ const loadEmailPage = async (req, res) => {
 // 👉 Send OTP to user's email
 const sendForgotOtp = async (req, res) => {
   try {
-    const { email } = req.body;
+    console.log("Full request object:", req); // Debug full request
+    console.log("Received req.body:", req.body); // Debug body
 
+    const { email } = req.body;
     if (!email) {
+      console.log("Email is undefined in req.body");
       return res.status(400).json({ success: false, message: "Email is required" });
     }
 
@@ -78,12 +81,13 @@ const sendForgotOtp = async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: email,
+      to: email, // Line 413 - This was the error point
       subject: "Your OTP for Password Reset",
       text: `Your OTP is ${otp}. It expires in 5 minutes.`,
     };
 
     await transporter.sendMail(mailOptions);
+    console.log("OTP sent successfully to", email, "at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
 
     return res.json({
       success: true,
@@ -91,7 +95,7 @@ const sendForgotOtp = async (req, res) => {
       redirectUrl: `/enter-otp?email=${encodeURIComponent(email)}`,
     });
   } catch (error) {
-    console.error("Send OTP Error:", error);
+    console.error("Send OTP Error at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }), ":", error);
     res.status(500).json({ success: false, message: "Failed to send OTP. Please try again." });
   }
 };
@@ -126,10 +130,54 @@ const verifyForgotOtp = async (req, res) => {
       redirectUrl: `/reset-password?email=${encodeURIComponent(email)}`,
     });
   } catch (error) {
-    console.error("Verify OTP Error:", error);
+    console.error("Verify OTP Error at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }), ":", error);
     res.status(500).json({ success: false, message: "An error occurred during OTP verification." });
   }
 };
+
+// 👉 Resend OTP
+// const resendOtp = async (req, res) => {
+//   try {
+//     const email = req.session.forgotEmail;
+
+//     if (!email) {
+//       return res.json({ success: false, message: "No email found. Please start the process again." });
+//     }
+
+//     // Generate new OTP and expiration
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//     const otpExpiration = Date.now() + 5 * 60 * 1000;
+
+//     // Update session
+//     req.session.otp = otp;
+//     req.session.otpExpiration = otpExpiration;
+
+//     console.log("Resending OTP to:", email, "OTP:", otp);
+
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
+
+//     const mailOptions = {
+//       from: process.env.EMAIL_USER,
+//       to: email,
+//       subject: "Resent OTP for Password Reset",
+//       text: `Your new OTP is: ${otp}. It expires in 5 minutes.`,
+//     };
+
+//     await transporter.sendMail(mailOptions);
+//     console.log("Resend OTP sent successfully to", email, "at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+
+//     return res.json({ success: true, message: "OTP resent successfully" });
+//   } catch (error) {
+//     console.error("Resend OTP Error at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }), ":", error);
+//     res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again." });
+//   }
+// };
 
 // 👉 Resend OTP
 const resendOtp = async (req, res) => {
@@ -166,11 +214,12 @@ const resendOtp = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
+    console.log("Resend OTP sent successfully to", email, "at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
 
     return res.json({ success: true, message: "OTP resent successfully" });
   } catch (error) {
-    console.error("Resend OTP Error:", error);
-    res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again." });
+    console.error("Resend OTP Error at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }), ":", error.message); // Enhanced error logging
+    res.status(500).json({ success: false, message: `Failed to resend OTP. Error: ${error.message}` }); // Detailed error message
   }
 };
 

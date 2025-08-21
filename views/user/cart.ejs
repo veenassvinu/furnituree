@@ -130,13 +130,8 @@
 
 
 
-
 <!-- Updated Script Section -->
-
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     // Add to cart
@@ -157,7 +152,7 @@
             Swal.fire({
               icon: "success",
               title: "Added to Cart!",
-              text: data.message,
+              text: data.message || "Item added to cart successfully",
               showConfirmButton: false,
               timer: 1500
             });
@@ -165,7 +160,7 @@
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text: data.message
+              text: data.message || "Failed to add item to cart"
             });
           }
         } catch (err) {
@@ -184,7 +179,6 @@
         e.preventDefault();
         const row = e.target.closest("tr");
         const productId = row.dataset.id;
-        console.log("Removing product ID:", productId);
 
         try {
           const res = await fetch(`/remove-from-cart/${productId}`, { method: "DELETE" });
@@ -196,7 +190,7 @@
             Swal.fire({
               icon: "success",
               title: "Item Removed",
-              text: data.message,
+              text: data.message || "Item removed from cart successfully",
               showConfirmButton: false,
               timer: 1500
             });
@@ -204,7 +198,7 @@
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text: data.message
+              text: data.message || "Failed to remove item"
             });
           }
         } catch (err) {
@@ -249,7 +243,7 @@
             Swal.fire({
               icon: "success",
               title: "Quantity Updated",
-              text: data.message,
+              text: data.message || "Cart quantity updated successfully",
               showConfirmButton: false,
               timer: 1500
             });
@@ -257,7 +251,7 @@
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text: data.message
+              text: data.message || "Failed to update quantity"
             });
           }
         } catch (err) {
@@ -280,7 +274,7 @@
           Swal.fire({
             icon: "success",
             title: "Time Updated!",
-            text: data.message,
+            text: data.message || "Current time updated successfully",
             footer: `Current Time: ${data.currentTime}`,
             showConfirmButton: false,
             timer: 1500
@@ -289,7 +283,7 @@
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: data.message
+            text: data.message || "Failed to update time"
           });
         }
       } catch (err) {
@@ -310,6 +304,7 @@
     }
   });
 </script>
+
 
 
 

@@ -6,6 +6,29 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<style>
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .form-control.is-valid {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+</style>
+
 <div class="main-wrapper">
     <!-- Sidebar -->
     <aside class="sidebar" style="margin-top: 100px;">
@@ -88,54 +111,63 @@
                 <form id="addressForm" method="post" action="/save-address">
                     <div class="form-group">
                         <label for="addressType">Address Type</label>
-                        <select id="addressType" name="addressType" required>
+                        <select id="addressType" name="addressType" class="form-control" required>
                             <option value="">Select Type</option>
                             <option value="home">🏠 Home</option>
                             <option value="work">🏢 Work</option>
                             <option value="other">📍 Other</option>
                         </select>
+                        <span id="addressTypeError" class="error-message"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="fullName">Name</label>
-                        <input type="text" id="fullName" name="name" placeholder="Enter name" required>
+                        <input type="text" id="fullName" name="name" class="form-control" placeholder="Enter name" required>
+                        <span id="fullNameError" class="error-message"></span>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" placeholder="Enter phone number" required>
+                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter phone number" required>
+                            <span id="phoneError" class="error-message"></span>
                         </div>
                         <div class="form-group">
                             <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" placeholder="Enter email address">
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Enter email address">
+                            <span id="emailError" class="error-message"></span>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="streetAddress">Landmark</label>
-                        <textarea id="streetAddress" name="landMark" placeholder="Enter landmark" required></textarea>
+                        <textarea id="streetAddress" name="landMark" class="form-control" placeholder="Enter landmark" required></textarea>
+                        <span id="streetAddressError" class="error-message"></span>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="city">City</label>
-                            <input type="text" id="city" name="city" placeholder="Enter city" required>
+                            <input type="text" id="city" name="city" class="form-control" placeholder="Enter city" required>
+                            <span id="cityError" class="error-message"></span>
                         </div>
                         <div class="form-group">
                             <label for="state">State</label>
-                            <input type="text" id="state" name="state" placeholder="Enter state" required>
+                            <input type="text" id="state" name="state" class="form-control" placeholder="Enter state" required>
+                            <span id="stateError" class="error-message"></span>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="zipCode">Pincode</label>
-                            <input type="text" id="PinCode" name="pincode" placeholder="Enter pincode" required>
+                            <input type="text" id="PinCode" name="pincode" class="form-control" placeholder="Enter pincode" required>
+                            <span id="PinCodeError" class="error-message"></span>
                         </div>
                         <div class="form-group">
                             <label for="country">Country</label>
-                            <input type="text" id="country" name="country" placeholder="Enter country" required>
+                            <input type="text" id="country" name="country" class="form-control" placeholder="Enter country" required>
+                            <span id="countryError" class="error-message"></span>
                         </div>
                     </div>
 
@@ -153,7 +185,6 @@
             <!-- Saved Addresses -->
             <div class="addresses-section">
                 <h2>📋 Saved Addresses</h2>
-                <!-- <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search addresses..."> -->
                 <div id="addressesList">
                     <% if (addresses && addresses.length > 0) { %>
                         <% addresses.forEach((addr, index) => { %>
@@ -165,12 +196,9 @@
                                 <% if (addr.email) { %><p>📧 <%= addr.email %></p><% } %>
 
                                 <div class="btn-group mt-2">
-                                    <!-- Edit Button -->
                                     <button class="btn btn-sm btn-warning editAddressBtn" data-id="<%= addr._id %>" data-index="<%= index %>" data-bs-toggle="modal" data-bs-target="#editAddressModal">
                                         ✏️ Edit
                                     </button>
-
-                                    <!-- Delete Button -->
                                     <button class="btn btn-sm btn-danger deleteAddressBtn" data-id="<%= addr._id %>" data-index="<%= index %>">
                                         🗑️ Delete
                                     </button>
@@ -190,7 +218,7 @@
             </div>
         </div>
 
-        <!-- Edit Address Modal (Outside the loop) -->
+        <!-- Edit Address Modal -->
         <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -210,46 +238,55 @@
                                     <option value="work">🏢 Work</option>
                                     <option value="other">📍 Other</option>
                                 </select>
+                                <span id="editAddressTypeError" class="error-message"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Name </label>
-                                <input type="text" id="editName" name="name" class="form-control" >
+                                <label class="form-label">Name</label>
+                                <input type="text" id="editName" name="name" class="form-control" required>
+                                <span id="editNameError" class="error-message"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Phone Number</label>
                                 <input type="text" id="editPhone" name="phone" class="form-control" required>
+                                <span id="editPhoneError" class="error-message"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Email Address</label>
                                 <input type="email" id="editEmail" name="email" class="form-control">
+                                <span id="editEmailError" class="error-message"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Landmark</label>
                                 <input type="text" id="editLandmark" name="landMark" class="form-control" required>
+                                <span id="editLandmarkError" class="error-message"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">City</label>
                                 <input type="text" id="editCity" name="city" class="form-control" required>
+                                <span id="editCityError" class="error-message"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">State</label>
                                 <input type="text" id="editState" name="state" class="form-control" required>
+                                <span id="editStateError" class="error-message"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Pincode</label>
                                 <input type="text" id="editPincode" name="pincode" class="form-control" required>
+                                <span id="editPincodeError" class="error-message"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Country</label>
                                 <input type="text" id="editCountry" name="country" class="form-control" required>
+                                <span id="editCountryError" class="error-message"></span>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Update Address</button>
@@ -265,30 +302,297 @@
     // Make addresses available in JS
     window.addresses = JSON.parse('<%- JSON.stringify(addresses || []) %>');
 
+    // Validation functions
+    const validationRules = {
+        name: {
+            pattern: /^[A-Za-z\s]+$/,
+            message: "Name should contain only letters and spaces (no numbers, special characters, or zeros)"
+        },
+        phone: {
+            pattern: /^[1-9][0-9]{9}$/,
+            message: "Phone number must be 10 digits and cannot start with 0"
+        },
+        email: {
+            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            message: "Please enter a valid email address"
+        },
+        city: {
+            pattern: /^[A-Za-z\s]+$/,
+            message: "City should contain only letters and spaces"
+        },
+        state: {
+            pattern: /^[A-Za-z\s]+$/,
+            message: "State should contain only letters and spaces"
+        },
+        country: {
+            pattern: /^[A-Za-z\s]+$/,
+            message: "Country should contain only letters and spaces"
+        },
+        pincode: {
+            pattern: /^[1-9][0-9]{5}$/,
+            message: "Pincode must be 6 digits and cannot start with 0"
+        },
+        landmark: {
+            pattern: /^.{2,}$/,
+            message: "Landmark must be at least 2 characters long"
+        }
+    };
 
+    function validateField(fieldId, value, rule) {
+        const errorElement = document.getElementById(fieldId + "Error");
+        const inputElement = document.getElementById(fieldId);
+        
+        if (!value.trim()) {
+            errorElement.textContent = "This field is required";
+            inputElement.classList.add('is-invalid');
+            inputElement.classList.remove('is-valid');
+            return false;
+        }
+        
+        if (rule && !rule.pattern.test(value.trim())) {
+            errorElement.textContent = rule.message;
+            inputElement.classList.add('is-invalid');
+            inputElement.classList.remove('is-valid');
+            return false;
+        }
+        
+        errorElement.textContent = "";
+        inputElement.classList.remove('is-invalid');
+        inputElement.classList.add('is-valid');
+        return true;
+    }
 
-    // Prefill Add Form with User Data (Optional)
+    function validateSelectField(fieldId, value) {
+        const errorElement = document.getElementById(fieldId + "Error");
+        const selectElement = document.getElementById(fieldId);
+        
+        if (!value) {
+            errorElement.textContent = "Please select an option";
+            selectElement.classList.add('is-invalid');
+            selectElement.classList.remove('is-valid');
+            return false;
+        }
+        
+        errorElement.textContent = "";
+        selectElement.classList.remove('is-invalid');
+        selectElement.classList.add('is-valid');
+        return true;
+    }
+
+    function validateForm(form) {
+        let isValid = true;
+        const isEditForm = form.id === 'editAddressForm';
+
+        // Validate address type
+        const addressTypeId = isEditForm ? 'editAddressType' : 'addressType';
+        const addressType = document.getElementById(addressTypeId).value;
+        if (!validateSelectField(addressTypeId, addressType)) {
+            isValid = false;
+        }
+
+        // Validate name
+        const nameId = isEditForm ? 'editName' : 'fullName';
+        const name = document.getElementById(nameId).value;
+        if (!validateField(nameId, name, validationRules.name)) {
+            isValid = false;
+        }
+
+        // Validate phone
+        const phoneId = isEditForm ? 'editPhone' : 'phone';
+        const phone = document.getElementById(phoneId).value;
+        if (!validateField(phoneId, phone, validationRules.phone)) {
+            isValid = false;
+        }
+
+        // Validate email (optional)
+        const emailId = isEditForm ? 'editEmail' : 'email';
+        const email = document.getElementById(emailId).value;
+        if (email.trim() && !validateField(emailId, email, validationRules.email)) {
+            isValid = false;
+        } else if (!email.trim()) {
+            document.getElementById(emailId + "Error").textContent = "";
+            document.getElementById(emailId).classList.remove('is-invalid', 'is-valid');
+        }
+
+        // Validate landmark
+        const landmarkId = isEditForm ? 'editLandmark' : 'streetAddress';
+        const landmark = document.getElementById(landmarkId).value;
+        if (!validateField(landmarkId, landmark, validationRules.landmark)) {
+            isValid = false;
+        }
+
+        // Validate city
+        const cityId = isEditForm ? 'editCity' : 'city';
+        const city = document.getElementById(cityId).value;
+        if (!validateField(cityId, city, validationRules.city)) {
+            isValid = false;
+        }
+
+        // Validate state
+        const stateId = isEditForm ? 'editState' : 'state';
+        const state = document.getElementById(stateId).value;
+        if (!validateField(stateId, state, validationRules.state)) {
+            isValid = false;
+        }
+
+        // Validate pincode
+        const pincodeId = isEditForm ? 'editPincode' : 'PinCode';
+        const pincode = document.getElementById(pincodeId).value;
+        if (!validateField(pincodeId, pincode, validationRules.pincode)) {
+            isValid = false;
+        }
+
+        // Validate country
+        const countryId = isEditForm ? 'editCountry' : 'country';
+        const country = document.getElementById(countryId).value;
+        if (!validateField(countryId, country, validationRules.country)) {
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Add real-time validation
+    function addRealTimeValidation() {
+        const fields = [
+            { id: 'fullName', rule: validationRules.name },
+            { id: 'phone', rule: validationRules.phone },
+            { id: 'email', rule: validationRules.email },
+            { id: 'streetAddress', rule: validationRules.landmark },
+            { id: 'city', rule: validationRules.city },
+            { id: 'state', rule: validationRules.state },
+            { id: 'PinCode', rule: validationRules.pincode },
+            { id: 'country', rule: validationRules.country }
+        ];
+
+        const editFields = [
+            { id: 'editName', rule: validationRules.name },
+            { id: 'editPhone', rule: validationRules.phone },
+            { id: 'editEmail', rule: validationRules.email },
+            { id: 'editLandmark', rule: validationRules.landmark },
+            { id: 'editCity', rule: validationRules.city },
+            { id: 'editState', rule: validationRules.state },
+            { id: 'editPincode', rule: validationRules.pincode },
+            { id: 'editCountry', rule: validationRules.country }
+        ];
+
+        [...fields, ...editFields].forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                element.addEventListener('blur', function() {
+                    if (field.id === 'email' || field.id === 'editEmail') {
+                        if (this.value.trim()) {
+                            validateField(field.id, this.value, field.rule);
+                        }
+                    } else {
+                        validateField(field.id, this.value, field.rule);
+                    }
+                });
+
+                element.addEventListener('input', function() {
+                    // Clear error state while typing
+                    const errorElement = document.getElementById(field.id + "Error");
+                    if (this.classList.contains('is-invalid')) {
+                        errorElement.textContent = "";
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            }
+        });
+
+        // Add validation for select fields
+        ['addressType', 'editAddressType'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', function() {
+                    validateSelectField(id, this.value);
+                });
+            }
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
+        // Prefill form with user data
         const userName = "<%= typeof user !== 'undefined' ? user.name : '' %>";
         const userEmail = "<%= typeof user !== 'undefined' ? user.email : '' %>";
         if (userName) document.getElementById("fullName").value = userName;
         if (userEmail) document.getElementById("email").value = userEmail;
-        document.getElementById("country").value = "India"; // Default country
-    });
+        document.getElementById("country").value = "India";
 
-    // Handle Edit Button Click
-    document.addEventListener("DOMContentLoaded", () => {
-        window.addresses = window.addresses || [];
+        // Add real-time validation
+        addRealTimeValidation();
 
+        // Handle Add Address Form Submission
+        document.getElementById("addressForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            if (!validateForm(e.target)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please correct the errors in the form before submitting.',
+                    confirmButtonColor: '#d33'
+                });
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const formObj = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch("/save-address", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formObj),
+                    credentials: "include"
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Address Saved',
+                        text: '✅ Address saved successfully!',
+                        confirmButtonColor: '#3085d6'
+                    }).then(() => {
+                        e.target.reset();
+                        // Clear all validation states
+                        document.querySelectorAll('.form-control').forEach(el => {
+                            el.classList.remove('is-valid', 'is-invalid');
+                        });
+                        document.querySelectorAll('.error-message').forEach(el => {
+                            el.textContent = '';
+                        });
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to save address',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong!',
+                    confirmButtonColor: '#d33'
+                });
+            }
+        });
+
+        // Handle Edit Button Click
         document.querySelectorAll(".editAddressBtn").forEach(button => {
             button.addEventListener("click", function () {
                 const addressId = this.dataset.id;
                 const index = parseInt(this.dataset.index);
 
-                console.log("Edit Button Clicked - Index:", index, "Addresses:", JSON.stringify(window.addresses));
-
                 if (!window.addresses || index >= window.addresses.length || !window.addresses[index]) {
-                    console.error("Address not found for index:", index, "Addresses length:", window.addresses.length);
+                    console.error("Address not found for index:", index);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -300,7 +604,15 @@
 
                 const address = window.addresses[index];
 
-                // Populate modal fields with existing address data
+                // Clear previous validation states
+                document.querySelectorAll('#editAddressModal .form-control').forEach(el => {
+                    el.classList.remove('is-valid', 'is-invalid');
+                });
+                document.querySelectorAll('#editAddressModal .error-message').forEach(el => {
+                    el.textContent = '';
+                });
+
+                // Populate modal fields
                 document.getElementById("editAddressId").value = addressId;
                 document.getElementById("editAddressType").value = address.addressType || "";
                 document.getElementById("editName").value = address.name || "";
@@ -312,7 +624,6 @@
                 document.getElementById("editPincode").value = address.pincode || "";
                 document.getElementById("editCountry").value = address.country || "";
 
-                // Show modal
                 const modal = new bootstrap.Modal(document.getElementById("editAddressModal"));
                 modal.show();
             });
@@ -322,9 +633,18 @@
         document.getElementById("editAddressForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
+            if (!validateForm(e.target)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please correct the errors in the form before updating.',
+                    confirmButtonColor: '#d33'
+                });
+                return;
+            }
+
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
-            console.log("Update Data:", data);
 
             try {
                 const res = await fetch(`/update-address/${data.addressId}`, {
@@ -335,15 +655,13 @@
                 });
 
                 const result = await res.json();
-                console.log("Update Response:", result);
 
                 if (result.success) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Address Updated',
                         text: 'Address updated successfully!',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'OK'
+                        confirmButtonColor: '#3085d6'
                     }).then(() => {
                         location.reload();
                     });
@@ -352,8 +670,7 @@
                         icon: 'error',
                         title: 'Error',
                         text: result.message || 'Failed to update address',
-                        confirmButtonColor: '#d33',
-                        confirmButtonText: 'OK'
+                        confirmButtonColor: '#d33'
                     });
                 }
             } catch (err) {
@@ -361,117 +678,64 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Something went wrong! Check console for details.',
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'OK'
+                    text: 'Something went wrong!',
+                    confirmButtonColor: '#d33'
                 });
             }
         });
-    });
 
-    // Handle Add Address Form Submission
-    document.getElementById("addressForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
+        // Handle Delete Button Click
+        document.querySelectorAll(".deleteAddressBtn").forEach(button => {
+            button.addEventListener("click", async function () {
+                const addressId = this.dataset.id;
 
-        const formData = new FormData(e.target);
-        const formObj = Object.fromEntries(formData.entries());
-
-        try {
-            const res = await fetch("/save-address", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formObj),
-                credentials: "include"
-            });
-
-            const data = await res.json();
-
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Address Saved',
-                    text: '✅ Address saved successfully!',
+                const confirmDelete = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
                     confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    e.target.reset(); // Reset form before reload
-                    location.reload();
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
                 });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message || 'Failed to save address',
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'OK'
-                });
-            }
-        } catch (err) {
-            console.error(err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Something went wrong!',
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
 
-    // Handle Delete Button Click
-    document.querySelectorAll(".deleteAddressBtn").forEach(button => {
-        button.addEventListener("click", async function () {
-            const addressId = this.dataset.id;
-
-            const confirmDelete = await Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            });
-
-            if (confirmDelete.isConfirmed) {
-                try {
-                    const res = await fetch(`/delete-address/${addressId}`, {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                        credentials: "include"
-                    });
-
-                    const data = await res.json();
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Deleted',
-                            text: 'Address deleted successfully!',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            location.reload();
+                if (confirmDelete.isConfirmed) {
+                    try {
+                        const res = await fetch(`/delete-address/${addressId}`, {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" },
+                            credentials: "include"
                         });
-                    } else {
+
+                        const data = await res.json();
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted',
+                                text: 'Address deleted successfully!',
+                                confirmButtonColor: '#3085d6'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Failed to delete address',
+                                confirmButtonColor: '#d33'
+                            });
+                        }
+                    } catch (err) {
+                        console.error("Error deleting address:", err);
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: data.message || 'Failed to delete address',
-                            confirmButtonColor: '#d33',
-                            confirmButtonText: 'OK'
+                            text: 'Something went wrong!',
+                            confirmButtonColor: '#d33'
                         });
                     }
-                } catch (err) {
-                    console.error("Error deleting address:", err);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Something went wrong!',
-                        confirmButtonColor: '#d33',
-                        confirmButtonText: 'OK'
-                    });
                 }
-            }
+            });
         });
     });
 </script>

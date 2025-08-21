@@ -390,30 +390,74 @@ const login = async (req, res) => {
   }
 };
 
+// const sendOtpEmail = async (req, res) => {
+//   try {
+//     const user = req.session.userData;
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+//     // Store OTP in session
+//     req.session.userOtp = otp;
+//     req.session.otpExpiration = Date.now() + 5 * 60 * 1000;
+
+//     console.log("EMAIL_USER:", process.env.EMAIL_USER);
+//     console.log(
+//       "EMAIL_PASS:",
+//       process.env.EMAIL_PASS ? "Exists ✅" : "Missing ❌"
+//     );
+
+//     console.log("EMAIL_USER:", process.env.EMAIL_USER);
+//     console.log(
+//       "EMAIL_PASS:",
+//       process.env.EMAIL_PASS ? "Exists ✅" : "Missing ❌"
+//     );
+//     console.log("Sending OTP to:", user.email);
+//     console.log("Generated OTP:", otp);
+
+//     // ✅ Set up transporter
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
+
+//     const mailOptions = {
+//       from: `"Furniture App" <${process.env.EMAIL_USER}>`,
+//       to: user.email, // ✅ Send to the actual user
+//       subject: "Your OTP Code",
+//       text: `Hello ${user.name},\n\nYour OTP is: ${otp}\nIt is valid for 5 minutes.`,
+//       html: `<p>Hello <b>${user.name}</b>,</p><p>Your OTP is: <b>${otp}</b></p><p>This code is valid for 5 minutes.</p>`,
+//     };
+
+//     await transporter.sendMail(mailOptions);
+
+//     res.json({ success: true, message: "OTP sent successfully to your email" });
+//   } catch (error) {
+//     console.error("❌ Error sending email:", error);
+//     res
+//       .status(500)
+//       .json({ success: false, message: "Failed to send OTP email." });
+//   }
+// };
+
 const sendOtpEmail = async (req, res) => {
   try {
     const user = req.session.userData;
+
+    if (!user || !user.email) {
+      console.log("❌ No user session found");
+      return res.status(400).json({ success: false, message: "User not logged in" });
+    }
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Store OTP in session
     req.session.userOtp = otp;
     req.session.otpExpiration = Date.now() + 5 * 60 * 1000;
 
-    console.log("EMAIL_USER:", process.env.EMAIL_USER);
-    console.log(
-      "EMAIL_PASS:",
-      process.env.EMAIL_PASS ? "Exists ✅" : "Missing ❌"
-    );
-
-    console.log("EMAIL_USER:", process.env.EMAIL_USER);
-    console.log(
-      "EMAIL_PASS:",
-      process.env.EMAIL_PASS ? "Exists ✅" : "Missing ❌"
-    );
     console.log("Sending OTP to:", user.email);
     console.log("Generated OTP:", otp);
 
-    // ✅ Set up transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -422,9 +466,17 @@ const sendOtpEmail = async (req, res) => {
       },
     });
 
+    transporter.verify((err, success) => {
+      if (err) {
+        console.error("❌ Transporter error:", err);
+      } else {
+        console.log("✅ Mail server ready");
+      }
+    });
+
     const mailOptions = {
       from: `"Furniture App" <${process.env.EMAIL_USER}>`,
-      to: user.email, // ✅ Send to the actual user
+      to: user.email,
       subject: "Your OTP Code",
       text: `Hello ${user.name},\n\nYour OTP is: ${otp}\nIt is valid for 5 minutes.`,
       html: `<p>Hello <b>${user.name}</b>,</p><p>Your OTP is: <b>${otp}</b></p><p>This code is valid for 5 minutes.</p>`,
@@ -434,12 +486,11 @@ const sendOtpEmail = async (req, res) => {
 
     res.json({ success: true, message: "OTP sent successfully to your email" });
   } catch (error) {
-    console.error("❌ Error sending email:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to send OTP email." });
+    console.error("❌ Error sending email:", error.response || error);
+    res.status(500).json({ success: false, message: "Failed to send OTP email." });
   }
 };
+
 
 const loadShopPage = async (req, res) => {
   try {
