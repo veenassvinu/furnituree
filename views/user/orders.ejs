@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Success | Furniture</title>
+    <link rel="stylesheet" href="/css/orders.css" />
+</head>
+
+<body>
+
+    <!-- Header -->
+    <%- include("../../views/partials/user/header") %>
+
+    <!-- Navbar -->
+    <%- include("../../views/partials/user/navBar") %>
+
+    <!-- Hero / Cart Section -->
+    <section class="hero" >
+        <h1 style="margin-left: 300px;">Cart</h1>
+    </section>
+
+    <!-- Thank You Section -->
+    <section class="thankyou">
+        <div class="icon">🛒</div>
+        <h2>Thank you!</h2>
+        <p>Your order was successfully completed.</p>
+        <button id="backShop">Back to shop</button>
+        <div class="chair">
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <form id="newsletterForm">
+            <label>
+                <input type="text" placeholder="Enter your name" required />
+            </label>
+            <label>
+                <input type="email" placeholder="Enter your email" required />
+            </label>
+            <button type="submit">➤</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <%- include("../../views/partials/user/footer") %>
+
+    <script>
+        // Back to Shop Button
+        document.getElementById("backShop").addEventListener("click", () => {
+            window.location.href = "/shop";
+        });
+
+        // Newsletter Form
+        document.getElementById("newsletterForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            alert("✅ Thank you for subscribing to our newsletter!");
+        });
+    </script>
+
+</body>
+</html>

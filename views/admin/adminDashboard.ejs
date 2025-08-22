@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,16 +10,12 @@
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
     }
-
-
     .container {
       padding: 0;
       display: flex;
       width: 100%;
       max-width: 100%;
     }
-
-    /* Sidebar positioning */
     .sidebar {
       position: fixed;
       top: 0;
@@ -29,15 +24,12 @@
       width: 250px;
       z-index: 1000;
     }
-
-    /* Main content positioning */
     .main-content {
       flex: 1;
       margin-left: 250px;
       padding: 2rem;
       max-width: calc(100% - 250px);
     }
-
     .welcome-message {
       height: 100%;
       display: flex;
@@ -49,25 +41,19 @@
       box-shadow: 0 0 20px #2c7a7b;
       margin-top: 250px;
     }
-
     .welcome-message h1 {
       font-size: 2.5rem;
       color: #2c3e50;
     }
-
-
-    /* Responsive Adjustments */
     @media (max-width: 768px) {
       .sidebar {
         position: fixed;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
       }
-
       .sidebar.active {
         transform: translateX(0);
       }
-
       .main-content {
         margin-left: 0;
         padding: 1rem;
@@ -76,30 +62,23 @@
     }
   </style>
 </head>
-
 <body>
-
-  <%- include("../../views/partials/admin/sidebar")%>
-
-    <div class="main-content">
-      <div class="welcome-message">
-        <h1>Welcome to Dashboard</h1>
-      </div>
+  <%- include("../../views/partials/admin/sidebar") %>
+  <div class="main-content">
+    <div class="welcome-message">
+      <h1>Welcome to Dashboard</h1>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <% if (successMessage) { %>
-      <script>
-        Swal.fire({
-          icon: 'success',
-          title: 'Login Successful',
-          text: '<%= successMessage %>',
-          confirmButtonColor: '#28a745'
-        });
-      </script>
-      <% } %>
-
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <% if (successMessage) { %>
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful',
+        text: '<%= successMessage %>',
+        confirmButtonColor: '#28a745'
+      });
+    </script>
+  <% } %>
 </body>
-
 </html>

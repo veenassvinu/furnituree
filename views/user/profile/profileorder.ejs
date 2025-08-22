@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Dashboard</title>
+    <link rel="stylesheet" href="/css/profileorder.css">
+    <link rel="stylesheet" href="/css/profile.css">
+   
+</head>
+<body>
+   
+<%- include("../../views/partials/user/profileSideBar") %>
+
+   <div class="content">
+    <h2>Your Orders</h2>
+    <table>
+        <tr>
+            <th>Orders #</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Totals</th>
+            <th>Actions</th>
+        </tr>
+        <% if (orders && orders.length > 0) { %>
+            <% orders.forEach(order => { %>
+                <tr>
+                    <td>#<%= order._id.toString().slice(-6) %></td>
+                    <td><%= order.createdAt.toDateString() %></td>
+                    <td><%= order.status %></td>
+                    <td>₹<%= order.totalPrice.toFixed(2) %></td>
+                    <td>
+                        <a href="/orders/<%= order._id %>">View</a>
+                        <% if(order.status !== 'Cancelled' && order.status !== 'Returned') { %>
+                            | <a href="/orders/<%= order._id %>/cancel">Cancel</a>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        <% } else { %>
+            <tr>
+                <td colspan="5" style="text-align:center;">No orders found</td>
+            </tr>
+        <% } %>
+    </table>
+
+    <div class="footer">
+        <div class="subscribe">
+            <p>For updates and offers</p>
+            <input type="email" placeholder="Enter Your Email">
+            <button>Subscribe</button>
+        </div>
+        <div class="footer-sections">
+            <div class="footer-section">
+                <h3>Top</h3>
+                <ul>
+                    <li>Kuuzo Aero Chair</li>
+                    <li>Nordic Chair</li>
+                    <li>Ergonomic Chair</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Customer Care</h3>
+                <ul>
+                    <li>Return</li>
+                    <li>Exchange</li>
+                    <li>Warranty</li>
+                    <li>Services</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Information</h3>
+                <ul>
+                    <li>About us</li>
+                    <li>Privacy Policy</li>
+                    <li>Terms</li>
+                    <li>Order Tracking</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Information</h3>
+                <ul>
+                    <li>Near Anna Nagar, Chennai</li>
+                    <li>+91 98850 4871</li>
+                    <li>info@furni.com</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            sidebarItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+        });
+    });
+
+    const subscribeButton = document.querySelector('.subscribe button');
+    subscribeButton.addEventListener('click', () => {
+        const email = document.querySelector('.subscribe input').value;
+        if (email) {
+            alert('Subscribed with: ' + email);
+        }
+    });
+});
+</script>
+
+    <script src="script.js"></script>
+</body>
+</html>

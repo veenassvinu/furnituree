@@ -139,11 +139,11 @@
                         <div class="payment-methods">
                             <h3>Payment Methods</h3>
                             <div class="payment-method selected" data-method="cod">
-                                <input type="radio" name="payment" value="cod" checked>
+                                <input type="radio" name="paymentMethod" value="COD" checked>
                                 <span>Cash on Delivery</span>
                             </div>
                             <div class="payment-method" data-method="card">
-                                <input type="radio" name="payment" value="card">
+                                <input type="radio" name="payment" value="card" >
                                 <span>Credit / Debit Card</span>
                             </div>
                         </div>
@@ -247,6 +247,8 @@
 
                         // Get selected payment method
                         const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value;
+                        console.log(paymentMethod);
+                        
 
                         if (!paymentMethod) {
                             alert("Please select a payment method");

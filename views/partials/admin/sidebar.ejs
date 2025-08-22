@@ -76,7 +76,7 @@
         cancelButtonText: 'Cancel',
       }).then((result) => {
         if (result.isConfirmed) {
-          fetch('/admin/adminLogout', {  // Changed route to match typical Express pattern
+          fetch('/admin/adminLogout', {  
             method: 'GET',
             credentials: 'include'
           })

@@ -1,5 +1,6 @@
 const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema");
+const Order=require("../../models/orderSchema")
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
@@ -193,8 +194,21 @@ const deleteAddress = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+const loadProfileOrder=async (req,res) => {
+  try {
+    const userId = req.session.user;
+    if (!userId) return res.redirect("/login");
 
-module.exports = { loadAddressPage, addAddress, updateAddress, deleteAddress };
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate("items.productId");
+
+    res.render('profile/profileorder',{orders})
+  } catch (error) {
+    res.send(error)
+    console.log(error);
+    
+  }
+}
+// module.exports = { loadAddressPage, addAddress, updateAddress, deleteAddress };
 
 
 module.exports = {
@@ -204,4 +218,5 @@ module.exports = {
   addAddress,
   deleteAddress,
   updateAddress,
+  loadProfileOrder
 };

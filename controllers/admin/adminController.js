@@ -90,9 +90,8 @@ const loadDashboard = async (req, res) => {
   if (req.session.admin) {
     try {
       const successMessage = req.session.successMessage;
-      req.session.successMessage = null; // clear after displaying once
-
-      res.render("Dashboard", { successMessage });
+      req.session.successMessage = null; 
+      res.render("adminDashboard", { successMessage });
     } catch (error) {
       console.log("error loading dashboard:", error);
       res.redirect("/pageerror");
@@ -101,6 +100,7 @@ const loadDashboard = async (req, res) => {
     res.redirect("/admin/admin-login");
   }
 };
+
 
 const adminLogout = async (req, res) => {
 try {

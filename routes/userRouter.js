@@ -112,7 +112,9 @@ router.get('/contact',userController.loadContactPage)
 
 //---------orders-------//
 router.get('/checkout',checkoutController.loadCheckout);
+router.get('/orders',checkoutController.loadOrder)
 router.post("/place-order", checkoutController.placeOrder);
+router.get('/profileorder',profileController.loadProfileOrder)
 
 
 module.exports=router;

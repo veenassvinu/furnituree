@@ -6,6 +6,7 @@ const categoryController=require("../controllers/admin/categoryController");
 const  { userAuth,adminAuth}=require("../middlewares/auth");
 const productController=require("../controllers/admin/productController");
 const upload = require('../middlewares/multer');
+const orderController=require("../controllers/admin/orderController")
 
 
 
@@ -15,10 +16,14 @@ router.post("/admin-login",adminController.login);
 router.get("/dashboard",adminAuth,adminController.loadDashboard);
 // router.get('/logout',adminController.logout);
 
+
+//----------user management---------//
 router.get("/User",adminAuth,adminUserController.userInfo);
 router.get("/blockUser",adminAuth,adminUserController.UserBlocked);
 router.get("/unblockUser",adminAuth,adminUserController.UserunBlocked);
 
+
+//--------------category management----------//
 router.get("/category",adminAuth,categoryController.categoryInfo);
 router.post("/add-category",adminAuth,categoryController.addCategory);
 router.put("/update-category/:id",adminAuth,categoryController.updateCategory);
@@ -27,7 +32,7 @@ router.put("/list-category/:id",adminAuth,categoryController.listCategory);
 router.put("/unlist-category/:id",adminAuth,categoryController.unlistCategory);
 
 
-
+//------------product management-----------//
 router.get("/product",adminAuth,productController.loadProduct);
 router.get("/addproduct",adminAuth,productController.getProductAddPage);
 // router.post("/addproduct",upload.array("productImages",4),productController.addproduct);
@@ -56,7 +61,8 @@ router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/adminLogout",adminAuth,adminController.adminLogout);
 
 
-
+//---------------order mangement----------//
+router.get('/adminorder',orderController.loadOrder)
 
 
 
