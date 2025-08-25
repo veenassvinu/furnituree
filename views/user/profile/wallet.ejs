@@ -1,0 +1,520 @@
+<%- include("../../views/partials/user/header.ejs") %>
+<%- include("../../views/partials/user/navBar.ejs") %>
+
+<link rel="stylesheet" href="/css/profile.css">
+
+<div class="profile-session-container">
+    <div class="container-fluid">
+        <div class="dashboard d-flex">
+            <!-- Sidebar -->
+            <%- include("../../views/partials/user/profileSideBar.ejs") %>
+
+            <!-- Main Content -->
+            <div class="main-content flex-grow-1 p-4">
+                <div class="wallet-header">
+                    <h2 class="section-title">My Wallet</h2>
+                    <p class="section-subtitle">Manage your wallet balance and transactions</p>
+                </div>
+
+                <!-- Wallet Card -->
+                <div class="wallet-card">
+                    <div class="wallet-brand">Furniture</div>
+                    <div class="wallet-subtitle">Pay with ease 2025</div>
+                    <div class="wallet-balance">₹<%= userData.walletBalance ? userData.walletBalance.toFixed(2) : '0.00' %></div>
+                    <div class="wallet-info">Valid Thru: 12/26</div>
+                </div>
+
+                <!-- Add Amount Section -->
+                <div class="add-amount-section">
+                    <h3>Add Amount</h3>
+                    <input type="number" class="amount-input" placeholder="Enter amount" id="amountInput" min="1" max="10000">
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="addMoney()">Add Money</button>
+                        <button class="btn btn-secondary" onclick="viewTransactions()">View Transactions</button>
+                    </div>
+                </div>
+
+                <!-- Transaction History Section -->
+                <div class="transactions-section" id="transactionsSection" style="display: none;">
+                    <h3>Recent Transactions</h3>
+                    <div class="transactions-list" id="transactionsList">
+                        <!-- Transactions will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* Dashboard Layout */
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Wallet Specific Styles */
+.wallet-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.section-title {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.section-subtitle {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Wallet Card */
+.wallet-card {
+    background: linear-gradient(135deg, #28a745 0%, #3b82f6 100%);
+    border-radius: 15px;
+    padding: 30px;
+    color: white;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.wallet-card:hover {
+    transform: translateY(-2px);
+}
+
+.wallet-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+}
+
+.wallet-brand {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    position: relative;
+    z-index: 1;
+}
+
+.wallet-subtitle {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.wallet-balance {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.wallet-info {
+    font-size: 12px;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+
+/* Add Amount Section */
+.add-amount-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    transition: box-shadow 0.3s ease;
+}
+
+.add-amount-section:hover {
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+}
+
+.add-amount-section h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.amount-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+}
+
+.amount-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* Transactions Section */
+.transactions-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.transactions-section h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.transaction-item:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.transaction-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.transaction-type {
+    font-weight: 600;
+    color: #333;
+}
+
+.transaction-date {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.transaction-amount {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.transaction-amount.credit {
+    color: #28a745;
+}
+
+.transaction-amount.debit {
+    color: #dc3545;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard {
+        flex-direction: column;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+
+    .wallet-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .wallet-balance {
+        font-size: 28px;
+    }
+    
+    .add-amount-section {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .transaction-item {
+        padding: 12px;
+    }
+    
+    .transactions-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .wallet-brand {
+        font-size: 20px;
+    }
+    
+    .wallet-balance {
+        font-size: 24px;
+    }
+    
+    .amount-input {
+        padding: 12px;
+    }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const amountInput = document.getElementById('amountInput');
+    const transactionsSection = document.getElementById('transactionsSection');
+    
+    // Handle Enter key for amount input
+    amountInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addMoney();
+        }
+    });
+
+    // Restrict input to positive numbers only
+    amountInput.addEventListener('input', function(e) {
+        if (this.value < 0) {
+            this.value = 0;
+        }
+    });
+});
+
+async function addMoney() {
+    const amountInput = document.getElementById('amountInput');
+    const amount = parseFloat(amountInput.value);
+
+    // Validation
+    const validationError = validateAmount(amount);
+    if (validationError) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Amount',
+            text: validationError
+        });
+        return;
+    }
+
+    // Show loading
+    Swal.fire({
+        title: 'Processing...',
+        text: 'Adding money to your wallet',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    try {
+        const response = await fetch('/profile/add-wallet-money', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ amount })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Update balance display
+            document.querySelector('.wallet-balance').textContent = `₹${data.newBalance.toFixed(2)}`;
+            amountInput.value = '';
+
+            // Show success
+            Swal.fire({
+                icon: 'success',
+                title: 'Money Added!',
+                text: `₹${amount.toFixed(2)} has been added to your wallet successfully`,
+                timer: 3000,
+                showConfirmButton: false
+            });
+
+            // Optionally refresh transactions
+            if (transactionsSection.style.display === 'block') {
+                await fetchTransactions();
+            }
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Transaction Failed',
+                text: data.message || 'Failed to add money to wallet'
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'An error occurred while processing your request'
+        });
+    }
+}
+
+async function viewTransactions() {
+    const transactionsSection = document.getElementById('transactionsSection');
+    const btn = document.querySelector('.btn-secondary');
+
+    if (transactionsSection.style.display === 'none') {
+        // Show loading
+        Swal.fire({
+            title: 'Loading Transactions...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            await fetchTransactions();
+            transactionsSection.style.display = 'block';
+            transactionsSection.scrollIntoView({ behavior: 'smooth' });
+            btn.textContent = 'Hide Transactions';
+            Swal.close();
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Failed to load transactions'
+            });
+        }
+    } else {
+        transactionsSection.style.display = 'none';
+        btn.textContent = 'View Transactions';
+    }
+}
+
+async function fetchTransactions() {
+    const transactionsList = document.getElementById('transactionsList');
+    try {
+        const response = await fetch('/profile/transactions', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            transactionsList.innerHTML = data.transactions.map(t => `
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <span class="transaction-type">${t.type}</span>
+                        <span class="transaction-date">${new Date(t.date).toLocaleString()}</span>
+                    </div>
+                    <span class="transaction-amount ${t.type === 'Credit' ? 'credit' : 'debit'}">
+                        ${t.type === 'Credit' ? '+' : '-'}₹${t.amount.toFixed(2)}
+                    </span>
+                </div>
+            `).join('');
+        } else {
+            transactionsList.innerHTML = '<p>No transactions found.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        transactionsList.innerHTML = '<p>Error loading transactions.</p>';
+    }
+}
+
+function validateAmount(amount) {
+    if (isNaN(amount) || amount <= 0) {
+        return 'Please enter a valid amount greater than 0';
+    }
+    if (amount > 10000) {
+        return 'Maximum amount that can be added is ₹10,000';
+    }
+    if (amount < 1) {
+        return 'Minimum amount that can be added is ₹1';
+    }
+    return null;
+}
+</script>

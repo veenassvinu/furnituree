@@ -61,10 +61,17 @@ router.get('/productDetails/:id([a-fA-F0-9]{24})', userController.productDetails
 // --------------Profile Section -------------- //
 
 router.get('/profile' , profileController.loadProfilePage)
+router.get('/dashboard' , profileController.loadDashboard)
 router.get('/address',profileController.loadAddressPage);
 router.post('/save-address', profileController.addAddress);
 router.put('/update-address/:id', profileController.updateAddress);
 router.delete('/delete-address/:id', profileController.deleteAddress);
+router.get('/profileorder',profileController.loadProfileOrder)
+router.put('/profile/profile', profileController.updateProfileOrPassword);
+router.get('/wallet', profileController.loadWallet);           
+router.post('/profile/add-wallet-money', profileController.addWalletMoney); 
+ 
+
 
 
 
@@ -114,7 +121,7 @@ router.get('/contact',userController.loadContactPage)
 router.get('/checkout',checkoutController.loadCheckout);
 router.get('/orders',checkoutController.loadOrder)
 router.post("/place-order", checkoutController.placeOrder);
-router.get('/profileorder',profileController.loadProfileOrder)
+router.get('/orders/:id/cancel',checkoutController.cancelOrder);
 
 
 module.exports=router;

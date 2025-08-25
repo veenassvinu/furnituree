@@ -233,23 +233,93 @@ const loadOrder=async(req,res)=>{
 
   }
 }
-// const loadProfileOrders = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     if (!userId) return res.redirect("/login");
 
-//     const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate("items.productId");
+const cancelOrder = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const orderId = req.params.id;
 
-//     res.render("profileorder", { orders });
-//   } catch (err) {
-//     console.error("Error loading orders:", err);
-//     res.status(500).send("Server Error");
-//   }
-// };
+        console.log(`Cancel order attempt - User ID: ${userId}, Order ID: ${orderId}`);
+
+        if (!userId) {
+            console.log('No user session found');
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Please login first' 
+            });
+        }
+
+        const order = await Order.findOne({ _id: orderId, userId });
+
+        if (!order) {
+            console.log(`Order not found for ID: ${orderId}, User ID: ${userId}`);
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Order not found' 
+            });
+        }
+
+        console.log(`Order status: ${order.status}`);
+
+        if (order.status === 'Cancelled' || order.status === 'Returned') {
+            console.log('Order cannot be cancelled: already Cancelled or Returned');
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Order cannot be cancelled' 
+            });
+        }
+
+        if (order.status === 'Shipped' || order.status === 'Delivered') {
+            console.log('Order cannot be cancelled: already Shipped or Delivered');
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Order cannot be cancelled after shipping' 
+            });
+        }
+
+        order.status = 'Cancelled';
+
+        const user = await User.findById(userId);
+        if (!user) {
+            console.log('User not found for ID:', userId);
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
+
+        user.walletBalance = user.walletBalance || 0;
+        user.walletBalance += order.totalPrice;
+
+        const transaction = new Transaction({
+            userId,
+            type: 'Credit',
+            amount: order.totalPrice,
+            date: new Date(),
+            description: `Refund for cancelled order #${order.orderId}`
+        });
+
+        await Promise.all([order.save(), user.save(), transaction.save()]);
+        console.log(`Order ${orderId} cancelled successfully, refunded ₹${order.totalPrice}`);
+
+        res.json({
+            success: true,
+            message: 'Order cancelled successfully'
+        });
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: `Internal server error: ${error.message}` 
+        });
+    }
+};
+
+
 
 module.exports = {
   loadCheckout,
   placeOrder,
   loadOrder,
-  // loadProfileOrders
+ cancelOrder,
 };

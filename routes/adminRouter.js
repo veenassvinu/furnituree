@@ -38,7 +38,7 @@ router.get("/addproduct",adminAuth,productController.getProductAddPage);
 // router.post("/addproduct",upload.array("productImages",4),productController.addproduct);
 router.post(
   '/add-product',
-  upload.array('productImages', 4), // 5 is max number of images allowed
+  upload.array('productImages', 4), 
   (req, res, next) => {
     if (req.fileValidationError) {
       return res.status(400).send(req.fileValidationError);
@@ -52,7 +52,7 @@ router.get("/edit-product/:id",adminAuth,productController.loadEditProduct);
 router.post(
   "/edit-product/:id",
   adminAuth,
-  upload.array("productImages", 4), // max 4 images
+  upload.array("productImages", 4), 
   productController.editproduct
 );
 router.delete("/delete-image",adminAuth,productController.deleteImage);
@@ -62,8 +62,9 @@ router.get("/adminLogout",adminAuth,adminController.adminLogout);
 
 
 //---------------order mangement----------//
-router.get('/adminorder',orderController.loadOrder)
-
+router.get('/order',orderController.loadOrder)
+router.get('/order/:id', orderController.loadOrderDetails);
+router.patch('/order/:id/status' ,orderController.changeStatus)
 
 
 module.exports=router;

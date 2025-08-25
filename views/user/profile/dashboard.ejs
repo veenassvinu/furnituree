@@ -1,97 +1,56 @@
-<%- include("../../partials/sidebar") %>
+<%- include("../../views/partials/user/header.ejs") %>
+    <%- include("../../views/partials/user/navBar") %>
 
-<link rel="stylesheet" href="/css/profile.css" />
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, sans-serif;
-  }
 
-  body {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    padding: 20px;
-  }
-</style>
+        <link rel="stylesheet" href="/css/profile.css">
 
-<div class="profile-session-container">
-  <div class="container-fluid">
-    <div class="dashboard">
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <a href="/dashboard" class="w-100">
-          <button class="nav-button active w-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-            Dashboard
-          </button>
-        </a>
-        <a href="/profileorder" class="w-100">
-          <button class="nav-button w-100">Orders</button>
-        </a>
-        <a href="/update-profile" class="w-100">
-          <button class="nav-button w-100">Update Profile</button>
-        </a>
-        <a href="/address" class="w-100">
-          <button class="nav-button w-100">My Address</button>
-        </a>
-        <a href="/wallet" class="w-100">
-          <button class="nav-button w-100">Wallet</button>
-        </a>
-        <a href="/logout" class="w-100">
-          <button class="nav-button w-100">Logout</button>
-        </a>
-      </div>
 
-      <!-- Main Content -->
-      <div class="container w-75 h-100 my-5 py-4 rounded shadow-lg bg-light">
-        <div class="dash">
-          <!-- Header Section -->
-          <div class="head1 text-center mb-4">
-            <h2 class="dashboard-title text-success fw-bold">Dashboard</h2>
-          </div>
+        <div class="profile-session-container">
+            <div class="container-fluid">
+                <div class="dashboard">
+                    <!-- Sidebar -->
+                    <%- include("../../views/partials/user/profileSideBar") %>
 
-          <!-- Profile Overview Section -->
-          <div class="profile-overview mb-5">
-            <h3 class="section-title text-secondary border-bottom pb-2">
-              John Doe
-            </h3>
-            <div class="profile-info mt-4">
-              <p class="mb-3">
-                <strong>Name:</strong>
-                <span class="text-dark"><%=userData.username %></span>
-              </p>
-              <p class="mb-3">
-                <strong>Email:</strong>
-                <span class="text-dark"><%=userData.email %></span>
-              </p>
-              <p class="mb-3">
-                <strong>Phone:</strong>
-                <span class="text-muted"
-                  ><% if(userData.phone){ %> <%= userData.phone %> <% }else {%>
-                  Not added <% } %></span
-                >
-              </p>
+                        <!-- Main Content -->
+                        <div class="main-content">
+
+                            <div class="dash">
+                                <!-- Header Section -->
+                                <div class="head1 text-center mb-4">
+                                    <h2 class="dashboard-title text-success fw-bold">Dashboard</h2>
+                                </div>
+
+                                <!-- Profile Overview Section -->
+                                <div class="profile-overview mb-5">
+                                    <h3 class="section-title text-secondary border-bottom pb-2">
+                                        <%= userData.name   %>
+                                    </h3>
+                                    <div class="profile-info mt-4">
+                                        <p class="mb-3">
+                                            <strong>Name:</strong>
+                                            <span class="text-dark">
+                                                <%= userData.name   %>
+                                            </span>
+                                        </p>
+                                        <p class="mb-3">
+                                            <strong>Email:</strong>
+                                            <span class="text-dark">
+                                                <%= userData.email   %>
+                                            </span>
+                                        </p>
+                                        <p class="mb-3">
+                                            <strong>Phone:</strong>
+                                            <span class="text-muted">
+                                                
+                                                <%= userData.phone || "null"  %>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<%- include("../../partials/footer") %>

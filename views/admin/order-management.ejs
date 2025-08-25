@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .menu-icon {
+            width: 25px;
+            height: 18px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: white;
+            margin: 4px 0;
+            transition: 0.3s;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            position: fixed;
+            left: 0;
+            top: 60px;
+            height: calc(100vh - 60px);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .nav-item.active {
+            background-color: #7dd3d8;
+            color: white;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            margin-top: 60px;
+            padding: 20px;
+            min-height: calc(100vh - 60px);
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-header {
+            background: linear-gradient(135deg, #7dd3d8, #5fb3c4);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: linear-gradient(135deg, #7dd3d8, #5fb3c4);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .view-link {
+            color: #7dd3d8;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border: 1px solid #7dd3d8;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .view-link:hover {
+            background-color: #7dd3d8;
+            color: white;
+            text-decoration: none;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-processing {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-shipped {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-delivered {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pagination-button {
+            padding: 10px 15px;
+            background-color: white;
+            color: #7dd3d8;
+            border: 2px solid #7dd3d8;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 45px;
+        }
+
+        .pagination-button:hover:not(.disabled) {
+            background: linear-gradient(135deg, #7dd3d8, #5fb3c4);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .pagination-button.active {
+            background: linear-gradient(135deg, #7dd3d8, #5fb3c4);
+            color: white;
+        }
+
+        .pagination-button.disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pagination-info {
+            margin: 0 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Search Styles */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-container input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 250px;
+        }
+
+        .search-container button {
+            padding: 10px 15px;
+            background-color: #7dd3d8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #5fb3c4;
+        }
+
+        .validation-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 60px;
+                padding: 10px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px 6px;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .pagination-button {
+                padding: 8px 12px;
+                min-width: 40px;
+                font-size: 12px;
+            }
+
+            .pagination-info {
+                margin: 10px 0;
+                order: -1;
+                flex-basis: 100%;
+                text-align: center;
+            }
+
+            .search-container {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .search-container input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <%- include("../../views/partials/admin/sidebar") %>
+    </div>
+
+    <div class="main-content">
+        <div class="content-header">
+            <h2 style="text-align: center">Order Management</h2>
+        </div>
+
+        <!-- Search Container -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by Order ID..." value="<%= searchQuery || '' %>">
+            <button onclick="performSearch()">Search</button>
+            <button onclick="resetSearch()">Reset</button>
+            <div id="validationMessage" class="validation-message"></div>
+        </div>
+        
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Name</th> <!-- Added Name column -->
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total Price</th>
+                        <th>Discount</th>
+                        <th>Final Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (orders && orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
+                            <% const finalAmount = order.totalPrice - (order.discount || 0); %>
+                            <tr>
+                                <td><strong>#<%= order.orderId %></strong></td>
+                                <td><%= order.name || 'N/A' %></td> <!-- Display Name -->
+                                <td><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A' %></td>
+                                <td>
+                                    <span class="status status-<%= (order.status || 'pending').toLowerCase() %>">
+                                        <%= order.status || 'Pending' %>
+                                    </span>
+                                </td>
+                                <td>₹<%= order.totalPrice ? order.totalPrice.toFixed(2) : '0.00' %></td>
+                                <td>₹<%= order.discount ? order.discount.toFixed(2) : '0.00' %></td>
+                                <td><strong>₹<%= finalAmount.toFixed(2) %></strong></td>
+                                <td>
+                                    <a href="/admin/order/<%= order._id %>" class="view-link">View Details</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="8" class="no-orders">No orders found.</td> <!-- Updated colspan to 8 -->
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <% if (orders && orders.length > 0) { %>
+            <div class="pagination-container">
+                <div class="pagination">
+                    <!-- Previous Button -->
+                    <a href="?page=<%= currentPage > 1 ? currentPage - 1 : 1 %>&search=<%= searchQuery || '' %>" 
+                       class="pagination-button <%= currentPage === 1 ? 'disabled' : '' %>">
+                        ← Previous
+                    </a>
+
+                    <!-- Page Numbers -->
+                    <% 
+                        const startPage = Math.max(1, currentPage - 2);
+                        const endPage = Math.min(totalPages, currentPage + 2);
+                    %>
+
+                    <% if (startPage > 1) { %>
+                        <a href="?page=1&search=<%= searchQuery || '' %>" class="pagination-button">1</a>
+                        <% if (startPage > 2) { %>
+                            <span class="pagination-button disabled">...</span>
+                        <% } %>
+                    <% } %>
+
+                    <% for (let p = startPage; p <= endPage; p++) { %>
+                        <a href="?page=<%= p %>&search=<%= searchQuery || '' %>" 
+                           class="pagination-button <%= currentPage === p ? 'active' : '' %>">
+                            <%= p %>
+                        </a>
+                    <% } %>
+
+                    <% if (endPage < totalPages) { %>
+                        <% if (endPage < totalPages - 1) { %>
+                            <span class="pagination-button disabled">...</span>
+                        <% } %>
+                        <a href="?page=<%= totalPages %>&search=<%= searchQuery || '' %>" class="pagination-button"><%= totalPages %></a>
+                    <% } %>
+
+                    <!-- Next Button -->
+                    <a href="?page=<%= currentPage < totalPages ? currentPage + 1 : totalPages %>&search=<%= searchQuery || '' %>" 
+                       class="pagination-button <%= currentPage === totalPages ? 'disabled' : '' %>">
+                        Next →
+                    </a>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        function setActive(clickedItem) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            clickedItem.classList.add('active');
+            
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('open');
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !menuToggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput').value.trim();
+            const validationMessage = document.getElementById('validationMessage');
+
+            // Validation
+            if (searchInput === '') {
+                validationMessage.textContent = 'Please enter an Order ID.';
+                validationMessage.style.display = 'block';
+                return;
+            }
+            if (searchInput.length < 3) {
+                validationMessage.textContent = 'Order ID must be at least 3 characters long.';
+                validationMessage.style.display = 'block';
+                return;
+            }
+
+            // Clear validation message if valid
+            validationMessage.style.display = 'none';
+
+            // Redirect with search query
+            window.location.href = `?page=1&search=${encodeURIComponent(searchInput)}`;
+        }
+
+        const resetSearch=()=>{
+            window.location.href = `/admin/order`
+
+        }
+
+    
+    </script>
+</body>
+</html>

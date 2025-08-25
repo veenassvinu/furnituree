@@ -5,13 +5,17 @@ const { v4: uuidv4 } = require("uuid");
 const orderSchema = new Schema({
   orderId: {
     type: String,
-    default: () => uuidv4(),
+    default: () => "ORD" + uuidv4().split("-")[0],
     unique: true
   },
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true
+  },
+  name: {
+    type: String, 
+    trim: true
   },
   items: [
     {
