@@ -14,7 +14,6 @@ const loadProduct = async (req, res) => {
     const search = req.query.search || "";
     const skip = (page - 1) * limit;
 
-    // Search filter
     const searchFilter = search
       ? {
           $or: [
@@ -59,9 +58,7 @@ const getProductAddPage = async (req, res) => {
 
 const addproduct = async (req, res) => {
   try {
-    // const products = req.body;
     const products = req.body;
-    // Parse images from FormData
     if (req.body.images) {
       if (typeof req.body.images === "string") {
         products.images = [req.body.images];
@@ -71,13 +68,11 @@ const addproduct = async (req, res) => {
     }
     const images = [];
 
-    // Create the output directory if it doesn't exist
     const outputDir = path.join(process.cwd(), "public/uploads/product-images");
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    // Validate image input
     if (
       !products.images ||
       !Array.isArray(products.images) ||
@@ -86,7 +81,6 @@ const addproduct = async (req, res) => {
       return res.status(400).send("Exactly 4 product images are required.");
     }
 
-    // Save and resize each image
     for (let i = 0; i < products.images.length; i++) {
       const base64Image = products.images[i];
       const matches = base64Image.match(
@@ -124,7 +118,6 @@ const addproduct = async (req, res) => {
       return res.status(400).send("Invalid category name.");
     }
 
-    // Create the product document
     const newProduct = new Product({
       productName: products.productName,
       description: products.description,
@@ -145,7 +138,6 @@ const addproduct = async (req, res) => {
   } catch (error) {
     console.error("❌ Error saving product:", error);
 
-    // If Mongoose validation fails, send detailed messages
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((e) => e.message);
       return res.status(400).send(messages.join(", "));
@@ -159,18 +151,15 @@ const loadEditProduct = async (req, res) => {
   try {
     const productId = req.params.id;
 
-    // Fetch the product by ID
     const product = await Product.findById(productId);
     console.log("products data:", product);
 
-    // Fetch all available categories
     const categories = await Category.find();
 
     if (!product) {
       return res.status(404).send("Product not found");
     }
 
-    // Pass both product and categories to the template
     res.render("edit-product", { product, cat: categories });
   } catch (error) {
     console.error("Error loading edit product page:", error);
@@ -206,12 +195,10 @@ const editproduct = async (req, res) => {
 
     await product.save();
 
-    // Redirect to edit page with success parameter instead of directly to product list
     res.redirect(`/admin/edit-product/${req.params.id}?updated=success`);
   } catch (err) {
     console.error("Edit Product Error:", err);
 
-    // Optional: redirect with error parameter
     res.redirect(`/admin/edit-product/${req.params.id}?updated=error`);
   }
 };
@@ -225,27 +212,21 @@ const deleteImage = async (req, res) => {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
-    // Find the product by ID
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    // Check if the image index is valid
     if (!product.productImages || !product.productImages[imageIndex]) {
       return res.status(400).json({ error: "Invalid image index" });
     }
 
-    // Get the image filename to delete
     const imageToDelete = product.productImages[imageIndex];
 
-    // Remove the image from the productImages array
     product.productImages.splice(imageIndex, 1);
 
-    // Save the updated product
     await product.save();
 
-    // Delete the image file from the server
     const imagePath = path.join(
       __dirname,
       "public",
@@ -259,7 +240,6 @@ const deleteImage = async (req, res) => {
       }
     });
 
-    // Send a success response
     res.status(200).json({ message: "Image deleted successfully" });
   } catch (error) {
     console.error("Error deleting image:", error);

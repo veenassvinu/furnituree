@@ -126,7 +126,7 @@ const verifyRegister = async (req, res) => {
       res.render("signUp", { error: "User already exist" });
     } else {
       const otp = generateOtp();
-      const otpExpiration = Date.now() + 5 * 60 * 1000; // 5 minutes
+      const otpExpiration = Date.now() + 5 * 60 * 1000; 
       req.session.otpExpiration = otpExpiration;
 
       const emailSent = await sendVerificationEmail(email, otp);
@@ -192,7 +192,7 @@ const verifyOtp = async (req, res) => {
         name: user.name,
         email: user.email,
         password: passwordHash,
-        otp: otp, // Optionally, you can remove this if not needed in DB
+        otp: otp, 
         otpExpiration: new Date(Date.now() + 5 * 60 * 1000),
       });
 
@@ -203,7 +203,7 @@ const verifyOtp = async (req, res) => {
       req.session.userOtp = null;
       req.session.otpExpiration = null;
       req.session.userData = null;
-      req.session.user = saveUserData._id; // Store the user ID in the session
+      req.session.user = saveUserData._id; 
 
       req.session.errorMessage = "OTP verified successfully!";
 
@@ -321,7 +321,7 @@ const registerUser = async (req, res) => {
       phone,
       password: hashedPassword,
       otp,
-      otpExpiration: Date.now() + 5 * 60 * 1000, // OTP expires in 5 minutes
+      otpExpiration: Date.now() + 5 * 60 * 1000,
     });
 
     await newUser.save();
@@ -359,7 +359,7 @@ const login = async (req, res) => {
 
     // Check if user was found
     if (!findUser) {
-      console.log("User not found with email:", email); // Add logging for debugging
+      console.log("User not found with email:", email); 
       return res.render("login", { message: "User not found" });
     }
 
@@ -389,57 +389,6 @@ const login = async (req, res) => {
     res.render("login", { message: "Login failed. Please try again later" });
   }
 };
-
-// const sendOtpEmail = async (req, res) => {
-//   try {
-//     const user = req.session.userData;
-//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-//     // Store OTP in session
-//     req.session.userOtp = otp;
-//     req.session.otpExpiration = Date.now() + 5 * 60 * 1000;
-
-//     console.log("EMAIL_USER:", process.env.EMAIL_USER);
-//     console.log(
-//       "EMAIL_PASS:",
-//       process.env.EMAIL_PASS ? "Exists ✅" : "Missing ❌"
-//     );
-
-//     console.log("EMAIL_USER:", process.env.EMAIL_USER);
-//     console.log(
-//       "EMAIL_PASS:",
-//       process.env.EMAIL_PASS ? "Exists ✅" : "Missing ❌"
-//     );
-//     console.log("Sending OTP to:", user.email);
-//     console.log("Generated OTP:", otp);
-
-//     // ✅ Set up transporter
-//     const transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS,
-//       },
-//     });
-
-//     const mailOptions = {
-//       from: `"Furniture App" <${process.env.EMAIL_USER}>`,
-//       to: user.email, // ✅ Send to the actual user
-//       subject: "Your OTP Code",
-//       text: `Hello ${user.name},\n\nYour OTP is: ${otp}\nIt is valid for 5 minutes.`,
-//       html: `<p>Hello <b>${user.name}</b>,</p><p>Your OTP is: <b>${otp}</b></p><p>This code is valid for 5 minutes.</p>`,
-//     };
-
-//     await transporter.sendMail(mailOptions);
-
-//     res.json({ success: true, message: "OTP sent successfully to your email" });
-//   } catch (error) {
-//     console.error("❌ Error sending email:", error);
-//     res
-//       .status(500)
-//       .json({ success: false, message: "Failed to send OTP email." });
-//   }
-// };
 
 const sendOtpEmail = async (req, res) => {
   try {
@@ -610,6 +559,7 @@ const productDetails = async (req, res) => {
 const loadContactPage = async(req,res)=>{
   res.render('contact')
 }
+
 module.exports = {
   loadHomepage,
   pageNotFound,

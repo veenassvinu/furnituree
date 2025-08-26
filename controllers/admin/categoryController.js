@@ -10,7 +10,6 @@ const categoryInfo = async (req, res) => {
 
     const search = req.query.search || "";
 
-    // Search filter (case-insensitive search on category name)
     const searchFilter = search
       ? { name: { $regex: search, $options: "i" } }
       : {};
@@ -27,7 +26,7 @@ const categoryInfo = async (req, res) => {
       currentPage: page,
       totalPages,
       totalCategories,
-      search, // ✅ Send search term back to view
+      search, 
     });
   } catch (error) {
     console.error("Error loading categories:", error);
@@ -88,8 +87,8 @@ const addCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
     try {
-        const { id } = req.params; // Extract category ID from route params
-        const { name, description } = req.body; // Extract updated data from request body
+        const { id } = req.params; 
+        const { name, description } = req.body; 
 
         // Check if category exists
         const category = await Category.findById(id);
@@ -111,7 +110,7 @@ const updateCategory = async (req, res) => {
 
 const deleteCategory = async (req, res) => {
     try {
-        const { id } = req.params; // Extract category ID from route params
+        const { id } = req.params; 
 
         // Find and delete the category
         const category = await Category.findByIdAndDelete(id);
@@ -130,11 +129,10 @@ const listCategory = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Update the category's `isListed` field to true
         const category = await Category.findByIdAndUpdate(
             id,
             { isListed: true },
-            { new: true } // Return the updated document
+            { new: true } 
         );
 
         if (!category) {
@@ -152,11 +150,10 @@ const unlistCategory = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Update the category's `isListed` field to false
         const category = await Category.findByIdAndUpdate(
             id,
             { isListed: false },
-            { new: true } // Return the updated document
+            { new: true } 
         );
 
         if (!category) {

@@ -9,23 +9,18 @@ const loadOrder = async (req, res) => {
     const limit = 6;
     const skip = (page - 1) * limit;
 
-    // Search parameter
     let searchQuery = req.query.search || '';
 
-    // ✅ Strip # if user typed it
     if (searchQuery.startsWith("#")) {
       searchQuery = searchQuery.substring(1);
     }
 
-    // Build query
     let query = {};
     let userIds = [];
 
     if (searchQuery) {
-      // Import User model
       const User = require("../../models/userSchema");
 
-      // ✅ First: find users whose name matches the search
       const matchedUsers = await User.find(
         { name: { $regex: searchQuery, $options: "i" } },
         "_id"
@@ -33,7 +28,6 @@ const loadOrder = async (req, res) => {
 
       userIds = matchedUsers.map(u => u._id);
 
-      // ✅ Query can match either orderId OR userId from matched users
       query = {
         $or: [
           { orderId: { $regex: searchQuery, $options: "i" } },
@@ -42,16 +36,15 @@ const loadOrder = async (req, res) => {
       };
     }
 
-    // Fetch total orders count and paginated orders
     const totalOrders = await Order.countDocuments(query);
     const orders = await Order.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate("userId", "name") // ✅ populate user name
+      .populate("userId", "name") 
+      
       .lean();
 
-    // Map user name into order
     for (let order of orders) {
       order.name = order.userId?.name || "N/A";
     }
@@ -74,8 +67,6 @@ const loadOrder = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
-
-
 
 const loadOrderDetails = async (req, res) => {
   try {

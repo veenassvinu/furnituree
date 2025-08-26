@@ -332,7 +332,6 @@ const updateAddress = async (req, res) => {
       });
     }
 
-    // Validate email if provided
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ 
         success: false, 
@@ -340,7 +339,6 @@ const updateAddress = async (req, res) => {
       });
     }
 
-    // Validate pincode
     if (!/^\d{6}$/.test(pincode)) {
       return res.status(400).json({ 
         success: false, 
@@ -386,7 +384,6 @@ const updateAddress = async (req, res) => {
   }
 };
 
-// Delete Address Function
 const deleteAddress = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -433,14 +430,12 @@ const loadProfileOrder = async (req, res) => {
       return res.redirect("/login");
     }
 
-    // Pagination parameters
     const page = parseInt(req.query.page) || 1;
-    const limit = 5; // Increased from 3 for better UX
+    const limit = 5; 
     const skip = (page - 1) * limit;
     
     console.log(`Orders page - User ID: ${userId}, Page: ${page}, Skip: ${skip}, Limit: ${limit}`);
 
-    // Fetch total orders count and paginated orders
     const totalOrders = await Order.countDocuments({ userId });
     console.log(`Total orders: ${totalOrders}`);
     
@@ -548,9 +543,6 @@ const addWalletMoney = async (req, res) => {
     // Add money to wallet
     user.walletBalance += amountNum;
     await user.save();
-
-    // TODO: Add transaction history record here
-    // You can create a separate Transaction model for this
 
     res.json({
       success: true,

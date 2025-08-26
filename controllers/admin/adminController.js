@@ -17,39 +17,8 @@ const loadLogin = (req, res) => {
   if (req.session.admin) {
     return res.redirect("/admin/dashboard");
   }
-  res.render("admin-login", { message: null }); // allow message injection
+  res.render("admin-login", { message: null }); 
 };
-
-
-// const login = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const admin = await User.findOne({ email, isAdmin: true });
-
-//     if (!admin) {
-//       return res.render("admin-login", {
-//         message: "Admin not found. Please check your credentials.",
-//       });
-//     }
-
-//     const passwordMatch = await bcrypt.compare(password, admin.password);
-//     if (!passwordMatch) {
-//       return res.render("admin-login", {
-//         message: "Incorrect password. Please try again.",
-//       });
-//     }
-
-//     // Login success
-//     req.session.admin = true;
-//     req.session.successMessage = "Welcome Admin!";
-//     return res.redirect("/admin/dashboard");
-
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     return res.redirect("/pageerror");
-//   }
-// };
 
 const login = async (req, res) => {
   try {
@@ -61,7 +30,7 @@ const login = async (req, res) => {
       return res.render("admin-login", {
         emailError: "Admin not found. Please check your email.",
         passwordError: "",
-        email, // keep typed email
+        email, 
       });
     }
 
@@ -70,7 +39,7 @@ const login = async (req, res) => {
       return res.render("admin-login", {
         emailError: "",
         passwordError: "Incorrect password. Please try again.",
-        email, // keep typed email
+        email, 
       });
     }
 
@@ -104,7 +73,6 @@ const loadDashboard = async (req, res) => {
 
 const adminLogout = async (req, res) => {
 try {
-  // Destroy session
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ 
@@ -114,7 +82,7 @@ try {
     }
     
     // Clear session cookie
-    res.clearCookie('connect.sid');  // Adjust cookie name if different
+    res.clearCookie('connect.sid');  
     
     // Send successful logout response
     res.json({ 

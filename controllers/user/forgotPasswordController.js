@@ -2,9 +2,8 @@ const User = require("../../models/userSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
-const session = require("express-session"); // Assume this is configured in app.js
+const session = require("express-session"); 
 
-// 👉 Render Forgot Password Page (Email Input)
 const getForgotPasswordPage = async (req, res) => {
   try {
     res.render("forgot-password/forgot-password");
@@ -14,10 +13,9 @@ const getForgotPasswordPage = async (req, res) => {
   }
 };
 
-// 👉 Render Reset Password Page (Change Password)
 const getResetPasswordPage = async (req, res) => {
   try {
-    const email = req.query.email; // Passed from OTP verification
+    const email = req.query.email; 
     if (!email) {
       return res.status(400).send("Email not provided");
     }
@@ -28,7 +26,6 @@ const getResetPasswordPage = async (req, res) => {
   }
 };
 
-// 👉 Render Enter OTP Page (with email passed via query)
 const loadEmailPage = async (req, res) => {
   try {
     const email = req.query.email;
@@ -42,11 +39,10 @@ const loadEmailPage = async (req, res) => {
   }
 };
 
-// 👉 Send OTP to user's email
 const sendForgotOtp = async (req, res) => {
   try {
-    console.log("Full request object:", req); // Debug full request
-    console.log("Received req.body:", req.body); // Debug body
+    console.log("Full request object:", req); 
+    console.log("Received req.body:", req.body); 
 
     const { email } = req.body;
     if (!email) {
@@ -62,7 +58,7 @@ const sendForgotOtp = async (req, res) => {
 
     // Generate OTP and expiration (5 minutes)
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiration = Date.now() + 5 * 60 * 1000; // 5 minutes
+    const otpExpiration = Date.now() + 5 * 60 * 1000; 
 
     // Store in session
     req.session.otp = otp;
@@ -81,7 +77,7 @@ const sendForgotOtp = async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: email, // Line 413 - This was the error point
+      to: email, 
       subject: "Your OTP for Password Reset",
       text: `Your OTP is ${otp}. It expires in 5 minutes.`,
     };
@@ -100,7 +96,6 @@ const sendForgotOtp = async (req, res) => {
   }
 };
 
-// 👉 Verify OTP
 const verifyForgotOtp = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -135,51 +130,7 @@ const verifyForgotOtp = async (req, res) => {
   }
 };
 
-// 👉 Resend OTP
-// const resendOtp = async (req, res) => {
-//   try {
-//     const email = req.session.forgotEmail;
 
-//     if (!email) {
-//       return res.json({ success: false, message: "No email found. Please start the process again." });
-//     }
-
-//     // Generate new OTP and expiration
-//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//     const otpExpiration = Date.now() + 5 * 60 * 1000;
-
-//     // Update session
-//     req.session.otp = otp;
-//     req.session.otpExpiration = otpExpiration;
-
-//     console.log("Resending OTP to:", email, "OTP:", otp);
-
-//     const transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS,
-//       },
-//     });
-
-//     const mailOptions = {
-//       from: process.env.EMAIL_USER,
-//       to: email,
-//       subject: "Resent OTP for Password Reset",
-//       text: `Your new OTP is: ${otp}. It expires in 5 minutes.`,
-//     };
-
-//     await transporter.sendMail(mailOptions);
-//     console.log("Resend OTP sent successfully to", email, "at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
-
-//     return res.json({ success: true, message: "OTP resent successfully" });
-//   } catch (error) {
-//     console.error("Resend OTP Error at", new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }), ":", error);
-//     res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again." });
-//   }
-// };
-
-// 👉 Resend OTP
 const resendOtp = async (req, res) => {
   try {
     const email = req.session.forgotEmail;
@@ -223,7 +174,6 @@ const resendOtp = async (req, res) => {
   }
 };
 
-// 👉 Update Password
 const updatePassword = async (req, res) => {
   try {
     const { email, password, confirmPassword } = req.body;

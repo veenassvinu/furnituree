@@ -189,50 +189,6 @@
 
 
 
-                <!-- 
-                <script>
-                    document.getElementById("placeOrderBtn").addEventListener("click", async () => {
-                        const selectedAddress = document.querySelector("input[name='selectedAddress']:checked");
-
-                        if (!selectedAddress) {
-                            alert("Please select an address");
-                            return;
-                        }
-
-                        const selectedAddressIndex = selectedAddress.value;  // ✅ Get index
-
-                        const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value;
-
-                        if (!paymentMethod) {
-                            alert("Please select a payment method");
-                            return;
-                        }
-
-                        try {
-                            const response = await fetch("/place-order", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    selectedAddressIndex,   // ✅ send index to backend
-                                    paymentMethod
-                                })
-                            });
-
-                            const data = await response.json();
-
-                            if (data.success) {
-                                alert("Order placed successfully!");
-                                window.location.href = "/orders";
-                            } else {
-                                alert(data.error || "Error placing order");
-                            }
-                        } catch (err) {
-                            console.error("Error placing order:", err);
-                            alert("Something went wrong");
-                        }
-                    });
-                </script> -->
-
                 <script>
                     document.getElementById("placeOrderBtn").addEventListener("click", async () => {
                         // Get selected address

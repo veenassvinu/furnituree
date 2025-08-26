@@ -26,12 +26,12 @@ const loadCheckout = async (req, res) => {
 
     if (cart && cart.items.length > 0) {
       cartItems = cart.items.map((item) => {
-        total += item.productId.salePrice * item.quantity; // using salePrice
+        total += item.productId.salePrice * item.quantity;
         return {
           name: item.productId.name,
           price: item.productId.salePrice,
           quantity: item.quantity,
-          image: item.productId.productImages[0], // take first image
+          image: item.productId.productImages[0], 
         };
       });
     }
@@ -48,130 +48,15 @@ const loadCheckout = async (req, res) => {
   }
 };
 
-// const placeOrder = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     const { selectedAddress, paymentMethod } = req.body;
-
-//     if (!userId) {
-//       return res.status(401).json({ message: "User not logged in" });
-//     }
-
-//     const cart = await Cart.findOne({ userId }).populate("items.productId");
-//     if (!cart || cart.items.length === 0) {
-//       return res.status(400).json({ message: "Cart is empty" });
-//     }
-
-//     // Calculate total price
-//     const totalPrice = cart.items.reduce((acc, item) => {
-//       return acc + item.productId.price * item.quantity;
-//     }, 0);
-
-//     const user = await User.findById(userId);
-
-//     console.log("User object:", user);
-//     console.log("Selected address index:", selectedAddress);
-//     console.log("User addresses:", user.address);
-
-//     if (!user || !user.addresses || !user.address[selectedAddress]) {
-//       return res.status(400).json({ message: "Invalid address" });
-//     }
-
-//     const order = new Order({
-//       userId,
-//       items: cart.items.map(item => ({
-//         productId: item.productId._id,
-//         quantity: item.quantity,
-//         price: item.productId.price
-//       })),
-//       address: user.address[selectedAddress],  // ✅ Safe
-//       totalPrice: totalPrice,
-//       paymentMethod,
-//       status: "Pending",
-//       createdAt: new Date()
-//     });
-
-//     await order.save();
-
-//     // clear cart
-//     cart.items = [];
-//     await cart.save();
-
-//     res.status(200).json({ message: "Order placed successfully", orderId: order._id });
-
-//   } catch (err) {
-//     console.error("Error placing order:", err);
-//     res.status(500).json({ message: "Error placing order", error: err.message });
-//   }
-// };
-
-
-// const placeOrder = async (req, res) => {
-//   try {
-//     const { selectedAddressIndex, paymentMethod } = req.body;
-
-//     if (!user || !user.address || !user.address[selectedAddressIndex]) {
-//       return res.status(400).json({ message: "Invalid address" });
-//     }
-
-//     const cart = await Cart.findOne({ userId }).populate("items.productId");
-//     if (!cart || cart.items.length === 0) {
-//       return res.status(400).json({ success: false, error: "Cart is empty" });
-//     }
-
-//     // Calculate total price
-//     const totalPrice = cart.items.reduce((acc, item) => {
-//       return acc + item.productId.price * item.quantity;
-//     }, 0);
-
-//     // ✅ Fetch addresses from Address collection
-//     const addressDoc = await Address.findOne({ userId });
-//     console.log("Address", addressDoc);
-
-//     if (!addressDoc || !addressDoc.address[selectedAddressIndex]) {
-//       return res.status(400).json({ success: false, error: "Invalid address" });
-//     }
-
-//     const order = new Order({
-//       userId,
-//       items: cart.items.map((item) => ({
-//         productId: item.productId._id,
-//         quantity: item.quantity,
-//         price: item.productId.price,
-//       })),
-//       address: addressDoc.address[selectedAddressIndex], // ✅ Correct source
-//       totalPrice,
-//       paymentMethod,
-//       status: "Pending",
-//       createdAt: new Date(),
-//     });
-
-//     await order.save();
-
-//     // Clear cart
-//     cart.items = [];
-//     await cart.save();
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Order placed successfully",
-//       orderId: order._id,
-//     });
-//   } catch (err) {
-//     console.error("Error placing order:", err);
-//     res.status(500).json({ success: false, error: err.message });
-//   }
-// };
 const placeOrder = async (req, res) => {
   try {
-    const userId = req.session.user; // ✅ assuming user session holds userId
+    const userId = req.session.user; 
     const { selectedAddressIndex, paymentMethod } = req.body;
 
     if (!userId) {
       return res.status(401).json({ success: false, error: "Unauthorized" });
     }
 
-    // ✅ Fetch user addresses
     const addressDoc = await Address.findOne({ userId });
     if (!addressDoc || !addressDoc.address[selectedAddressIndex]) {
       return res
@@ -180,18 +65,15 @@ const placeOrder = async (req, res) => {
     }
     const deliveryAddress = addressDoc.address[selectedAddressIndex];
 
-    // ✅ Fetch cart
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ success: false, error: "Cart is empty" });
     }
 
-    // ✅ Calculate total
     const totalPrice = cart.items.reduce((acc, item) => {
       return acc + item.productId.salePrice * item.quantity;
     }, 0);
 
-    // ✅ Create new order
     const order = new Order({
       userId,
       items: cart.items.map((item) => ({
@@ -199,19 +81,17 @@ const placeOrder = async (req, res) => {
         quantity: item.quantity,
         price: item.productId.salePrice,
       })),
-      address: deliveryAddress, // save full snapshot
+      address: deliveryAddress, 
       totalPrice,
-      paymentMethod, // e.g., COD
+      paymentMethod, 
       status: paymentMethod === "COD" ? "Pending" : "Processing",
     });
 
     await order.save();
 
-    // ✅ Clear cart after placing order
     cart.items = [];
     await cart.save();
 
-    // ✅ Response
     return res.status(200).json({
       success: true,
       message: "Order placed successfully",
