@@ -7,6 +7,7 @@ const  { userAuth,adminAuth}=require("../middlewares/auth");
 const productController=require("../controllers/admin/productController");
 const upload = require('../middlewares/multer');
 const orderController=require("../controllers/admin/orderController")
+const couponController=require("../controllers/admin/couponController");
 
 
 
@@ -66,5 +67,12 @@ router.get('/order',orderController.loadOrder)
 router.get('/order/:id', orderController.loadOrderDetails);
 router.patch('/order/:id/status' ,orderController.changeStatus)
 
+
+
+//---------------coupon management-------//
+router.get("/coupon", couponController.loadCoupon);
+router.post("/coupon/create", couponController.createCoupon);
+router.post("/coupon/update/:id", couponController.updateCoupon);
+router.post("/coupon/delete/:id", couponController.deleteCoupon);
 
 module.exports=router;

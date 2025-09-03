@@ -1,212 +1,239 @@
 <%- include("../../views/partials/user/header.ejs")%>
 
-  <style>
-    .zoom-container {
-      position: relative;
-      width: 400px;
-      height: 400px;
-      overflow: hidden;
-      cursor: zoom-in;
-    }
+<style>
+  .zoom-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
 
-    .zoom-container.zoomed {
-      cursor: zoom-out;
-    }
+  .zoom-container.zoomed {
+    cursor: zoom-out;
+  }
 
-    .main-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
+  .main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
 
-    .zoom-container.zoomed .main-image {
-      transform: scale(2);
-      transform-origin: center center;
-    }
+  .zoom-container.zoomed .main-image {
+    transform: scale(2);
+    transform-origin: center center;
+  }
 
-    .regular-price {
-      font-size: 18px;
-      color: #999;
-      text-decoration: line-through;
-      margin-right: 8px;
-    }
+  .regular-price {
+    font-size: 18px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 8px;
+  }
 
-    .sale-price {
-      font-size: 22px;
-      color: #d9534f;
-      font-weight: bold;
-    }
-  </style>
+  .sale-price {
+    font-size: 22px;
+    color: #d9534f;
+    font-weight: bold;
+  }
+</style>
 
-  <body>
-    <header>
-      <%- include("../../views/partials/user/navBar.ejs")%>
-    </header>
+<body>
+  <header>
+    <%- include("../../views/partials/user/navBar.ejs")%>
+  </header>
 
-    <!-- Hero Section -->
-    <div class="hero">
-      <div class="container">
-        <div class="row justify-content-between">
-          <div class="col-lg-5">
-            <div class="intro-excerpt">
-              <h1>Product Details</h1>
-            </div>
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="container">
+      <div class="row justify-content-between">
+        <div class="col-lg-5">
+          <div class="intro-excerpt">
+            <h1>Product Details</h1>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Product Details Section -->
-    <div class="container my-5">
-      <div class="row">
+  <!-- Product Details Section -->
+  <div class="container my-5">
+    <div class="row">
 
-        <!-- Product Images -->
-        <div class="col-12 col-md-6 mb-4">
-          <div class="zoom-container">
-            <% if (product.productImages && product.productImages.length> 0) { %>
-              <img src="/uploads/product-images/<%= product.productImages[0] %>" class="img-fluid main-image"
-                alt="Main Image">
-              <% } else { %>
-                <img src="/images/default-product.jpg" class="img-fluid main-image" alt="No Image">
-                <% } %>
-          </div>
-
-          <div class="small-images mt-3">
-            <div class="row">
-              <% for (let i=1; i < product.productImages.length; i++) { %>
-                <div class="col-4">
-                  <img src="/uploads/product-images/<%= product.productImages[i] %>" class="img-fluid small-image"
-                    alt="Alternate View <%= i %>">
-                </div>
-                <% } %>
-            </div>
-          </div>
+      <!-- Product Images -->
+      <div class="col-12 col-md-6 mb-4">
+        <div class="zoom-container">
+          <% if (product.productImages && product.productImages.length > 0) { %>
+            <img src="/uploads/product-images/<%= product.productImages[0] %>" class="img-fluid main-image"
+              alt="Main Image">
+          <% } else { %>
+            <img src="/images/default-product.jpg" class="img-fluid main-image" alt="No Image">
+          <% } %>
         </div>
 
-        <!-- Product Info -->
-        <div class="col-12 col-md-6 mb-4">
-          <h2 class="product-title">
-            <%= product.productName.toUpperCase() %>
-          </h2>
-          <div class="rating mb-3">
-            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-            <span class="ms-2">(4.5/5)</span>
+        <div class="small-images mt-3">
+          <div class="row">
+            <% for (let i = 1; i < product.productImages.length; i++) { %>
+              <div class="col-4">
+                <img src="/uploads/product-images/<%= product.productImages[i] %>" class="img-fluid small-image"
+                  alt="Alternate View <%= i %>">
+              </div>
+            <% } %>
           </div>
+        </div>
+      </div>
 
-          <p class="mb-4">
-            <% if (product.originalPrice && product.salePrice && product.salePrice < product.originalPrice) { %>
-              <span class="regular-price">₹<%= product.originalPrice.toLocaleString('en-IN') %></span>
-              <% } %>
-                <span class="sale-price">₹<%= product.salePrice.toLocaleString('en-IN') %></span>
+      <!-- Product Info -->
+      <div class="col-12 col-md-6 mb-4">
+        <h2 class="product-title">
+          <%= product.productName.toUpperCase() %>
+        </h2>
+        <div class="rating mb-3">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          <span class="ms-2">(4.5/5)</span>
+        </div>
+
+        <p class="mb-4">
+          <% if (product.originalPrice && product.salePrice && product.salePrice < product.originalPrice) { %>
+            <span class="regular-price">₹<%= product.originalPrice.toLocaleString('en-IN') %></span>
+          <% } %>
+          <span class="sale-price">₹<%= product.salePrice.toLocaleString('en-IN') %></span>
+        </p>
+
+        <div class="product-description mb-4">
+          <p>
+            <%= product.description %>
           </p>
+        </div>
 
-          <div class="product-description mb-4">
-            <p>
-              <%= product.description %>
-            </p>
-          </div>
+        <h4>Stock</h4>
+        <p class="price text-primary mb-4">
+          <% if (product.quantity > 0) { %>
+            In stock: <%= product.quantity %>
+          <% } else { %>
+            <span class="text-danger">Out of stock</span>
+          <% } %>
+        </p>
 
-          <h4>Stock</h4>
-          <p class="price text-primary mb-4">
-            <% if (product.quantity> 0) { %>
-              In stock: <%= product.quantity %>
-                <% } else { %>
-                  <span class="text-danger">Out of stock</span>
-                  <% } %>
-          </p>
-          <!-- <a href="/cart" class="btn btn-primary btn-lg w-100 mb-4">Add to Cart</a> -->
+        <!-- ✅ Add to Cart button only if stock available -->
+        <% if (product.quantity > 0) { %>
           <button class="btn btn-primary add-to-cart-btn" data-id="<%= product._id %>">
             Add to Cart
           </button>
-
-        </div>
+        <% } else { %>
+          <button class="btn btn-secondary" disabled>
+            Out of Stock
+          </button>
+        <% } %>
       </div>
     </div>
+  </div>
 
-    <!-- Similar Products -->
-    <div class="untree_co-section product-section before-footer-section">
-      <div class="container">
-        <h2 class="text-center pb-5">Similar Products</h2>
-        <div class="row">
-          <% for(let i=0; i<products.length; i++){ %>
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-              <a class="product-item" href="/productDetails/<%= products[i]._id %>">
-                <img src="/uploads/product-images/<%= products[i].productImages[0] %>"
-                  class="img-fluid product-thumbnail">
-                <h3 class="product-title">
-                  <%= products[i].productName %>
-                </h3>
+  <!-- Similar Products -->
+  <div class="untree_co-section product-section before-footer-section">
+    <div class="container">
+      <h2 class="text-center pb-5">Similar Products</h2>
+      <div class="row">
+        <% for(let i=0; i<products.length; i++){ %>
+          <div class="col-12 col-md-4 col-lg-3 mb-5">
+            <a class="product-item" href="/productDetails/<%= products[i]._id %>">
+              <img src="/uploads/product-images/<%= products[i].productImages[0] %>"
+                class="img-fluid product-thumbnail">
+              <h3 class="product-title">
+                <%= products[i].productName %>
+              </h3>
 
-                <p>
-                  <% if (products[i].originalPrice && products[i].salePrice && products[i].salePrice <
-                    products[i].originalPrice) { %>
-                    <span class="regular-price">₹<%= products[i].originalPrice.toLocaleString('en-IN') %></span>
-                    <% } %>
-                      <span class="sale-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span>
-                </p>
+              <p>
+                <% if (products[i].originalPrice && products[i].salePrice && products[i].salePrice <
+                  products[i].originalPrice) { %>
+                  <span class="regular-price">₹<%= products[i].originalPrice.toLocaleString('en-IN') %></span>
+                <% } %>
+                <span class="sale-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span>
+              </p>
 
-                <span class="icon-cross">
-                  <img src="images/cross.svg" class="img-fluid">
-                </span>
-              </a>
-            </div>
-            <% } %>
-        </div>
+              <span class="icon-cross">
+                <img src="images/cross.svg" class="img-fluid">
+              </span>
+            </a>
+          </div>
+        <% } %>
       </div>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <footer>
-      <%- include("../../views/partials/user/footer.ejs") %>
-    </footer>
+  <!-- Footer -->
+  <footer>
+    <%- include("../../views/partials/user/footer.ejs") %>
+  </footer>
 
-    <!-- Scripts -->
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <script>
-      const zoomContainer = document.querySelector('.zoom-container');
-      const mainImage = document.querySelector('.main-image');
+  <!-- Scripts -->
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const zoomContainer = document.querySelector('.zoom-container');
+    const mainImage = document.querySelector('.main-image');
 
-      document.querySelectorAll('.small-image').forEach(image => {
-        image.addEventListener('click', () => {
-          mainImage.src = image.src;
-          zoomContainer.classList.remove('zoomed');
-        });
+    document.querySelectorAll('.small-image').forEach(image => {
+      image.addEventListener('click', () => {
+        mainImage.src = image.src;
+        zoomContainer.classList.remove('zoomed');
       });
+    });
 
-      zoomContainer.addEventListener('click', () => {
-        zoomContainer.classList.toggle('zoomed');
-      });
+    zoomContainer.addEventListener('click', () => {
+      zoomContainer.classList.toggle('zoomed');
+    });
 
-      zoomContainer.addEventListener('mousemove', function (e) {
-        if (!zoomContainer.classList.contains('zoomed')) return;
-        const rect = zoomContainer.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        mainImage.style.transformOrigin = `${x}% ${y}%`;
-      });
-    </script>
-    <script>
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+    zoomContainer.addEventListener('mousemove', function (e) {
+      if (!zoomContainer.classList.contains('zoomed')) return;
+      const rect = zoomContainer.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      mainImage.style.transformOrigin = `${x}% ${y}%`;
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
         btn.addEventListener("click", async (e) => {
-            e.preventDefault();
-            const productId =  e.currentTarget.dataset.id;;
+          e.preventDefault();
+          const productId = e.currentTarget.dataset.id;
 
+          try {
             const res = await fetch(`/add-to-cart/${productId}`, { method: "POST" });
             const data = await res.json();
 
             if (data.success) {
-                alert("Product added to cart!");
+              Swal.fire({
+                icon: "success",
+                title: "Added to Cart!",
+                text: "The product was successfully added to your cart.",
+                showConfirmButton: false,
+                timer: 1500
+              });
             } else {
-                alert(data.message || "Something went wrong");
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: data.message || "Something went wrong",
+              });
             }
+          } catch (error) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Unable to add product. Please try again later.",
+            });
+          }
         });
+      });
     });
-});
-</script>
+  </script>
 
-  </body>
-
-  </html>
+  <script src="/js/common.js"></script>
+</body>
+</html>

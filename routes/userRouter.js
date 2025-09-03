@@ -92,12 +92,14 @@ router.get('/logout', async (req,res)=>{
 
 
 //---------------cart section-----------//
+
 router.get("/cart", cartController.loadCartPage);
 router.post("/add-to-cart/:productId", cartController.addToCart);
 router.delete("/remove-from-cart/:id", cartController.removeFromCart);
 router.put("/update-cart-quantity", cartController.updateQuantity);
+router.get("/get-product-stock/:productId", cartController.getProductStock);
+router.get("/get-cart-count", cartController.getCartCount);
 router.get("/update-time", cartController.updateTime);
-
 
 
 //--------------forgot password-----------//

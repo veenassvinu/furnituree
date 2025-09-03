@@ -228,6 +228,8 @@ const addAddress = async (req, res) => {
       country,
     } = req.body;
 
+    console.log(req.body)
+
     // Validate required fields
     if (!addressType || !name || !phone || !landMark || !city || !state || !pincode || !country) {
       return res.status(400).json({ 

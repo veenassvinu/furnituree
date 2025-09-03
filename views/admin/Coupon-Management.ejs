@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UrbanWorn - Coupon Management</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
         body {
-            background-color: #4a4a4a;
+            background: #f4f6f9;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
 
         .container {
@@ -21,247 +16,575 @@
             min-height: 100vh;
         }
 
-        /* Sidebar Styles */
         .sidebar {
             width: 250px;
-            background-color: white;
+            background: #fff;
             padding: 20px;
+            border-right: 1px solid #ddd;
         }
 
-        .logo {
-            font-size: 24px;
-            color: #5cc6ba;
-            margin-bottom: 30px;
-        }
-
-        .nav-item {
-            padding: 12px 0;
-            color: #333;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .nav-item:hover {
-            color: #5cc6ba;
-        }
-
-        /* Main Content Styles */
         .main-content {
             flex: 1;
+            padding: 20px;
             display: flex;
             gap: 20px;
+        }
+
+        .table-section,
+        .form-section {
+            background: #fff;
+            border-radius: 8px;
             padding: 20px;
-            margin: 20px;
         }
 
         .table-section {
             flex: 2;
-            background-color: white;
-            border-radius: 8px;
         }
 
         .form-section {
             flex: 1;
-            background-color: #5cc6ba;
-            padding: 20px;
-            border-radius: 8px;
+            background: #5cc6ba;
+            color: #fff;
         }
 
-        /* Search Bar */
+        .top-bar {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
         .search-container {
-            margin-bottom: 30px;
-            padding: 0 20px;
+            display: flex;
+            margin-bottom: 20px;
         }
 
         .search-input {
-            width: calc(100% - 100px);
-            padding: 10px;
-            border: none;
-            background-color: #1e2124;
-            color: white;
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
             border-radius: 4px;
         }
 
         .search-button {
-            padding: 10px 20px;
-            background-color: #0099ff;
-            color: white;
-            border: none;
-            border-radius: 4px;
             margin-left: 10px;
+            padding: 8px 16px;
+            border: none;
+            background: #0099ff;
+            color: #fff;
+            border-radius: 4px;
             cursor: pointer;
         }
 
-        /* Coupon Table */
-        .coupon-table {
+        .section-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 2px solid transparent;
+            color: #666;
+        }
+
+        .tab-button.active {
+            color: #0099ff;
+            border-bottom-color: #0099ff;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
             width: 100%;
             border-collapse: collapse;
-            padding: 0 20px;
         }
 
-        .coupon-table th {
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f9f9f9;
             text-align: left;
-            padding: 15px 10px;
-            border-bottom: 1px solid #eee;
-            color: #666;
-            font-weight: normal;
         }
 
-        .coupon-table td {
-            padding: 15px 10px;
-            border-bottom: 1px solid #eee;
+        .update-button,
+        .delete-button {
+            padding: 5px 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
         }
 
         .update-button {
-            padding: 5px 15px;
-            background-color: transparent;
-            color: #00c853;
             border: 1px solid #00c853;
-            border-radius: 4px;
-            cursor: pointer;
+            color: #00c853;
+            background: transparent;
         }
 
         .delete-button {
-            padding: 5px 15px;
-            background-color: transparent;
-            color: #f44336;
             border: 1px solid #f44336;
-            border-radius: 4px;
-            cursor: pointer;
+            color: #f44336;
+            background: transparent;
         }
 
-        /* Form Styles */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            color: white;
             margin-bottom: 5px;
+            font-size: 14px;
         }
 
         .form-group input {
             width: 100%;
             padding: 8px;
-            border: none;
             border-radius: 4px;
+            border: none;
         }
 
         .create-button {
-            padding: 10px 20px;
-            background-color: #0099ff;
-            color: white;
+            padding: 10px 15px;
+            background: #0099ff;
+            color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            width: auto;
         }
 
-        .top-bar {
-            background-color: #5cc6ba;
-            padding: 15px;
-            color: white;
-            font-size: 20px;
-            border-radius: 4px 4px 0 0;
-            display: flex;
-            justify-content: space-between;
+        .cancel-button {
+            padding: 10px 15px;
+            background: #f44336;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
         }
 
-        .controls {
-            display: flex;
-            gap: 10px;
+        .deleted-coupon {
+            background-color: #f5f5f5;
+            color: #666;
         }
 
-        .control-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+        .deleted-coupon .update-button,
+        .deleted-coupon .delete-button {
+            pointer-events: none;
+            cursor: not-allowed;
+            opacity: 0.5;
         }
 
-        .green-dot {
-            background-color: #4CAF50;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
         }
 
-        .red-dot {
-            background-color: #f44336;
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            position: relative;
+        }
+
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-expired {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .status-active {
+            background-color: #e8f5e8;
+            color: #2e7d32;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <div class="sidebar">
-            <div class="logo">UrbanWorn</div>
-            <div class="nav-item">Dashboard</div>
-            <div class="nav-item">User Management</div>
-            <div class="nav-item">Products Management</div>
-            <div class="nav-item">Order Management</div>
-            <div class="nav-item">Category Management</div>
-            <div class="nav-item">Coupon Management</div>
-            <div class="nav-item">Offers Management</div>
-        </div>
-        <div class="main-content">
-            <div class="table-section">
-                <div class="top-bar">
-                    UrbanWorn
-                    <div class="controls">
-                        <div class="control-dot green-dot"></div>
-                        <div class="control-dot red-dot"></div>
+        <%- include("../../views/partials/admin/sidebar") %>
+
+            <div class="main-content">
+                <!-- Table Section -->
+                <div class="table-section">
+                    <div class="top-bar">Coupon Management</div>
+
+                    <form method="get" action="/admin/coupon" class="search-container">
+                        <input type="text" name="search" class="search-input" placeholder="Search coupons"
+                            value="<%= search || '' %>">
+                        <button type="submit" class="search-button">Search</button>
+                    </form>
+
+                    <!-- Section Tabs -->
+                    <div class="section-tabs">
+                        <button class="tab-button active" onclick="switchTab('active')">Active Coupons</button>
+                        <button class="tab-button" onclick="switchTab('deleted')">Previously Used Coupons</button>
+                    </div>
+
+                    <!-- Active Coupons Table -->
+                    <div id="active-tab" class="tab-content active">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Discount</th>
+                                    <th>Min Price</th>
+                                    <th>Valid From</th>
+                                    <th>Valid Until</th>
+                                    <th>Status</th>
+                                    <th>Update</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% const activeCoupons = coupons.filter(coupon => !coupon.isDeleted); %>
+                                <% if(activeCoupons.length === 0) { %>
+                                    <tr>
+                                        <td colspan="8" style="text-align:center;">No active coupons found</td>
+                                    </tr>
+                                <% } else { %>
+                                    <% activeCoupons.forEach(coupon => { %>
+                                        <% const isExpired = new Date(coupon.expireOn) < new Date(); %>
+                                        <tr id="row-<%= coupon._id %>">
+                                            <td><%= coupon.name %></td>
+                                            <td><%= coupon.offerPrice %></td>
+                                            <td>₹<%= coupon.minimumPrice %></td>
+                                            <td><%= coupon.createOn.toISOString().split("T")[0] %></td>
+                                            <td><%= coupon.expireOn.toISOString().split("T")[0] %></td>
+                                            <td>
+                                                <span class="status-badge <%= isExpired ? 'status-expired' : 'status-active' %>">
+                                                    <%= isExpired ? 'Expired' : 'Active' %>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="update-button"
+                                                    onclick='openEditModal(`<%- JSON.stringify(coupon) %>`)'>
+                                                    Update
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="delete-button"
+                                                    onclick="deleteCoupon('<%= coupon._id %>')">
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Previously Used Coupons Table -->
+                    <div id="deleted-tab" class="tab-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Discount</th>
+                                    <th>Min Price</th>
+                                    <th>Valid From</th>
+                                    <th>Valid Until</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% const deletedCoupons = coupons.filter(coupon => coupon.isDeleted); %>
+                                <% if(deletedCoupons.length === 0) { %>
+                                    <tr>
+                                        <td colspan="6" style="text-align:center;">No previously used coupons found</td>
+                                    </tr>
+                                <% } else { %>
+                                    <% deletedCoupons.forEach(coupon => { %>
+                                        <tr class="deleted-coupon">
+                                            <td><%= coupon.name %></td>
+                                            <td><%= coupon.offerPrice %></td>
+                                            <td>₹<%= coupon.minimumPrice %></td>
+                                            <td><%= coupon.createOn.toISOString().split("T")[0] %></td>
+                                            <td><%= coupon.expireOn.toISOString().split("T")[0] %></td>
+                                            <td>
+                                                <span class="status-badge status-expired">
+                                                    Used
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } %>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search users">
-                    <button class="search-button">Search</button>
+
+                <!-- Form Section -->
+                <div class="form-section">
+                    <form method="post" action="/admin/coupon/create" onsubmit="return handleCreateCoupon(event)">
+                        <div class="form-group">
+                            <label>Coupon Code</label>
+                            <input type="text" name="name" id="couponName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount</label>
+                            <input type="number" name="offerPrice" id="offerPrice" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Minimum Price</label>
+                            <input type="number" name="minimumPrice" id="minimumPrice" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Valid From</label>
+                            <input type="date" name="createOn" id="createOn" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Valid Until</label>
+                            <input type="date" name="expireOn" id="expireOn" required>
+                        </div>
+                        <button type="submit" class="create-button">Create</button>
+                    </form>
                 </div>
-                <table class="coupon-table">
-                    <thead>
-                        <tr>
-                            <th>Coupon Code</th>
-                            <th>Discount Value</th>
-                            <th>Valid From</th>
-                            <th>Valid Until</th>
-                            <th>Usage Limit</th>
-                            <th>Update</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>MF736H98GDD</td>
-                            <td>10%</td>
-                            <td>04 Jan 2024</td>
-                            <td>05 Jan 2024</td>
-                            <td>2</td>
-                            <td><button class="update-button">Update</button></td>
-                            <td><button class="delete-button">Delete</button></td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
-            <div class="form-section">
+    </div>
+
+    <!-- Update Modal -->
+    <div id="editCouponModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Coupon</h3>
+            <form id="editCouponForm" method="post" onsubmit="return handleUpdateCoupon(event)">
+                <input type="hidden" name="id" id="editId">
                 <div class="form-group">
                     <label>Coupon Code</label>
-                    <input type="text" placeholder="Coupon Code">
+                    <input type="text" name="name" id="editName" required>
                 </div>
                 <div class="form-group">
-                    <label>Discount Value</label>
-                    <input type="text" placeholder="Discount Value">
+                    <label>Discount</label>
+                    <input type="number" name="offerPrice" id="editOffer" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Minimum Price</label>
+                    <input type="number" name="minimumPrice" id="editMin" min="1" required>
                 </div>
                 <div class="form-group">
                     <label>Valid From</label>
-                    <input type="date" placeholder="dd-mm-yyyy">
+                    <input type="date" name="createOn" id="editFrom" required>
                 </div>
                 <div class="form-group">
                     <label>Valid Until</label>
-                    <input type="date" placeholder="dd-mm-yyyy">
+                    <input type="date" name="expireOn" id="editUntil" required>
                 </div>
-                <div class="form-group">
-                    <label>Usage Limit</label>
-                    <input type="number" placeholder="Usage Limit">
-                </div>
-                <button class="create-button">Create</button>
-            </div>
+                <button type="submit" class="create-button">Update</button>
+                <button type="button" class="cancel-button" onclick="closeModal()">Cancel</button>
+            </form>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        function validateDates(createOn, expireOn) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const start = new Date(createOn);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(expireOn);
+            end.setHours(0, 0, 0, 0);
+
+            if (!createOn || !expireOn) {
+                Swal.fire("Error", "Please select both start and end dates", "error");
+                return false;
+            }
+
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                Swal.fire("Error", "Invalid date format", "error");
+                return false;
+            }
+
+            if (start < today) {
+                Swal.fire("Error", "Valid From cannot be in the past", "error");
+                return false;
+            }
+
+            if (end <= start) {
+                Swal.fire("Error", "Valid Until must be later than Valid From", "error");
+                return false;
+            }
+
+            return true;
+        }
+
+        async function handleCreateCoupon(e) {
+            e.preventDefault();
+            const form = e.target;
+            const name = form.querySelector("#couponName").value.trim();
+            const offerPrice = parseFloat(form.querySelector("#offerPrice").value);
+            const minimumPrice = parseFloat(form.querySelector("#minimumPrice").value);
+            const createOn = form.querySelector("#createOn").value;
+            const expireOn = form.querySelector("#expireOn").value;
+
+            if (offerPrice <= 0 || minimumPrice <= 0) {
+                Swal.fire("Error", "Discount and minimum price must be positive numbers", "error");
+                return false;
+            }
+
+            if (!validateDates(createOn, expireOn)) {
+                return false;
+            }
+
+            try {
+                const response = await fetch("/admin/coupon/create", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, offerPrice, minimumPrice, createOn, expireOn })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire({
+                        title: "Success",
+                        text: "Coupon created successfully!",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire("Error", data.message || "Failed to create coupon", "error");
+                }
+            } catch (err) {
+                console.error("Error creating coupon:", err);
+                Swal.fire("Error", "Server error", "error");
+            }
+            return false;
+        }
+
+        async function handleUpdateCoupon(e) {
+            e.preventDefault();
+            const form = e.target;
+            const id = form.querySelector("#editId").value;
+            const name = form.querySelector("#editName").value.trim();
+            const offerPrice = parseFloat(form.querySelector("#editOffer").value);
+            const minimumPrice = parseFloat(form.querySelector("#editMin").value);
+            const createOn = form.querySelector("#editFrom").value;
+            const expireOn = form.querySelector("#editUntil").value;
+
+            if (offerPrice <= 0 || minimumPrice <= 0) {
+                Swal.fire("Error", "Discount and minimum price must be positive numbers", "error");
+                return false;
+            }
+
+            if (!validateDates(createOn, expireOn)) {
+                return false;
+            }
+
+            try {
+                const response = await fetch(`/admin/coupon/update/${id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, offerPrice, minimumPrice, createOn, expireOn })
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: "Success",
+                        text: "Coupon updated successfully!",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    const data = await response.json();
+                    Swal.fire("Error", data.message || "Failed to update coupon", "error");
+                }
+            } catch (err) {
+                console.error("Error updating coupon:", err);
+                Swal.fire("Error", "Server error", "error");
+            }
+            return false;
+        }
+
+        async function deleteCoupon(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This coupon will be moved to Previously Used Coupons section.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/coupon/delete/${id}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" }
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            Swal.fire("Deleted", "Coupon has been moved to Previously Used Coupons.", "success").then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire("Error", data.message || "Failed to delete coupon", "error");
+                        }
+                    } catch (err) {
+                        console.error("Error deleting coupon:", err);
+                        Swal.fire("Error", "Server error", "error");
+                    }
+                }
+            });
+        }
+
+        function openEditModal(couponData) {
+            const coupon = JSON.parse(couponData);
+            document.getElementById("editId").value = coupon._id;
+            document.getElementById("editName").value = coupon.name;
+            document.getElementById("editOffer").value = coupon.offerPrice;
+            document.getElementById("editMin").value = coupon.minimumPrice;
+            document.getElementById("editFrom").value = coupon.createOn.split("T")[0];
+            document.getElementById("editUntil").value = coupon.expireOn.split("T")[0];
+            document.getElementById("editCouponModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("editCouponModal").style.display = "none";
+        }
+    </script>
 </body>
+
 </html>

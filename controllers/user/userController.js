@@ -4,7 +4,11 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
+const Cart = require("../../models/cartSchema");
 const mongoose = require("mongoose");
+
+
+
 
 const pageNotFound = async (req, res) => {
   try {
@@ -525,16 +529,26 @@ const loadShopPage = async (req, res) => {
   }
 };
 
+const calculateCartCount = (cart) => {
+  if (!cart || !cart.items) return 0;
+  return cart.items.reduce((sum, item) => sum + item.quantity, 0);
+};
+
 const productDetails = async (req, res) => {
   try {
     const productId = req.params.id;
+    
+    const userId = req.session.user;
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
+     const cartCount = calculateCartCount(cart);
+
 
     // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       console.log("Invalid product ID:", productId);
       return res
         .status(400)
-        .render("errorPage", { message: "Invalid product ID" }); // Render an error page
+        .render("errorPage", { message: "Invalid product ID" }); 
     }
 
     // Query the product by ID
@@ -545,14 +559,14 @@ const productDetails = async (req, res) => {
       console.log("Product not found for ID:", productId);
       return res
         .status(404)
-        .render("errorPage", { message: "Product not found" }); // Render a not-found page
+        .render("errorPage", { message: "Product not found" }); 
     }
 
     console.log("Product in details:", product);
-    res.render("productDetails", { product, products: simliarProducts });
+    res.render("productDetails", { product, products: simliarProducts ,cartCount });
   } catch (error) {
     console.log("Error displaying product details:", error);
-    res.status(500).render("errorPage", { message: "Internal server error" }); // Render a generic error page
+    res.status(500).render("errorPage", { message: "Internal server error" }); 
   }
 };
 

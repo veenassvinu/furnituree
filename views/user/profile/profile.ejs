@@ -17,6 +17,33 @@
                 </div>
 
                 <div class="profile-form-container">
+                    <!-- Profile Image Field -->
+                    <div class="profile-field-group">
+                        <label for="profileImage" class="form-label profile-label">PROFILE IMAGE</label>
+                        <div class="profile-value-container">
+                            <% if (userData.profileImage) { %>
+                                <img src="/uploads/profile-images/<%= userData.profileImage %>" alt="Profile Image" class="profile-image" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                                <button class="edit-btn" data-field="profileImage" title="Change Profile Image">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                    </svg>
+                                </button>
+                                <button class="remove-image-btn" data-field="profileImage" title="Remove Profile Image">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            <% } else { %>
+                                <div class="profile-value" id="profileImageValue">No Profile Image Set</div>
+                                <button class="edit-btn" data-field="profileImage" title="Add Profile Image">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                    </svg>
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+
                     <!-- Name Field -->
                     <div class="profile-field-group">
                         <label for="name" class="form-label profile-label">NAME</label>
@@ -25,8 +52,7 @@
                                 <%= userData.name %>
                             </div>
                             <button class="edit-btn" data-field="name" title="Edit Name">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                                 </svg>
                             </button>
@@ -41,8 +67,7 @@
                                 <%= userData.email %>
                             </div>
                             <button class="edit-btn" data-field="email" title="Edit Email">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                                 </svg>
                             </button>
@@ -57,8 +82,7 @@
                                 <%= userData.phone || 'Not Set' %>
                             </div>
                             <button class="edit-btn" data-field="phone" title="Edit Phone">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                                 </svg>
                             </button>
@@ -71,8 +95,7 @@
                         <div class="profile-value-container">
                             <div class="profile-value" id="passwordValue">* * * * * * * *</div>
                             <button class="edit-btn" data-field="password" title="Change Password">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                                 </svg>
                             </button>
@@ -97,15 +120,13 @@
                         <div class="modal-body">
                             <div class="password-input-group">
                                 <label for="currentPassword" class="form-label">Current Password</label>
-                                <input type="password" class="form-control" id="currentPassword"
-                                       placeholder="Enter current password" name="CurrentPassword">
+                                <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password" name="CurrentPassword">
                                 <div class="error-message" id="currentPasswordError"></div>
                             </div>
 
                             <div class="password-input-group">
                                 <label for="newPassword" class="form-label">New Password</label>
-                                <input type="password" class="form-control" id="newPassword"
-                                       placeholder="Enter new password" name="NewPassword">
+                                <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" name="NewPassword">
                                 <div class="error-message" id="newPasswordError"></div>
                                 <div class="password-requirements">
                                     <small>Password must contain at least 8 characters, including uppercase, lowercase, number, and special character</small>
@@ -114,8 +135,7 @@
 
                             <div class="password-input-group">
                                 <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                <input type="password" class="form-control" id="confirmPassword"
-                                       placeholder="Confirm new password" name="ConfirmNewPassword">
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password" name="ConfirmNewPassword">
                                 <div class="error-message" id="confirmPasswordError"></div>
                             </div>
                         </div>
@@ -126,90 +146,52 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Profile Image Modal -->
+                <div class="password-modal" id="profileImageModal">
+                    <div class="password-modal-content">
+                        <div class="modal-header">
+                            <h3>Update Profile Image</h3>
+                            <button class="modal-close" id="closeProfileImageModal">&times;</button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="password-input-group">
+                                <label for="profileImageInput" class="form-label">Select Profile Image</label>
+                                <input type="file" class="form-control" id="profileImageInput" accept="image/jpeg,image/png,image/jpg,image/gif">
+                                <div class="error-message" id="profileImageError"></div>
+                                <div class="image-requirements">
+                                    <small>Image must be JPEG, PNG, JPG, or GIF, and less than 5MB</small>
+                                </div>
+                            </div>
+                            <div class="image-preview" id="imagePreview" style="display: none; margin-top: 1rem;">
+                                <img id="previewImage" style="max-width: 150px; max-height: 150px; border-radius: 8px; object-fit: cover;">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-custom" id="updateProfileImageBtn">Update Image</button>
+                            <button class="btn btn-secondary" id="cancelProfileImageBtn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Enhanced Profile Styling */
-.profile-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
-}
-
-.section-title {
-    margin: 0 0 0.5rem 0;
-    color: #333;
-    font-size: 1.8rem;
-    font-weight: 600;
-}
-
-.section-subtitle {
-    margin: 0;
-    color: #666;
-    font-size: 0.95rem;
-}
-
-.profile-form-container {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.profile-field-group {
-    margin-bottom: 2rem;
-    position: relative;
-}
-
-.profile-label {
-    display: block;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.75rem;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.profile-value-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
+/* Existing styles remain unchanged, adding profile image-specific styles */
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
     border: 2px solid #e9ecef;
-    border-radius: 8px;
-    background: #f8f9fa;
-    transition: all 0.3s ease;
 }
 
-.profile-value-container:hover {
-    border-color: #007bff;
-    background: white;
-}
-
-.profile-value {
-    flex: 1;
-    font-size: 1rem;
-    color: #333;
-    min-height: 1.5rem;
-    padding: 0.25rem 0;
-}
-
-.profile-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    font-size: 1rem;
-    color: #333;
-    outline: none;
-    padding: 0.25rem 0;
-}
-
-.edit-btn {
-    background: #007bff;
+.remove-image-btn {
+    background: #dc3545;
     border: none;
     border-radius: 50%;
     width: 36px;
@@ -223,230 +205,19 @@
     opacity: 0.7;
 }
 
-.edit-btn:hover {
+.remove-image-btn:hover {
     opacity: 1;
     transform: scale(1.1);
-    background: #0056b3;
+    background: #c82333;
 }
 
-.profile-actions {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e9ecef;
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.btn {
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-custom {
-    background: #007bff;
-    color: white;
-}
-
-.btn-custom:hover {
-    background: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #545b62;
-}
-
-/* Password Modal Styling */
-.password-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.password-modal.show {
-    display: flex;
-}
-
-.password-modal-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #333;
-    font-size: 1.4rem;
-    font-weight: 600;
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    color: #666;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.modal-close:hover {
-    background: #f8f9fa;
-    color: #333;
-}
-
-.modal-body {
-    padding: 2rem;
-}
-
-.modal-footer {
-    padding: 1.5rem 2rem;
-    border-top: 1px solid #e9ecef;
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-}
-
-.password-input-group {
-    margin-bottom: 1.5rem;
-}
-
-.password-input-group .form-label {
-    display: block;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-}
-
-.password-input-group .form-control {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-.password-input-group .form-control:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.password-requirements {
+.image-requirements {
     margin-top: 0.5rem;
 }
 
-.password-requirements small {
+.image-requirements small {
     color: #666;
     font-size: 0.85rem;
-}
-
-.error-message {
-    display: none;
-    color: #dc3545;
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    background: #f8d7da;
-    border-radius: 4px;
-    border: 1px solid #f5c6cb;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .profile-form-container {
-        padding: 1.5rem;
-        margin: 0 1rem;
-    }
-    
-    .profile-value-container {
-        padding: 0.75rem;
-    }
-    
-    .profile-actions {
-        flex-direction: column;
-    }
-    
-    .btn {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .password-modal-content {
-        width: 95%;
-        margin: 1rem;
-    }
-    
-    .modal-header,
-    .modal-body,
-    .modal-footer {
-        padding: 1rem 1.5rem;
-    }
-    
-    .modal-footer {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 480px) {
-    .section-title {
-        font-size: 1.5rem;
-    }
-    
-    .profile-label {
-        font-size: 0.8rem;
-    }
-    
-    .profile-value {
-        font-size: 0.9rem;
-    }
-    
-    .edit-btn {
-        width: 32px;
-        height: 32px;
-    }
 }
 </style>
 
@@ -456,11 +227,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const editButtons = document.querySelectorAll('.edit-btn');
     const passwordModal = document.getElementById('passwordModal');
+    const profileImageModal = document.getElementById('profileImageModal');
     const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
     const updatePasswordBtn = document.getElementById('updatePasswordBtn');
     const closePasswordModal = document.getElementById('closePasswordModal');
+    const cancelProfileImageBtn = document.getElementById('cancelProfileImageBtn');
+    const updateProfileImageBtn = document.getElementById('updateProfileImageBtn');
+    const closeProfileImageModal = document.getElementById('closeProfileImageModal');
     const saveChangesBtn = document.getElementById('saveChangesBtn');
     const cancelChangesBtn = document.getElementById('cancelChangesBtn');
+    const removeImageButtons = document.querySelectorAll('.remove-image-btn');
 
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const phonePattern = /^\d{10}$/;
@@ -470,9 +246,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let originalValues = {};
 
     // Store original values
-    ['name', 'email', 'phone'].forEach(field => {
+    ['name', 'email', 'phone', 'profileImage'].forEach(field => {
         const element = document.getElementById(`${field}Value`);
-        originalValues[field] = element.textContent.trim();
+        originalValues[field] = element ? element.textContent.trim() : '<%= userData.profileImage || "No Profile Image Set" %>';
     });
 
     function showActionButtons() {
@@ -495,6 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (field === 'password') {
                 passwordModal.classList.add('show');
+                return;
+            }
+
+            if (field === 'profileImage') {
+                profileImageModal.classList.add('show');
                 return;
             }
 
@@ -605,6 +386,183 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Profile Image Preview
+    const profileImageInput = document.getElementById('profileImageInput');
+    profileImageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const previewImage = document.getElementById('previewImage');
+                previewImage.src = event.target.result;
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+    });
+
+    // Profile Image Modal Handlers
+    function closeProfileImageModalHandler() {
+        profileImageModal.classList.remove('show');
+        document.getElementById('profileImageInput').value = '';
+        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('profileImageError').style.display = 'none';
+    }
+
+    closeProfileImageModal.addEventListener('click', closeProfileImageModalHandler);
+    cancelProfileImageBtn.addEventListener('click', closeProfileImageModalHandler);
+
+    profileImageModal.addEventListener('click', (e) => {
+        if (e.target === profileImageModal) {
+            closeProfileImageModalHandler();
+        }
+    });
+
+    updateProfileImageBtn.addEventListener('click', () => {
+        const profileImageInput = document.getElementById('profileImageInput');
+        if (!profileImageInput.files[0]) {
+            document.getElementById('profileImageError').textContent = 'Please select an image';
+            document.getElementById('profileImageError').style.display = 'block';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('profileImage', profileImageInput.files[0]);
+
+        Swal.fire({
+            title: 'Uploading Image...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch('/profile/update-profile-image', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeProfileImageModalHandler();
+                // Update the profile image display
+                const profileImageContainer = document.querySelector('.profile-value-container[data-field="profileImage"]') || 
+                    document.querySelector('#profileImageValue').parentElement;
+                profileImageContainer.innerHTML = `
+                    <img src="/uploads/profile-images/${data.profileImage}" alt="Profile Image" class="profile-image" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                    <button class="edit-btn" data-field="profileImage" title="Change Profile Image">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                    </button>
+                    <button class="remove-image-btn" data-field="profileImage" title="Remove Profile Image">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                `;
+                originalValues.profileImage = data.profileImage;
+                showActionButtons();
+
+                // Re-attach event listeners for new buttons
+                attachRemoveImageListener();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Image Updated!',
+                    text: 'Your profile image has been updated successfully',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: data.message || 'Failed to update profile image'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'An error occurred while updating profile image'
+            });
+        });
+    });
+
+    // Remove Profile Image Handler
+    function attachRemoveImageListener() {
+        document.querySelectorAll('.remove-image-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Remove Profile Image?',
+                    text: 'Are you sure you want to remove your profile image?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, remove',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/profile/remove-profile-image', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const profileImageContainer = document.querySelector('.profile-value-container[data-field="profileImage"]') || 
+                                    document.querySelector('#profileImageValue').parentElement;
+                                profileImageContainer.innerHTML = `
+                                    <div class="profile-value" id="profileImageValue">No Profile Image Set</div>
+                                    <button class="edit-btn" data-field="profileImage" title="Add Profile Image">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                        </svg>
+                                    </button>
+                                `;
+                                originalValues.profileImage = 'No Profile Image Set';
+                                showActionButtons();
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Image Removed!',
+                                    text: 'Your profile image has been removed successfully',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: data.message || 'Failed to remove profile image'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred while removing profile image'
+                            });
+                        });
+                    }
+                });
+            });
+        });
+    }
+
+    // Initialize remove image button listeners
+    attachRemoveImageListener();
+
     // Save Changes Button Handler
     saveChangesBtn.addEventListener('click', () => {
         const updatedName = document.getElementById('nameValue').textContent.trim();
@@ -645,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        fetch('profile/profile', {
+        fetch('/profile/profile', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -730,7 +688,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closePasswordModal.addEventListener('click', closePasswordModalHandler);
     cancelPasswordBtn.addEventListener('click', closePasswordModalHandler);
 
-    // Close modal when clicking outside
     passwordModal.addEventListener('click', (e) => {
         if (e.target === passwordModal) {
             closePasswordModalHandler();
@@ -778,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        fetch('profile/profile', {
+        fetch('/profile/profile', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

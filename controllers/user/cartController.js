@@ -1,9 +1,13 @@
-// const User = require("../../models/userSchema")
 const Cart = require("../../models/cartSchema");
-const Product = require("../../models/productSchema"); 
+const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");
 const mongoose = require("mongoose");
 
+// Helper to calculate cart count
+const calculateCartCount = (cart) => {
+  if (!cart || !cart.items) return 0;
+  return cart.items.reduce((sum, item) => sum + item.quantity, 0);
+};
 
 // GET cart page
 const loadCartPage = async (req, res) => {
@@ -12,11 +16,11 @@ const loadCartPage = async (req, res) => {
     console.log("User ID in session:", userId);
 
     if (!userId) {
-      return res.status(401).render("cart", { cartItems: [], totalPrice: 0, error: "Please log in to view your cart" });
+      return res.status(401).render("cart", { cartItems: [], totalPrice: 0, cartCount: 0, error: "Please log in to view your cart" });
     }
 
     const cart = await Cart.findOne({ userId }).populate("items.productId");
-    
+
     let cartItems = [];
     let totalPrice = 0;
 
@@ -35,17 +39,17 @@ const loadCartPage = async (req, res) => {
           quantity: item.quantity,
           image: item.productId.productImages[0],
           total,
+          stock: item.productId.quantity
         };
       }).filter(item => item !== null);
     }
 
-    console.log("Cart items:", cartItems);
-    console.log("Total price:", totalPrice);
+    const cartCount = calculateCartCount(cart);
 
-    res.render("cart", { cartItems, totalPrice });
+    res.render("cart", { cartItems, totalPrice, cartCount });
   } catch (error) {
     console.error("Error loading cart:", error);
-    res.status(500).render("cart", { cartItems: [], totalPrice: 0, error: "Error loading cart" });
+    res.status(500).render("cart", { cartItems: [], totalPrice: 0, cartCount: 0, error: "Error loading cart" });
   }
 };
 
@@ -69,15 +73,19 @@ const addToCart = async (req, res) => {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
 
+    if (product.quantity < quantity) {
+      return res.status(400).json({
+        success: false,
+        message: `Only ${product.quantity} items available in stock`
+      });
+    }
+
     const price = product.salePrice;
     if (typeof price !== "number" || isNaN(price) || price < 0) {
       return res.status(400).json({ success: false, message: "Invalid product price" });
     }
 
     const totalPrice = price * quantity;
-    if (isNaN(totalPrice)) {
-      return res.status(400).json({ success: false, message: "Failed to calculate total price" });
-    }
 
     let cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -91,15 +99,55 @@ const addToCart = async (req, res) => {
       );
 
       if (itemIndex > -1) {
-        cart.items[itemIndex].quantity += quantity;
-        cart.items[itemIndex].totalPrice = cart.items[itemIndex].quantity * price;
+        const newQuantity = cart.items[itemIndex].quantity + quantity;
+        if (newQuantity > product.quantity) {
+          return res.status(400).json({
+            success: false,
+            message: `Cannot add more items. Only ${product.quantity} items available in stock`
+          });
+        }
+        cart.items[itemIndex].quantity = newQuantity;
+        cart.items[itemIndex].totalPrice = newQuantity * price;
       } else {
         cart.items.push({ productId, quantity, price, totalPrice });
       }
     }
 
     await cart.save();
-    res.json({ success: true, message: "Item added to cart successfully" });
+
+    const updatedCart = await Cart.findOne({ userId }).populate("items.productId");
+    let cartItems = [];
+    let cartTotalPrice = 0;
+
+    if (updatedCart && updatedCart.items.length > 0) {
+      cartItems = updatedCart.items.map((item) => {
+        if (!item.productId) {
+          console.warn(`Invalid productId for cart item: ${item._id}`);
+          return null;
+        }
+        const total = item.quantity * item.productId.salePrice;
+        cartTotalPrice += total;
+        return {
+          _id: item.productId._id,
+          productName: item.productId.productName,
+          price: item.productId.salePrice,
+          quantity: item.quantity,
+          image: item.productId.productImages[0],
+          total,
+          stock: item.productId.quantity
+        };
+      }).filter(item => item !== null);
+    }
+
+    const cartCount = calculateCartCount(updatedCart);
+
+    res.json({
+      success: true,
+      message: "Item added to cart successfully",
+      cartCount,
+      cartItems,
+      totalPrice: cartTotalPrice
+    });
   } catch (error) {
     console.error("Add to cart error:", error);
     res.status(500).json({ success: false, message: "Something went wrong", error: error.message });
@@ -126,24 +174,49 @@ const removeFromCart = async (req, res) => {
       return res.status(404).json({ success: false, message: "Item not found in cart" });
     }
 
-    const result = await Cart.findOneAndUpdate(
-      { userId },
-      { $pull: { items: { productId } } },
-      { new: true }
-    );
+    cart.items.splice(itemIndex, 1);
+    await cart.save();
 
-    if (!result) {
-      return res.status(500).json({ success: false, message: "Failed to update cart" });
+    const updatedCart = await Cart.findOne({ userId }).populate("items.productId");
+    let totalPrice = 0;
+    let cartItems = [];
+
+    if (updatedCart && updatedCart.items.length > 0) {
+      cartItems = updatedCart.items.map((item) => {
+        if (!item.productId) {
+          console.warn(`Invalid productId for cart item: ${item._id}`);
+          return null;
+        }
+        const total = item.quantity * item.productId.salePrice;
+        totalPrice += total;
+        return {
+          _id: item.productId._id,
+          productName: item.productId.productName,
+          price: item.productId.salePrice,
+          quantity: item.quantity,
+          image: item.productId.productImages[0],
+          total,
+          stock: item.productId.quantity
+        };
+      }).filter(item => item !== null);
     }
 
-    res.json({ success: true, message: "Item removed from cart successfully" });
+    const cartCount = calculateCartCount(updatedCart);
+
+    res.json({
+      success: true,
+      message: "Item removed from cart successfully",
+      totalPrice,
+      cartCount,
+      cartItems
+    });
   } catch (error) {
     console.error("Remove from cart error:", error);
     res.status(500).json({ success: false, message: "Failed to remove item from cart" });
   }
 };
 
-// Update quantity
+// Update quantity with stock validation
 const updateQuantity = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
@@ -156,6 +229,19 @@ const updateQuantity = async (req, res) => {
     const qty = parseInt(quantity);
     if (isNaN(qty) || qty < 1) {
       return res.status(400).json({ success: false, message: "Quantity must be a positive number" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    if (qty > product.quantity) {
+      return res.status(400).json({
+        success: false,
+        message: `Only ${product.quantity} items available in stock`,
+        availableStock: product.quantity
+      });
     }
 
     const cart = await Cart.findOne({ userId }).populate("items.productId");
@@ -173,14 +259,84 @@ const updateQuantity = async (req, res) => {
     await cart.save();
 
     let totalPrice = 0;
-    cart.items.forEach(item => {
-      totalPrice += item.quantity * item.productId.salePrice;
-    });
+    let cartItems = [];
 
-    res.json({ success: true, message: "Quantity updated successfully", totalPrice });
+    if (cart && cart.items.length > 0) {
+      cartItems = cart.items.map((item) => {
+        if (!item.productId) {
+          console.warn(`Invalid productId for cart item: ${item._id}`);
+          return null;
+        }
+        const total = item.quantity * item.productId.salePrice;
+        totalPrice += total;
+        return {
+          _id: item.productId._id,
+          productName: item.productId.productName,
+          price: item.productId.salePrice,
+          quantity: item.quantity,
+          image: item.productId.productImages[0],
+          total,
+          stock: item.productId.quantity
+        };
+      }).filter(item => item !== null);
+    }
+
+    const cartCount = calculateCartCount(cart);
+
+    res.json({
+      success: true,
+      message: "Quantity updated successfully",
+      totalPrice,
+      cartCount,
+      cartItems,
+      availableStock: product.quantity
+    });
   } catch (error) {
     console.error("Update quantity error:", error);
     res.status(500).json({ success: false, message: "Failed to update quantity" });
+  }
+};
+
+// Get product stock information
+const getProductStock = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ success: false, message: "Invalid product ID" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    res.json({
+      success: true,
+      stock: product.quantity,
+      productName: product.productName
+    });
+  } catch (error) {
+    console.error("Get product stock error:", error);
+    res.status(500).json({ success: false, message: "Failed to get product stock" });
+  }
+};
+
+// Get cart count
+const getCartCount = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    if (!userId) {
+      return res.json({ success: true, cartCount: 0 });
+    }
+
+    const cart = await Cart.findOne({ userId });
+    const cartCount = calculateCartCount(cart);
+
+    res.json({ success: true, cartCount });
+  } catch (error) {
+    console.error("Get cart count error:", error);
+    res.status(500).json({ success: false, message: "Failed to get cart count" });
   }
 };
 
@@ -200,5 +356,7 @@ module.exports = {
   addToCart,
   removeFromCart,
   updateQuantity,
-  updateTime,
+  getProductStock,
+  getCartCount,
+  updateTime
 };

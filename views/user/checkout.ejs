@@ -143,7 +143,7 @@
                                 <span>Cash on Delivery</span>
                             </div>
                             <div class="payment-method" data-method="card">
-                                <input type="radio" name="payment" value="card" >
+                                <input type="radio" name="payment" value="card">
                                 <span>Credit / Debit Card</span>
                             </div>
                         </div>
@@ -189,25 +189,82 @@
 
 
 
+                <!-- ✅ SweetAlert2 -->
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
                 <script>
+
+                    document.getElementById("addressForm").addEventListener("submit", async (e) => {
+                        e.preventDefault();
+
+                        const form = e.target;
+                        const formData = new FormData(form);
+                        const plainFormData = Object.fromEntries(formData.entries()); // convert to object
+
+                        try {
+                            const response = await fetch("/save-address", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(plainFormData) // send as JSON
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok && data.success) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Address Added!",
+                                    text: "Your address was saved successfully.",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: data.message || "Failed to save address. Please try again."
+                                });
+                            }
+                        } catch (err) {
+                            console.error("Error saving address:", err);
+                            Swal.fire({
+                                icon: "error",
+                                title: "Something went wrong",
+                                text: "Please try again later."
+                            });
+                        }
+                    });
+
+
+
+
+
                     document.getElementById("placeOrderBtn").addEventListener("click", async () => {
                         // Get selected address
                         const selectedAddressEl = document.querySelector("input[name='selectedAddress']:checked");
 
                         if (!selectedAddressEl) {
-                            alert("Please select an address");
+                            Swal.fire({
+                                icon: "warning",
+                                title: "No Address Selected",
+                                text: "Please select an address before placing your order.",
+                            });
                             return;
                         }
 
-                        const selectedAddressIndex = selectedAddressEl.value; // ✅ defined properly
+                        const selectedAddressIndex = selectedAddressEl.value;
 
                         // Get selected payment method
                         const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value;
-                        console.log(paymentMethod);
-                        
 
                         if (!paymentMethod) {
-                            alert("Please select a payment method");
+                            Swal.fire({
+                                icon: "warning",
+                                title: "No Payment Method",
+                                text: "Please select a payment method to continue.",
+                            });
                             return;
                         }
 
@@ -216,7 +273,7 @@
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({
-                                    selectedAddressIndex,  // ✅ sending correct field
+                                    selectedAddressIndex,
                                     paymentMethod
                                 })
                             });
@@ -224,17 +281,33 @@
                             const data = await response.json();
 
                             if (response.ok) {
-                                alert("Order placed successfully!");
-                                window.location.href = "/orders";
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Order Placed!",
+                                    text: "Your order has been placed successfully.",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.href = "/orders";
+                                });
                             } else {
-                                alert(data.message || "Error placing order");
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Order Failed",
+                                    text: data.message || "Error placing order. Please try again.",
+                                });
                             }
                         } catch (err) {
                             console.error("Error placing order:", err);
-                            alert("Something went wrong");
+                            Swal.fire({
+                                icon: "error",
+                                title: "Something Went Wrong",
+                                text: "Please try again later.",
+                            });
                         }
                     });
                 </script>
+
 
 
     </body>
