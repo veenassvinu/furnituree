@@ -409,7 +409,7 @@ async function cancelOrder(orderId, totalPrice) {
         });
 
         const data = await response.json();
-        console.log('Server response:', data); // Debugging
+        console.log('Server response:', data); 
 
         if (data.success) {
             Swal.fire({

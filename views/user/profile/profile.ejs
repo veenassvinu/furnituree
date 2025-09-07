@@ -1,291 +1,938 @@
 <%- include("../../views/partials/user/header.ejs") %>
-<%- include("../../views/partials/user/navBar") %>
+    <%- include("../../views/partials/user/navBar") %>
 
-<link rel="stylesheet" href="/css/profile.css">
+        <link rel="stylesheet" href="/css/profile.css">
+        <style>
+            /* Profile Page Styling - /css/profile.css */
 
-<div class="profile-session-container">
-    <div class="container-fluid">
-        <div class="dashboard">
-            <!-- Sidebar -->
-            <%- include("../../views/partials/user/profileSideBar") %>
+            /* Reset and Base Styles */
+            * {
+                box-sizing: border-box;
+            }
 
-            <!-- Main Content -->
-            <div class="main-content">
-                <div class="profile-header">
-                    <h2 class="section-title">Update Profile</h2>
-                    <p class="section-subtitle">Manage your personal information</p>
-                </div>
+            /* Dashboard Layout */
+            .profile-session-container {
+                min-height: 100vh;
+                background: #f8fafc;
+            }
 
-                <div class="profile-form-container">
-                    <!-- Profile Image Field -->
-                    <div class="profile-field-group">
-                        <label for="profileImage" class="form-label profile-label">PROFILE IMAGE</label>
-                        <div class="profile-value-container">
-                            <% if (userData.profileImage) { %>
-                                <img src="/uploads/profile-images/<%= userData.profileImage %>" alt="Profile Image" class="profile-image" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
-                                <button class="edit-btn" data-field="profileImage" title="Change Profile Image">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                    </svg>
-                                </button>
-                                <button class="remove-image-btn" data-field="profileImage" title="Remove Profile Image">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            <% } else { %>
-                                <div class="profile-value" id="profileImageValue">No Profile Image Set</div>
-                                <button class="edit-btn" data-field="profileImage" title="Add Profile Image">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                    </svg>
-                                </button>
-                            <% } %>
-                        </div>
-                    </div>
+            .dashboard {
+                display: flex;
+                min-height: 100vh;
+                gap: 0;
+            }
 
-                    <!-- Name Field -->
-                    <div class="profile-field-group">
-                        <label for="name" class="form-label profile-label">NAME</label>
-                        <div class="profile-value-container">
-                            <div class="profile-value" id="nameValue">
-                                <%= userData.name %>
+            /* Main Content Area */
+            .main-content {
+                flex: 1;
+                padding: 2rem;
+                background: #ffffff;
+                margin-left: 0;
+                overflow-y: auto;
+            }
+
+            /* Profile Header */
+            .profile-header {
+                margin-bottom: 2.5rem;
+                text-align: left;
+                border-bottom: 2px solid #e2e8f0;
+                padding-bottom: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 2.25rem;
+                font-weight: 700;
+                color: #1a202c;
+                margin: 0 0 0.5rem 0;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .section-subtitle {
+                font-size: 1.1rem;
+                color: #718096;
+                margin: 0;
+                font-weight: 400;
+            }
+
+            /* Profile Form Container */
+            .profile-form-container {
+                max-width: 800px;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            /* Profile Field Groups */
+            .profile-field-group {
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 1.5rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            .profile-field-group:hover {
+                border-color: #667eea;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+                transform: translateY(-2px);
+            }
+
+            /* Labels */
+            .profile-label {
+                display: block;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #4a5568;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 1rem;
+                text-align: left;
+            }
+
+            /* Value Container */
+            .profile-value-container {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                position: relative;
+            }
+
+            /* Profile Values */
+            .profile-value {
+                flex: 1;
+                color: #2d3748;
+                font-size: 1rem;
+                font-weight: 500;
+                text-align: left;
+                min-height: 24px;
+                line-height: 1.5;
+                padding: 0.5rem 0;
+            }
+
+            .profile-value:empty::before {
+                content: "Not Set";
+                color: #a0aec0;
+                font-style: italic;
+            }
+
+            /* Profile Input Fields */
+            .profile-input {
+                flex: 1;
+                background: #f7fafc;
+                border: 2px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+                color: #2d3748;
+                transition: all 0.3s ease;
+                font-family: inherit;
+                outline: none;
+            }
+
+            .profile-input:focus {
+                border-color: #667eea;
+                background: #ffffff;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+
+            .profile-input:invalid {
+                border-color: #e53e3e;
+            }
+
+            /* Profile Image Styles */
+            .profile-image {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 4px solid #667eea;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+                transition: all 0.3s ease;
+            }
+
+            .profile-image:hover {
+                transform: scale(1.05);
+                box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+            }
+
+            /* No Image Placeholder */
+            .profile-value#profileImageValue {
+                color: #a0aec0;
+                font-style: italic;
+                font-size: 0.95rem;
+            }
+
+            /* Action Buttons */
+            .edit-btn,
+            .remove-image-btn {
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+                flex-shrink: 0;
+            }
+
+            .edit-btn:hover {
+                background: #5a5fcf;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+
+            .remove-image-btn {
+                background: #e53e3e;
+                box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+            }
+
+            .remove-image-btn:hover {
+                background: #c53030;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+            }
+
+            /* Profile Actions */
+            .profile-actions {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                margin-top: 2rem;
+                padding-top: 2rem;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            /* Buttons */
+            .btn {
+                padding: 0.875rem 2rem;
+                border: none;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                min-width: 140px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+            }
+
+            .btn-custom {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-custom:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+            }
+
+            .btn-secondary {
+                background: #e2e8f0;
+                color: #4a5568;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-secondary:hover {
+                background: #cbd5e0;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Modal Styles */
+            .password-modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(4px);
+            }
+
+            .password-modal.show {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .password-modal-content {
+                background: white;
+                border-radius: 16px;
+                width: 90%;
+                max-width: 500px;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                animation: modalSlideIn 0.3s ease;
+            }
+
+            @keyframes modalSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-50px) scale(0.9);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            /* Modal Header */
+            .modal-header {
+                padding: 2rem 2rem 1rem 2rem;
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .modal-header h3 {
+                margin: 0;
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #1a202c;
+            }
+
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 2rem;
+                cursor: pointer;
+                color: #718096;
+                transition: color 0.3s ease;
+                padding: 0;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .modal-close:hover {
+                color: #e53e3e;
+            }
+
+            /* Modal Body */
+            .modal-body {
+                padding: 2rem;
+            }
+
+            .password-input-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .password-input-group:last-child {
+                margin-bottom: 0;
+            }
+
+            .form-label {
+                display: block;
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #4a5568;
+                margin-bottom: 0.5rem;
+                text-align: left;
+            }
+
+            .form-control {
+                width: 100%;
+                padding: 0.875rem 1rem;
+                border: 2px solid #e2e8f0;
+                border-radius: 8px;
+                font-size: 1rem;
+                color: #2d3748;
+                background: #f7fafc;
+                transition: all 0.3s ease;
+                outline: none;
+            }
+
+            .form-control:focus {
+                border-color: #667eea;
+                background: #ffffff;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+
+            .form-control:invalid {
+                border-color: #e53e3e;
+            }
+
+            /* Error Messages */
+            .error-message {
+                display: none;
+                color: #e53e3e;
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+                text-align: left;
+            }
+
+            /* Password Requirements */
+            .password-requirements,
+            .image-requirements {
+                margin-top: 0.5rem;
+            }
+
+            .password-requirements small,
+            .image-requirements small {
+                color: #718096;
+                font-size: 0.8rem;
+                line-height: 1.4;
+                display: block;
+            }
+
+            /* Image Preview */
+            .image-preview {
+                text-align: center;
+                margin-top: 1rem;
+            }
+
+            .image-preview img {
+                max-width: 150px;
+                max-height: 150px;
+                border-radius: 8px;
+                object-fit: cover;
+                border: 2px solid #e2e8f0;
+            }
+
+            /* Modal Footer */
+            .modal-footer {
+                padding: 1rem 2rem 2rem 2rem;
+                border-top: 1px solid #e2e8f0;
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+            }
+
+            /* Password Field Special Styling */
+            .password-field .profile-value {
+                font-family: 'Courier New', monospace;
+                letter-spacing: 2px;
+                font-size: 1.2rem;
+                color: #718096;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .main-content {
+                    padding: 1rem;
+                }
+
+                .section-title {
+                    font-size: 1.875rem;
+                }
+
+                .profile-field-group {
+                    padding: 1rem;
+                }
+
+                .profile-value-container {
+                    flex-direction: column;
+                    gap: 1rem;
+                    align-items: stretch;
+                }
+
+                .profile-image {
+                    width: 80px;
+                    height: 80px;
+                    align-self: center;
+                }
+
+                .edit-btn,
+                .remove-image-btn {
+                    align-self: flex-end;
+                    width: 36px;
+                    height: 36px;
+                }
+
+                .profile-actions {
+                    flex-direction: column;
+                }
+
+                .btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+
+                .password-modal-content {
+                    width: 95%;
+                    margin: 1rem;
+                }
+
+                .modal-header,
+                .modal-body,
+                .modal-footer {
+                    padding: 1.5rem 1rem;
+                }
+
+                .modal-footer {
+                    flex-direction: column;
+                    gap: 0.75rem;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .main-content {
+                    padding: 0.75rem;
+                }
+
+                .section-title {
+                    font-size: 1.5rem;
+                }
+
+                .profile-header {
+                    margin-bottom: 1.5rem;
+                    padding-bottom: 1rem;
+                }
+
+                .profile-form-container {
+                    gap: 1.5rem;
+                }
+
+                .profile-field-group {
+                    padding: 0.875rem;
+                }
+
+                .modal-header h3 {
+                    font-size: 1.25rem;
+                }
+            }
+
+            /* Animation Classes */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .profile-field-group {
+                animation: fadeInUp 0.6s ease forwards;
+            }
+
+            .profile-field-group:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+
+            .profile-field-group:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .profile-field-group:nth-child(3) {
+                animation-delay: 0.3s;
+            }
+
+            .profile-field-group:nth-child(4) {
+                animation-delay: 0.4s;
+            }
+
+            .profile-field-group:nth-child(5) {
+                animation-delay: 0.5s;
+            }
+
+            .profile-field-group:nth-child(6) {
+                animation-delay: 0.6s;
+            }
+
+            /* Loading States */
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .btn:disabled:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            /* Focus States for Accessibility */
+            .btn:focus,
+            .edit-btn:focus,
+            .remove-image-btn:focus {
+                outline: 2px solid #667eea;
+                outline-offset: 2px;
+            }
+
+            .form-control:focus {
+                outline: none;
+            }
+
+            /* High Contrast Support */
+            @media (prefers-contrast: high) {
+                .profile-field-group {
+                    border-color: #000;
+                }
+
+                .profile-value {
+                    color: #000;
+                }
+
+                .btn-custom {
+                    background: #000;
+                    color: #fff;
+                }
+
+                .btn-secondary {
+                    background: #fff;
+                    color: #000;
+                    border: 2px solid #000;
+                }
+            }
+
+            /* Reduced Motion Support */
+            @media (prefers-reduced-motion: reduce) {
+
+                *,
+                *::before,
+                *::after {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+            }
+        </style>
+        <div class="profile-session-container">
+            <div class="container-fluid">
+                <div class="dashboard">
+                    <!-- Sidebar -->
+                    <%- include("../../views/partials/user/profileSideBar") %>
+
+                        <!-- Main Content -->
+                        <div class="main-content">
+                            <div class="profile-header">
+                                <h2 class="section-title">Update Profile</h2>
+                                <p class="section-subtitle">Manage your personal information</p>
                             </div>
-                            <button class="edit-btn" data-field="name" title="Edit Name">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
 
-                    <!-- Email Field -->
-                    <div class="profile-field-group">
-                        <label for="email" class="form-label profile-label">EMAIL</label>
-                        <div class="profile-value-container">
-                            <div class="profile-value" id="emailValue">
-                                <%= userData.email %>
-                            </div>
-                            <button class="edit-btn" data-field="email" title="Edit Email">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                            <div class="profile-form-container">
+                                <!-- Profile Image Field -->
+                                <div class="profile-field-group">
+                                    <label for="profileImage" class="form-label profile-label">PROFILE IMAGE</label>
+                                    <div class="profile-value-container">
+                                        <% if (userData.profileImage) { %>
+                                            <img src="/uploads/profile-images/<%= userData.profileImage %>"
+                                                alt="Profile Image" class="profile-image"
+                                                style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                                            <button class="edit-btn" data-field="profileImage"
+                                                title="Change Profile Image">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                    </path>
+                                                </svg>
+                                            </button>
+                                            <button class="remove-image-btn" data-field="profileImage"
+                                                title="Remove Profile Image">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </button>
+                                            <% } else { %>
+                                                <div class="profile-value" id="profileImageValue">No Profile Image Set
+                                                </div>
+                                                <button class="edit-btn" data-field="profileImage"
+                                                    title="Add Profile Image">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path
+                                                            d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                        </path>
+                                                    </svg>
+                                                </button>
+                                                <% } %>
+                                    </div>
+                                </div>
 
-                    <!-- Phone Field -->
-                    <div class="profile-field-group">
-                        <label for="phone" class="form-label profile-label">PHONE NUMBER</label>
-                        <div class="profile-value-container">
-                            <div class="profile-value" id="phoneValue">
-                                <%= userData.phone || 'Not Set' %>
-                            </div>
-                            <button class="edit-btn" data-field="phone" title="Edit Phone">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                                <!-- Name Field -->
+                                <div class="profile-field-group">
+                                    <label for="name" class="form-label profile-label">NAME</label>
+                                    <div class="profile-value-container">
+                                        <div class="profile-value" id="nameValue">
+                                            <%= userData.name %>
+                                        </div>
+                                        <button class="edit-btn" data-field="name" title="Edit Name">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
 
-                    <!-- Password Field -->
-                    <div class="profile-field-group">
-                        <label for="password" class="form-label profile-label">PASSWORD</label>
-                        <div class="profile-value-container">
-                            <div class="profile-value" id="passwordValue">* * * * * * * *</div>
-                            <button class="edit-btn" data-field="password" title="Change Password">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                                <!-- Email Field -->
+                                <div class="profile-field-group">
+                                    <label for="email" class="form-label profile-label">EMAIL</label>
+                                    <div class="profile-value-container">
+                                        <div class="profile-value" id="emailValue">
+                                            <%= userData.email %>
+                                        </div>
+                                        <button class="edit-btn" data-field="email" title="Edit Email">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
 
-                    <!-- Action Buttons -->
-                    <div class="profile-actions">
-                        <button class="btn btn-custom" id="saveChangesBtn" style="display: none;">Save Changes</button>
-                        <button class="btn btn-secondary" id="cancelChangesBtn" style="display: none;">Cancel</button>
-                    </div>
-                </div>
+                                <!-- Phone Field -->
+                                <div class="profile-field-group">
+                                    <label for="phone" class="form-label profile-label">PHONE NUMBER</label>
+                                    <div class="profile-value-container">
+                                        <div class="profile-value" id="phoneValue">
+                                            <%= userData.phone || 'Not Set' %>
+                                        </div>
+                                        <button class="edit-btn" data-field="phone" title="Edit Phone">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
 
-                <!-- Password Update Modal -->
-                <div class="password-modal" id="passwordModal">
-                    <div class="password-modal-content">
-                        <div class="modal-header">
-                            <h3>Update Password</h3>
-                            <button class="modal-close" id="closePasswordModal">&times;</button>
-                        </div>
+                                <!-- Password Field -->
+                                <div class="profile-field-group">
+                                    <label for="password" class="form-label profile-label">PASSWORD</label>
+                                    <div class="profile-value-container">
+                                        <div class="profile-value" id="passwordValue">* * * * * * * *</div>
+                                        <button class="edit-btn" data-field="password" title="Change Password">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
 
-                        <div class="modal-body">
-                            <div class="password-input-group">
-                                <label for="currentPassword" class="form-label">Current Password</label>
-                                <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password" name="CurrentPassword">
-                                <div class="error-message" id="currentPasswordError"></div>
-                            </div>
-
-                            <div class="password-input-group">
-                                <label for="newPassword" class="form-label">New Password</label>
-                                <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" name="NewPassword">
-                                <div class="error-message" id="newPasswordError"></div>
-                                <div class="password-requirements">
-                                    <small>Password must contain at least 8 characters, including uppercase, lowercase, number, and special character</small>
+                                <!-- Action Buttons -->
+                                <div class="profile-actions">
+                                    <button class="btn btn-custom" id="saveChangesBtn" style="display: none;">Save
+                                        Changes</button>
+                                    <button class="btn btn-secondary" id="cancelChangesBtn"
+                                        style="display: none;">Cancel</button>
                                 </div>
                             </div>
 
-                            <div class="password-input-group">
-                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password" name="ConfirmNewPassword">
-                                <div class="error-message" id="confirmPasswordError"></div>
-                            </div>
-                        </div>
+                            <!-- Password Update Modal -->
+                            <div class="password-modal" id="passwordModal">
+                                <div class="password-modal-content">
+                                    <div class="modal-header">
+                                        <h3>Update Password</h3>
+                                        <button class="modal-close" id="closePasswordModal">&times;</button>
+                                    </div>
 
-                        <div class="modal-footer">
-                            <button class="btn btn-custom" id="updatePasswordBtn">Update Password</button>
-                            <button class="btn btn-secondary" id="cancelPasswordBtn">Cancel</button>
-                        </div>
-                    </div>
-                </div>
+                                    <div class="modal-body">
+                                        <div class="password-input-group">
+                                            <label for="currentPassword" class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" id="currentPassword"
+                                                placeholder="Enter current password" name="CurrentPassword">
+                                            <div class="error-message" id="currentPasswordError"></div>
+                                        </div>
 
-                <!-- Profile Image Modal -->
-                <div class="password-modal" id="profileImageModal">
-                    <div class="password-modal-content">
-                        <div class="modal-header">
-                            <h3>Update Profile Image</h3>
-                            <button class="modal-close" id="closeProfileImageModal">&times;</button>
-                        </div>
+                                        <div class="password-input-group">
+                                            <label for="newPassword" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="newPassword"
+                                                placeholder="Enter new password" name="NewPassword">
+                                            <div class="error-message" id="newPasswordError"></div>
+                                            <div class="password-requirements">
+                                                <small>Password must contain at least 8 characters, including uppercase,
+                                                    lowercase, number, and special character</small>
+                                            </div>
+                                        </div>
 
-                        <div class="modal-body">
-                            <div class="password-input-group">
-                                <label for="profileImageInput" class="form-label">Select Profile Image</label>
-                                <input type="file" class="form-control" id="profileImageInput" accept="image/jpeg,image/png,image/jpg,image/gif">
-                                <div class="error-message" id="profileImageError"></div>
-                                <div class="image-requirements">
-                                    <small>Image must be JPEG, PNG, JPG, or GIF, and less than 5MB</small>
+                                        <div class="password-input-group">
+                                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword"
+                                                placeholder="Confirm new password" name="ConfirmNewPassword">
+                                            <div class="error-message" id="confirmPasswordError"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="btn btn-custom" id="updatePasswordBtn">Update Password</button>
+                                        <button class="btn btn-secondary" id="cancelPasswordBtn">Cancel</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="image-preview" id="imagePreview" style="display: none; margin-top: 1rem;">
-                                <img id="previewImage" style="max-width: 150px; max-height: 150px; border-radius: 8px; object-fit: cover;">
+
+                            <!-- Profile Image Modal -->
+                            <div class="password-modal" id="profileImageModal">
+                                <div class="password-modal-content">
+                                    <div class="modal-header">
+                                        <h3>Update Profile Image</h3>
+                                        <button class="modal-close" id="closeProfileImageModal">&times;</button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="password-input-group">
+                                            <label for="profileImageInput" class="form-label">Select Profile
+                                                Image</label>
+                                            <input type="file" class="form-control" id="profileImageInput"
+                                                accept="image/jpeg,image/png,image/jpg,image/gif">
+                                            <div class="error-message" id="profileImageError"></div>
+                                            <div class="image-requirements">
+                                                <small>Image must be JPEG, PNG, JPG, or GIF, and less than 5MB</small>
+                                            </div>
+                                        </div>
+                                        <div class="image-preview" id="imagePreview"
+                                            style="display: none; margin-top: 1rem;">
+                                            <img id="previewImage"
+                                                style="max-width: 150px; max-height: 150px; border-radius: 8px; object-fit: cover;">
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="btn btn-custom" id="updateProfileImageBtn">Update Image</button>
+                                        <button class="btn btn-secondary" id="cancelProfileImageBtn">Cancel</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="modal-footer">
-                            <button class="btn btn-custom" id="updateProfileImageBtn">Update Image</button>
-                            <button class="btn btn-secondary" id="cancelProfileImageBtn">Cancel</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<style>
-/* Existing styles remain unchanged, adding profile image-specific styles */
-.profile-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #e9ecef;
-}
-
-.remove-image-btn {
-    background: #dc3545;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    opacity: 0.7;
-}
-
-.remove-image-btn:hover {
-    opacity: 1;
-    transform: scale(1.1);
-    background: #c82333;
-}
-
-.image-requirements {
-    margin-top: 0.5rem;
-}
-
-.image-requirements small {
-    color: #666;
-    font-size: 0.85rem;
-}
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const editButtons = document.querySelectorAll('.edit-btn');
-    const passwordModal = document.getElementById('passwordModal');
-    const profileImageModal = document.getElementById('profileImageModal');
-    const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
-    const updatePasswordBtn = document.getElementById('updatePasswordBtn');
-    const closePasswordModal = document.getElementById('closePasswordModal');
-    const cancelProfileImageBtn = document.getElementById('cancelProfileImageBtn');
-    const updateProfileImageBtn = document.getElementById('updateProfileImageBtn');
-    const closeProfileImageModal = document.getElementById('closeProfileImageModal');
-    const saveChangesBtn = document.getElementById('saveChangesBtn');
-    const cancelChangesBtn = document.getElementById('cancelChangesBtn');
-    const removeImageButtons = document.querySelectorAll('.remove-image-btn');
-
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    const phonePattern = /^\d{10}$/;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    let hasChanges = false;
-    let originalValues = {};
-
-    // Store original values
-    ['name', 'email', 'phone', 'profileImage'].forEach(field => {
-        const element = document.getElementById(`${field}Value`);
-        originalValues[field] = element ? element.textContent.trim() : '<%= userData.profileImage || "No Profile Image Set" %>';
-    });
-
-    function showActionButtons() {
-        if (!hasChanges) {
-            saveChangesBtn.style.display = 'inline-flex';
-            cancelChangesBtn.style.display = 'inline-flex';
-            hasChanges = true;
-        }
-    }
-
-    function hideActionButtons() {
-        saveChangesBtn.style.display = 'none';
-        cancelChangesBtn.style.display = 'none';
-        hasChanges = false;
-    }
-
-    editButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const field = e.currentTarget.dataset.field;
-
-            if (field === 'password') {
-                passwordModal.classList.add('show');
-                return;
+        <style>
+            /* Existing styles remain unchanged, adding profile image-specific styles */
+            .profile-image {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #e9ecef;
             }
 
-            if (field === 'profileImage') {
-                profileImageModal.classList.add('show');
-                return;
+            .remove-image-btn {
+                background: #dc3545;
+                border: none;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                opacity: 0.7;
             }
 
-            const valueElement = document.getElementById(`${field}Value`);
-            if (valueElement.tagName === 'INPUT') return;
+            .remove-image-btn:hover {
+                opacity: 1;
+                transform: scale(1.1);
+                background: #c82333;
+            }
 
-            const currentValue = valueElement.textContent.trim();
-            const inputValue = currentValue === 'Not Set' ? '' : currentValue;
+            .image-requirements {
+                margin-top: 0.5rem;
+            }
 
-            valueElement.outerHTML = `
+            .image-requirements small {
+                color: #666;
+                font-size: 0.85rem;
+            }
+        </style>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const editButtons = document.querySelectorAll('.edit-btn');
+                const passwordModal = document.getElementById('passwordModal');
+                const profileImageModal = document.getElementById('profileImageModal');
+                const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+                const updatePasswordBtn = document.getElementById('updatePasswordBtn');
+                const closePasswordModal = document.getElementById('closePasswordModal');
+                const cancelProfileImageBtn = document.getElementById('cancelProfileImageBtn');
+                const updateProfileImageBtn = document.getElementById('updateProfileImageBtn');
+                const closeProfileImageModal = document.getElementById('closeProfileImageModal');
+                const saveChangesBtn = document.getElementById('saveChangesBtn');
+                const cancelChangesBtn = document.getElementById('cancelChangesBtn');
+                const removeImageButtons = document.querySelectorAll('.remove-image-btn');
+
+                const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                const phonePattern = /^\d{10}$/;
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                let hasChanges = false;
+                let originalValues = {};
+
+                // Store original values
+                ['name', 'email', 'phone', 'profileImage'].forEach(field => {
+                    const element = document.getElementById(`${field}Value`);
+                    originalValues[field] = element ? element.textContent.trim() : '<%= userData.profileImage || "No Profile Image Set" %>';
+                });
+
+                function showActionButtons() {
+                    if (!hasChanges) {
+                        saveChangesBtn.style.display = 'inline-flex';
+                        cancelChangesBtn.style.display = 'inline-flex';
+                        hasChanges = true;
+                    }
+                }
+
+                function hideActionButtons() {
+                    saveChangesBtn.style.display = 'none';
+                    cancelChangesBtn.style.display = 'none';
+                    hasChanges = false;
+                }
+
+                editButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const field = e.currentTarget.dataset.field;
+
+                        if (field === 'password') {
+                            passwordModal.classList.add('show');
+                            return;
+                        }
+
+                        if (field === 'profileImage') {
+                            profileImageModal.classList.add('show');
+                            return;
+                        }
+
+                        const valueElement = document.getElementById(`${field}Value`);
+                        if (valueElement.tagName === 'INPUT') return;
+
+                        const currentValue = valueElement.textContent.trim();
+                        const inputValue = currentValue === 'Not Set' ? '' : currentValue;
+
+                        valueElement.outerHTML = `
                 <input 
                     type="${field === 'phone' ? 'tel' : field === 'email' ? 'email' : 'text'}"
                     class="profile-input" 
@@ -297,160 +944,160 @@ document.addEventListener('DOMContentLoaded', () => {
                 />
             `;
 
-            const inputElement = document.getElementById(`${field}Value`);
-            inputElement.focus();
-            inputElement.select();
+                        const inputElement = document.getElementById(`${field}Value`);
+                        inputElement.focus();
+                        inputElement.select();
 
-            inputElement.addEventListener('blur', () => saveEdit(field));
-            inputElement.addEventListener('keypress', (event) => {
-                if (event.key === 'Enter') {
-                    inputElement.blur();
-                }
-            });
+                        inputElement.addEventListener('blur', () => saveEdit(field));
+                        inputElement.addEventListener('keypress', (event) => {
+                            if (event.key === 'Enter') {
+                                inputElement.blur();
+                            }
+                        });
 
-            inputElement.addEventListener('input', () => {
-                if (inputElement.value.trim() !== originalValues[field]) {
-                    showActionButtons();
-                }
-            });
-        });
-    });
+                        inputElement.addEventListener('input', () => {
+                            if (inputElement.value.trim() !== originalValues[field]) {
+                                showActionButtons();
+                            }
+                        });
+                    });
+                });
 
-    function saveEdit(field) {
-        const inputElement = document.getElementById(`${field}Value`);
-        const newValue = inputElement.value.trim();
+                function saveEdit(field) {
+                    const inputElement = document.getElementById(`${field}Value`);
+                    const newValue = inputElement.value.trim();
 
-        if (validateInput(field, newValue)) {
-            const displayValue = (field === 'phone' && !newValue) ? 'Not Set' : newValue;
-            
-            inputElement.outerHTML = `
+                    if (validateInput(field, newValue)) {
+                        const displayValue = (field === 'phone' && !newValue) ? 'Not Set' : newValue;
+
+                        inputElement.outerHTML = `
                 <div class="profile-value" id="${field}Value">${displayValue}</div>
             `;
 
-            if (newValue !== originalValues[field]) {
-                showActionButtons();
-            }
-        } else {
-            inputElement.outerHTML = `
+                        if (newValue !== originalValues[field]) {
+                            showActionButtons();
+                        }
+                    } else {
+                        inputElement.outerHTML = `
                 <div class="profile-value" id="${field}Value">${originalValues[field]}</div>
             `;
-        }
-    }
-
-    function validateInput(field, value) {
-        switch (field) {
-            case 'name':
-                if (value.length < 2) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid Name',
-                        text: 'Name must be at least 2 characters long'
-                    });
-                    return false;
+                    }
                 }
-                if (!/^[a-zA-Z\s]+$/.test(value)) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid Name',
-                        text: 'Name can only contain letters and spaces'
-                    });
-                    return false;
+
+                function validateInput(field, value) {
+                    switch (field) {
+                        case 'name':
+                            if (value.length < 2) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid Name',
+                                    text: 'Name must be at least 2 characters long'
+                                });
+                                return false;
+                            }
+                            if (!/^[a-zA-Z\s]+$/.test(value)) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid Name',
+                                    text: 'Name can only contain letters and spaces'
+                                });
+                                return false;
+                            }
+                            return true;
+
+                        case 'email':
+                            if (!emailPattern.test(value)) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid Email',
+                                    text: 'Please enter a valid email address'
+                                });
+                                return false;
+                            }
+                            return true;
+
+                        case 'phone':
+                            if (value === '') return true;
+                            if (!phonePattern.test(value)) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid Phone',
+                                    text: 'Please enter a valid 10-digit phone number'
+                                });
+                                return false;
+                            }
+                            return true;
+
+                        default:
+                            return true;
+                    }
                 }
-                return true;
 
-            case 'email':
-                if (!emailPattern.test(value)) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid Email',
-                        text: 'Please enter a valid email address'
-                    });
-                    return false;
+                // Profile Image Preview
+                const profileImageInput = document.getElementById('profileImageInput');
+                profileImageInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            const previewImage = document.getElementById('previewImage');
+                            previewImage.src = event.target.result;
+                            document.getElementById('imagePreview').style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        document.getElementById('imagePreview').style.display = 'none';
+                    }
+                });
+
+                // Profile Image Modal Handlers
+                function closeProfileImageModalHandler() {
+                    profileImageModal.classList.remove('show');
+                    document.getElementById('profileImageInput').value = '';
+                    document.getElementById('imagePreview').style.display = 'none';
+                    document.getElementById('profileImageError').style.display = 'none';
                 }
-                return true;
 
-            case 'phone':
-                if (value === '') return true;
-                if (!phonePattern.test(value)) {
+                closeProfileImageModal.addEventListener('click', closeProfileImageModalHandler);
+                cancelProfileImageBtn.addEventListener('click', closeProfileImageModalHandler);
+
+                profileImageModal.addEventListener('click', (e) => {
+                    if (e.target === profileImageModal) {
+                        closeProfileImageModalHandler();
+                    }
+                });
+
+                updateProfileImageBtn.addEventListener('click', () => {
+                    const profileImageInput = document.getElementById('profileImageInput');
+                    if (!profileImageInput.files[0]) {
+                        document.getElementById('profileImageError').textContent = 'Please select an image';
+                        document.getElementById('profileImageError').style.display = 'block';
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('profileImage', profileImageInput.files[0]);
+
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid Phone',
-                        text: 'Please enter a valid 10-digit phone number'
+                        title: 'Uploading Image...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
                     });
-                    return false;
-                }
-                return true;
 
-            default:
-                return true;
-        }
-    }
-
-    // Profile Image Preview
-    const profileImageInput = document.getElementById('profileImageInput');
-    profileImageInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const previewImage = document.getElementById('previewImage');
-                previewImage.src = event.target.result;
-                document.getElementById('imagePreview').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        } else {
-            document.getElementById('imagePreview').style.display = 'none';
-        }
-    });
-
-    // Profile Image Modal Handlers
-    function closeProfileImageModalHandler() {
-        profileImageModal.classList.remove('show');
-        document.getElementById('profileImageInput').value = '';
-        document.getElementById('imagePreview').style.display = 'none';
-        document.getElementById('profileImageError').style.display = 'none';
-    }
-
-    closeProfileImageModal.addEventListener('click', closeProfileImageModalHandler);
-    cancelProfileImageBtn.addEventListener('click', closeProfileImageModalHandler);
-
-    profileImageModal.addEventListener('click', (e) => {
-        if (e.target === profileImageModal) {
-            closeProfileImageModalHandler();
-        }
-    });
-
-    updateProfileImageBtn.addEventListener('click', () => {
-        const profileImageInput = document.getElementById('profileImageInput');
-        if (!profileImageInput.files[0]) {
-            document.getElementById('profileImageError').textContent = 'Please select an image';
-            document.getElementById('profileImageError').style.display = 'block';
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('profileImage', profileImageInput.files[0]);
-
-        Swal.fire({
-            title: 'Uploading Image...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        fetch('/profile/update-profile-image', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                closeProfileImageModalHandler();
-                // Update the profile image display
-                const profileImageContainer = document.querySelector('.profile-value-container[data-field="profileImage"]') || 
-                    document.querySelector('#profileImageValue').parentElement;
-                profileImageContainer.innerHTML = `
+                    fetch('/profile/update-profile-image', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                closeProfileImageModalHandler();
+                                // Update the profile image display
+                                const profileImageContainer = document.querySelector('.profile-value-container[data-field="profileImage"]') ||
+                                    document.querySelector('#profileImageValue').parentElement;
+                                profileImageContainer.innerHTML = `
                     <img src="/uploads/profile-images/${data.profileImage}" alt="Profile Image" class="profile-image" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
                     <button class="edit-btn" data-field="profileImage" title="Change Profile Image">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -463,78 +1110,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         </svg>
                     </button>
                 `;
-                originalValues.profileImage = data.profileImage;
-                showActionButtons();
-
-                // Re-attach event listeners for new buttons
-                attachRemoveImageListener();
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Image Updated!',
-                    text: 'Your profile image has been updated successfully',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: data.message || 'Failed to update profile image'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'An error occurred while updating profile image'
-            });
-        });
-    });
-
-    // Remove Profile Image Handler
-    function attachRemoveImageListener() {
-        document.querySelectorAll('.remove-image-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                Swal.fire({
-                    title: 'Remove Profile Image?',
-                    text: 'Are you sure you want to remove your profile image?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, remove',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch('/profile/remove-profile-image', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                const profileImageContainer = document.querySelector('.profile-value-container[data-field="profileImage"]') || 
-                                    document.querySelector('#profileImageValue').parentElement;
-                                profileImageContainer.innerHTML = `
-                                    <div class="profile-value" id="profileImageValue">No Profile Image Set</div>
-                                    <button class="edit-btn" data-field="profileImage" title="Add Profile Image">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                        </svg>
-                                    </button>
-                                `;
-                                originalValues.profileImage = 'No Profile Image Set';
+                                originalValues.profileImage = data.profileImage;
                                 showActionButtons();
+
+                                // Re-attach event listeners for new buttons
+                                attachRemoveImageListener();
 
                                 Swal.fire({
                                     icon: 'success',
-                                    title: 'Image Removed!',
-                                    text: 'Your profile image has been removed successfully',
+                                    title: 'Image Updated!',
+                                    text: 'Your profile image has been updated successfully',
                                     timer: 2000,
                                     showConfirmButton: false
                                 });
@@ -542,7 +1127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error!',
-                                    text: data.message || 'Failed to remove profile image'
+                                    text: data.message || 'Failed to update profile image'
                                 });
                             }
                         })
@@ -551,227 +1136,289 @@ document.addEventListener('DOMContentLoaded', () => {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
-                                text: 'An error occurred while removing profile image'
+                                text: 'An error occurred while updating profile image'
                             });
                         });
+                });
+
+                // Remove Profile Image Handler
+                function attachRemoveImageListener() {
+                    document.querySelectorAll('.remove-image-btn').forEach(button => {
+                        button.addEventListener('click', () => {
+                            Swal.fire({
+                                title: 'Remove Profile Image?',
+                                text: 'Are you sure you want to remove your profile image?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#d33',
+                                cancelButtonColor: '#3085d6',
+                                confirmButtonText: 'Yes, remove',
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    fetch('/profile/remove-profile-image', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        }
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                const profileImageContainer = document.querySelector('.profile-value-container[data-field="profileImage"]') ||
+                                                    document.querySelector('#profileImageValue').parentElement;
+                                                profileImageContainer.innerHTML = `
+                                    <div class="profile-value" id="profileImageValue">No Profile Image Set</div>
+                                    <button class="edit-btn" data-field="profileImage" title="Add Profile Image">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                        </svg>
+                                    </button>
+                                `;
+                                                originalValues.profileImage = 'No Profile Image Set';
+                                                showActionButtons();
+
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Image Removed!',
+                                                    text: 'Your profile image has been removed successfully',
+                                                    timer: 2000,
+                                                    showConfirmButton: false
+                                                });
+                                            } else {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Error!',
+                                                    text: data.message || 'Failed to remove profile image'
+                                                });
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error!',
+                                                text: 'An error occurred while removing profile image'
+                                            });
+                                        });
+                                }
+                            });
+                        });
+                    });
+                }
+
+                // Initialize remove image button listeners
+                attachRemoveImageListener();
+
+                // Save Changes Button Handler
+                saveChangesBtn.addEventListener('click', () => {
+                    const updatedName = document.getElementById('nameValue').textContent.trim();
+                    const updatedEmail = document.getElementById('emailValue').textContent.trim();
+                    const updatedPhone = document.getElementById('phoneValue').textContent.trim();
+
+                    const updateData = {};
+                    let hasRealChanges = false;
+
+                    if (updatedName !== originalValues.name) {
+                        updateData.name = updatedName;
+                        hasRealChanges = true;
+                    }
+                    if (updatedEmail !== originalValues.email) {
+                        updateData.email = updatedEmail;
+                        hasRealChanges = true;
+                    }
+                    if (updatedPhone !== originalValues.phone) {
+                        updateData.phone = updatedPhone === 'Not Set' ? '' : updatedPhone;
+                        hasRealChanges = true;
+                    }
+
+                    if (!hasRealChanges) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'No Changes',
+                            text: 'No changes were made to save'
+                        });
+                        return;
+                    }
+
+                    // Show loading
+                    Swal.fire({
+                        title: 'Saving Changes...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    fetch('/profile/profile', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(updateData),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === 'Profile updated successfully') {
+                                // Update original values
+                                originalValues.name = data.user.name || updatedName;
+                                originalValues.email = data.user.email || updatedEmail;
+                                originalValues.phone = data.user.phone || updatedPhone;
+
+                                hideActionButtons();
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success!',
+                                    text: 'Profile updated successfully',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: data.message || 'Failed to update profile'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred while updating profile'
+                            });
+                        });
+                });
+
+                // Cancel Changes Button Handler
+                cancelChangesBtn.addEventListener('click', () => {
+                    Swal.fire({
+                        title: 'Discard Changes?',
+                        text: 'Are you sure you want to discard all unsaved changes?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, discard',
+                        cancelButtonText: 'Keep editing'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Reset all values to original
+                            document.getElementById('nameValue').textContent = originalValues.name;
+                            document.getElementById('emailValue').textContent = originalValues.email;
+                            document.getElementById('phoneValue').textContent = originalValues.phone;
+
+                            hideActionButtons();
+
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Changes Discarded',
+                                text: 'All changes have been discarded',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                });
+
+                // Password Modal Handlers
+                function closePasswordModalHandler() {
+                    passwordModal.classList.remove('show');
+                    ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
+                        document.getElementById(id).value = '';
+                        document.getElementById(`${id}Error`).style.display = 'none';
+                    });
+                }
+
+                closePasswordModal.addEventListener('click', closePasswordModalHandler);
+                cancelPasswordBtn.addEventListener('click', closePasswordModalHandler);
+
+                passwordModal.addEventListener('click', (e) => {
+                    if (e.target === passwordModal) {
+                        closePasswordModalHandler();
                     }
                 });
-            });
-        });
-    }
 
-    // Initialize remove image button listeners
-    attachRemoveImageListener();
+                updatePasswordBtn.addEventListener('click', () => {
+                    const currentPassword = document.getElementById('currentPassword');
+                    const newPassword = document.getElementById('newPassword');
+                    const confirmPassword = document.getElementById('confirmPassword');
 
-    // Save Changes Button Handler
-    saveChangesBtn.addEventListener('click', () => {
-        const updatedName = document.getElementById('nameValue').textContent.trim();
-        const updatedEmail = document.getElementById('emailValue').textContent.trim();
-        const updatedPhone = document.getElementById('phoneValue').textContent.trim();
+                    // Clear previous errors
+                    ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
+                        document.getElementById(`${id}Error`).style.display = 'none';
+                    });
 
-        const updateData = {};
-        let hasRealChanges = false;
+                    let hasError = false;
 
-        if (updatedName !== originalValues.name) {
-            updateData.name = updatedName;
-            hasRealChanges = true;
-        }
-        if (updatedEmail !== originalValues.email) {
-            updateData.email = updatedEmail;
-            hasRealChanges = true;
-        }
-        if (updatedPhone !== originalValues.phone) {
-            updateData.phone = updatedPhone === 'Not Set' ? '' : updatedPhone;
-            hasRealChanges = true;
-        }
+                    if (!currentPassword.value.trim()) {
+                        document.getElementById('currentPasswordError').textContent = 'Current password is required';
+                        document.getElementById('currentPasswordError').style.display = 'block';
+                        hasError = true;
+                    }
 
-        if (!hasRealChanges) {
-            Swal.fire({
-                icon: 'info',
-                title: 'No Changes',
-                text: 'No changes were made to save'
-            });
-            return;
-        }
+                    if (!passwordPattern.test(newPassword.value)) {
+                        document.getElementById('newPasswordError').textContent = 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character';
+                        document.getElementById('newPasswordError').style.display = 'block';
+                        hasError = true;
+                    }
 
-        // Show loading
-        Swal.fire({
-            title: 'Saving Changes...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+                    if (newPassword.value !== confirmPassword.value) {
+                        document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+                        document.getElementById('confirmPasswordError').style.display = 'block';
+                        hasError = true;
+                    }
 
-        fetch('/profile/profile', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updateData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === 'Profile updated successfully') {
-                // Update original values
-                originalValues.name = data.user.name || updatedName;
-                originalValues.email = data.user.email || updatedEmail;
-                originalValues.phone = data.user.phone || updatedPhone;
+                    if (hasError) return;
 
-                hideActionButtons();
+                    // Show loading
+                    Swal.fire({
+                        title: 'Updating Password...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Profile updated successfully',
-                    timer: 2000,
-                    showConfirmButton: false
+                    fetch('/profile/profile', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            currentPassword: currentPassword.value,
+                            newPassword: newPassword.value,
+                            confirmNewPassword: confirmPassword.value
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Password updated successfully") {
+                                closePasswordModalHandler();
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Password Updated!',
+                                    text: 'Your password has been updated successfully',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.close();
+                                document.getElementById('currentPasswordError').textContent = data.message;
+                                document.getElementById('currentPasswordError').style.display = 'block';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred while updating password'
+                            });
+                        });
                 });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: data.message || 'Failed to update profile'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'An error occurred while updating profile'
             });
-        });
-    });
-
-    // Cancel Changes Button Handler
-    cancelChangesBtn.addEventListener('click', () => {
-        Swal.fire({
-            title: 'Discard Changes?',
-            text: 'Are you sure you want to discard all unsaved changes?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, discard',
-            cancelButtonText: 'Keep editing'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Reset all values to original
-                document.getElementById('nameValue').textContent = originalValues.name;
-                document.getElementById('emailValue').textContent = originalValues.email;
-                document.getElementById('phoneValue').textContent = originalValues.phone;
-                
-                hideActionButtons();
-                
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Changes Discarded',
-                    text: 'All changes have been discarded',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            }
-        });
-    });
-
-    // Password Modal Handlers
-    function closePasswordModalHandler() {
-        passwordModal.classList.remove('show');
-        ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
-            document.getElementById(id).value = '';
-            document.getElementById(`${id}Error`).style.display = 'none';
-        });
-    }
-
-    closePasswordModal.addEventListener('click', closePasswordModalHandler);
-    cancelPasswordBtn.addEventListener('click', closePasswordModalHandler);
-
-    passwordModal.addEventListener('click', (e) => {
-        if (e.target === passwordModal) {
-            closePasswordModalHandler();
-        }
-    });
-
-    updatePasswordBtn.addEventListener('click', () => {
-        const currentPassword = document.getElementById('currentPassword');
-        const newPassword = document.getElementById('newPassword');
-        const confirmPassword = document.getElementById('confirmPassword');
-
-        // Clear previous errors
-        ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
-            document.getElementById(`${id}Error`).style.display = 'none';
-        });
-
-        let hasError = false;
-
-        if (!currentPassword.value.trim()) {
-            document.getElementById('currentPasswordError').textContent = 'Current password is required';
-            document.getElementById('currentPasswordError').style.display = 'block';
-            hasError = true;
-        }
-
-        if (!passwordPattern.test(newPassword.value)) {
-            document.getElementById('newPasswordError').textContent = 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character';
-            document.getElementById('newPasswordError').style.display = 'block';
-            hasError = true;
-        }
-
-        if (newPassword.value !== confirmPassword.value) {
-            document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
-            document.getElementById('confirmPasswordError').style.display = 'block';
-            hasError = true;
-        }
-
-        if (hasError) return;
-
-        // Show loading
-        Swal.fire({
-            title: 'Updating Password...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        fetch('/profile/profile', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                currentPassword: currentPassword.value,
-                newPassword: newPassword.value,
-                confirmNewPassword: confirmPassword.value
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === "Password updated successfully") {
-                closePasswordModalHandler();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Password Updated!',
-                    text: 'Your password has been updated successfully',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            } else {
-                Swal.close();
-                document.getElementById('currentPasswordError').textContent = data.message;
-                document.getElementById('currentPasswordError').style.display = 'block';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'An error occurred while updating password'
-            });
-        });
-    });
-});
-</script>
+        </script>

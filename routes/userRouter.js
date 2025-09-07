@@ -68,6 +68,8 @@ router.put('/update-address/:id', profileController.updateAddress);
 router.delete('/delete-address/:id', profileController.deleteAddress);
 router.get('/profileorder',profileController.loadProfileOrder)
 router.put('/profile/profile', profileController.updateProfileOrPassword);
+router.get('/orders/:id([a-fA-F0-9]{24})', userAuth, profileController.loadOrderDetails);
+router.post('/orders/:id([a-fA-F0-9]{24})/cancel', userAuth, profileController.cancelOrder);
 router.get('/wallet', profileController.loadWallet);           
 router.post('/profile/add-wallet-money', profileController.addWalletMoney); 
  

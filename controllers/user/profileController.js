@@ -11,18 +11,18 @@ const loadProfilePage = async (req, res) => {
   try {
     const userId = req.session.user;
     console.log("User ID from session:", userId);
-    
+
     if (!userId) {
       return res.redirect("/login");
     }
-    
+
     const user = await User.findById(userId);
     console.log("User found:", user);
-    
+
     if (!user) {
       return res.redirect("/login");
     }
-    
+
     res.render("profile/profile", { userData: user });
   } catch (error) {
     console.error("Error loading profile page:", error);
@@ -34,18 +34,18 @@ const loadDashboard = async (req, res) => {
   try {
     const userId = req.session.user;
     console.log("Dashboard - User ID from session:", userId);
-    
+
     if (!userId) {
       return res.redirect("/login");
     }
-    
+
     const user = await User.findById(userId);
     console.log("Dashboard - User found:", user);
-    
+
     if (!user) {
       return res.redirect("/login");
     }
-    
+
     res.render("profile/dashboard", { userData: user });
   } catch (error) {
     console.error("Error loading dashboard page:", error);
@@ -58,7 +58,7 @@ const updateProfileOrPassword = async (req, res) => {
   try {
     // Fixed: Use correct session variable (user, not User)
     const userId = req.session.user;
-    
+
     if (!userId) {
       return res.status(401).json({ message: "Please login first" });
     }
@@ -67,17 +67,26 @@ const updateProfileOrPassword = async (req, res) => {
     console.log("User ID:", userId);
 
     // Password change logic
-    if (req.body.currentPassword && req.body.newPassword && req.body.confirmNewPassword) {
+    if (
+      req.body.currentPassword &&
+      req.body.newPassword &&
+      req.body.confirmNewPassword
+    ) {
       const user = await User.findById(userId);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
       // Verify current password
-      const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
+      const isMatch = await bcrypt.compare(
+        req.body.currentPassword,
+        user.password
+      );
       if (!isMatch) {
-        return res.status(400).json({ message: "Current password is incorrect" });
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
       }
 
       // Verify new password and confirmation match
@@ -86,10 +95,12 @@ const updateProfileOrPassword = async (req, res) => {
       }
 
       // Validate new password strength
-      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      const passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       if (!passwordPattern.test(req.body.newPassword)) {
-        return res.status(400).json({ 
-          message: "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character" 
+        return res.status(400).json({
+          message:
+            "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character",
         });
       }
 
@@ -103,15 +114,19 @@ const updateProfileOrPassword = async (req, res) => {
 
     // Profile update logic
     const updateFields = {};
-    
+
     // Handle name update
     if (req.body.name !== undefined) {
       const name = req.body.name.trim();
       if (name.length < 2) {
-        return res.status(400).json({ message: "Name must be at least 2 characters long" });
+        return res
+          .status(400)
+          .json({ message: "Name must be at least 2 characters long" });
       }
       if (!/^[a-zA-Z\s]+$/.test(name)) {
-        return res.status(400).json({ message: "Name can only contain letters and spaces" });
+        return res
+          .status(400)
+          .json({ message: "Name can only contain letters and spaces" });
       }
       updateFields.name = name;
     }
@@ -120,21 +135,23 @@ const updateProfileOrPassword = async (req, res) => {
     if (req.body.email !== undefined) {
       const email = req.body.email.trim().toLowerCase();
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      
+
       if (!emailPattern.test(email)) {
-        return res.status(400).json({ message: "Please enter a valid email address" });
+        return res
+          .status(400)
+          .json({ message: "Please enter a valid email address" });
       }
 
       // Check if email already exists for another user
-      const existingUser = await User.findOne({ 
-        email: email, 
-        _id: { $ne: userId } 
+      const existingUser = await User.findOne({
+        email: email,
+        _id: { $ne: userId },
       });
-      
+
       if (existingUser) {
         return res.status(400).json({ message: "Email already exists" });
       }
-      
+
       updateFields.email = email;
     }
 
@@ -142,7 +159,9 @@ const updateProfileOrPassword = async (req, res) => {
     if (req.body.phone !== undefined) {
       const phone = req.body.phone.trim();
       if (phone && !/^\d{10}$/.test(phone)) {
-        return res.status(400).json({ message: "Please enter a valid 10-digit phone number" });
+        return res
+          .status(400)
+          .json({ message: "Please enter a valid 10-digit phone number" });
       }
       updateFields.phone = phone || null;
     }
@@ -168,21 +187,23 @@ const updateProfileOrPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating profile:", error);
-    
+
     // Handle duplicate key errors
     if (error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0];
-      return res.status(400).json({ 
-        message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists` 
+      return res.status(400).json({
+        message: `${
+          field.charAt(0).toUpperCase() + field.slice(1)
+        } already exists`,
       });
     }
-    
+
     // Handle validation errors
-    if (error.name === 'ValidationError') {
-      const messages = Object.values(error.errors).map(err => err.message);
-      return res.status(400).json({ message: messages.join(', ') });
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
     }
-    
+
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -191,14 +212,14 @@ const loadAddressPage = async (req, res) => {
   try {
     const userId = req.session.user;
     console.log("Address page - User ID:", userId);
-    
+
     if (!userId) {
       return res.redirect("/login");
     }
-    
+
     const addressDoc = await Address.findOne({ userId });
     const addresses = addressDoc ? addressDoc.address : [];
-    
+
     res.render("profile/address", { addresses });
   } catch (error) {
     console.error("Error loading address page:", error);
@@ -210,9 +231,9 @@ const addAddress = async (req, res) => {
   try {
     const userId = req.session.user;
     if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Please login first" 
+      return res.status(401).json({
+        success: false,
+        message: "Please login first",
       });
     }
 
@@ -228,37 +249,46 @@ const addAddress = async (req, res) => {
       country,
     } = req.body;
 
-    console.log(req.body)
+    console.log(req.body);
 
     // Validate required fields
-    if (!addressType || !name || !phone || !landMark || !city || !state || !pincode || !country) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "All required fields are necessary" 
+    if (
+      !addressType ||
+      !name ||
+      !phone ||
+      !landMark ||
+      !city ||
+      !state ||
+      !pincode ||
+      !country
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All required fields are necessary",
       });
     }
 
     // Validate phone number
     if (!/^\d{10}$/.test(phone)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Please enter a valid 10-digit phone number" 
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 10-digit phone number",
       });
     }
 
     // Validate email if provided
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Please enter a valid email address" 
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address",
       });
     }
 
     // Validate pincode
     if (!/^\d{6}$/.test(pincode)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Please enter a valid 6-digit pincode" 
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 6-digit pincode",
       });
     }
 
@@ -271,7 +301,7 @@ const addAddress = async (req, res) => {
       addressType,
       name,
       phone,
-      email: email || '',
+      email: email || "",
       landMark,
       city,
       state,
@@ -280,16 +310,16 @@ const addAddress = async (req, res) => {
     });
 
     await addressDoc.save();
-    
-    res.json({ 
-      success: true, 
-      message: "Address added successfully" 
+
+    res.json({
+      success: true,
+      message: "Address added successfully",
     });
   } catch (error) {
     console.error("Error adding address:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Internal server error" 
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };
@@ -299,9 +329,9 @@ const updateAddress = async (req, res) => {
   try {
     const userId = req.session.user;
     if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Please login first" 
+      return res.status(401).json({
+        success: false,
+        message: "Please login first",
       });
     }
 
@@ -319,32 +349,41 @@ const updateAddress = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!addressType || !name || !phone || !landMark || !city || !state || !pincode || !country) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "All required fields are necessary" 
+    if (
+      !addressType ||
+      !name ||
+      !phone ||
+      !landMark ||
+      !city ||
+      !state ||
+      !pincode ||
+      !country
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All required fields are necessary",
       });
     }
 
     // Validate phone number
     if (!/^\d{10}$/.test(phone)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Please enter a valid 10-digit phone number" 
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 10-digit phone number",
       });
     }
 
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Please enter a valid email address" 
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address",
       });
     }
 
     if (!/^\d{6}$/.test(pincode)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Please enter a valid 6-digit pincode" 
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 6-digit pincode",
       });
     }
 
@@ -355,7 +394,7 @@ const updateAddress = async (req, res) => {
           "address.$.addressType": addressType,
           "address.$.name": name,
           "address.$.phone": phone,
-          "address.$.email": email || '',
+          "address.$.email": email || "",
           "address.$.landMark": landMark,
           "address.$.city": city,
           "address.$.state": state,
@@ -367,21 +406,21 @@ const updateAddress = async (req, res) => {
     );
 
     if (!addressDoc) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Address not found" 
+      return res.status(404).json({
+        success: false,
+        message: "Address not found",
       });
     }
 
-    res.json({ 
-      success: true, 
-      message: "Address updated successfully" 
+    res.json({
+      success: true,
+      message: "Address updated successfully",
     });
   } catch (error) {
     console.error("Error updating address:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Internal server error" 
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };
@@ -390,9 +429,9 @@ const deleteAddress = async (req, res) => {
   try {
     const userId = req.session.user;
     if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Please login first" 
+      return res.status(401).json({
+        success: false,
+        message: "Please login first",
       });
     }
 
@@ -405,24 +444,175 @@ const deleteAddress = async (req, res) => {
     );
 
     if (!addressDoc) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "User or address not found" 
+      return res.status(404).json({
+        success: false,
+        message: "User or address not found",
       });
     }
 
-    res.json({ 
-      success: true, 
-      message: "Address deleted successfully" 
+    res.json({
+      success: true,
+      message: "Address deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting address:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Internal server error" 
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };
+
+// const loadProfileOrder = async (req, res) => {
+//   try {
+//     const userId = req.session.user;
+//     if (!userId) {
+//       console.log("No userId in session, redirecting to login");
+//       return res.redirect("/login");
+//     }
+
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = 5;
+//     const skip = (page - 1) * limit;
+
+//     console.log(
+//       `Orders page - User ID: ${userId}, Page: ${page}, Skip: ${skip}, Limit: ${limit}`
+//     );
+
+//     const totalOrders = await Order.countDocuments({ userId });
+//     console.log(`Total orders: ${totalOrders}`);
+
+//     const orders = await Order.find({ userId })
+//       .sort({ createdAt: -1 })
+//       .populate("items.productId")
+//       .skip(skip)
+//       .limit(limit);
+
+//     // Pagination metadata
+//     const totalPages = Math.ceil(totalOrders / limit);
+//     const hasNextPage = page < totalPages;
+//     const hasPrevPage = page > 1;
+
+//     console.log(
+//       `Total Pages: ${totalPages}, Has Prev: ${hasPrevPage}, Has Next: ${hasNextPage}`
+//     );
+
+//     res.render("profile/profileorder", {
+//       orders,
+//       currentPage: page,
+//       totalPages,
+//       hasNextPage,
+//       hasPrevPage,
+//     });
+//   } catch (error) {
+//     console.error("Error in loadProfileOrder:", error);
+//     res.status(500).render("error", {
+//       message: "Error loading orders page",
+//     });
+//   }
+// };
+
+// const loadOrderDetails = async (req, res) => {
+//   try {
+//     const userId = req.session.user;
+//     const orderId = req.params.id;
+
+//     if (!userId) {
+//       console.log("No userId in session, redirecting to login");
+//       return res.redirect("/login");
+//     }
+
+//     const order = await Order.findOne({ _id: orderId, userId })
+//       .populate("items.productId")
+//       .populate("address");
+
+//     if (!order) {
+//       return res.status(404).render("error", {
+//         message: "Order not found",
+//       });
+//     }
+
+//     res.render("profile/orderDetails", {
+//       order,
+//       userData: await User.findById(userId),
+//     });
+//   } catch (error) {
+//     console.error("Error in loadOrderDetails:", error);
+//     res.status(500).render("error", {
+//       message: "Error loading order details",
+//     });
+//   }
+// };
+
+// const cancelOrder = async (req, res) => {
+//   try {
+//     const userId = req.session.user;
+//     const orderId = req.params.id;
+
+//     if (!userId) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "Please login first",
+//       });
+//     }
+
+//     const order = await Order.findOne({ _id: orderId, userId });
+//     if (!order) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Order not found",
+//       });
+//     }
+
+//     if (order.status === "Cancelled" || order.status === "Returned") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Order is already cancelled or returned",
+//       });
+//     }
+
+//     if (order.status === "Delivered") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Cannot cancel a delivered order",
+//       });
+//     }
+
+//     // Update order status
+//     order.status = "Cancelled";
+//     await order.save();
+
+//     // Refund to wallet
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
+
+//     if (!user.walletBalance) {
+//       user.walletBalance = 0;
+//     }
+
+//     user.walletBalance += order.totalPrice;
+//     await user.save();
+
+//     res.json({
+//       success: true,
+//       message: `Order cancelled successfully. ₹${order.totalPrice.toFixed(
+//         2
+//       )} refunded to your wallet.`,
+//       newBalance: user.walletBalance,
+//     });
+//   } catch (error) {
+//     console.error("Error cancelling order:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal server error",
+//     });
+//   }
+// };
 
 const loadProfileOrder = async (req, res) => {
   try {
@@ -433,14 +623,16 @@ const loadProfileOrder = async (req, res) => {
     }
 
     const page = parseInt(req.query.page) || 1;
-    const limit = 5; 
+    const limit = 5;
     const skip = (page - 1) * limit;
-    
-    console.log(`Orders page - User ID: ${userId}, Page: ${page}, Skip: ${skip}, Limit: ${limit}`);
+
+    console.log(
+      `Orders page - User ID: ${userId}, Page: ${page}, Skip: ${skip}, Limit: ${limit}`
+    );
 
     const totalOrders = await Order.countDocuments({ userId });
     console.log(`Total orders: ${totalOrders}`);
-    
+
     const orders = await Order.find({ userId })
       .sort({ createdAt: -1 })
       .populate("items.productId")
@@ -451,8 +643,10 @@ const loadProfileOrder = async (req, res) => {
     const totalPages = Math.ceil(totalOrders / limit);
     const hasNextPage = page < totalPages;
     const hasPrevPage = page > 1;
-    
-    console.log(`Total Pages: ${totalPages}, Has Prev: ${hasPrevPage}, Has Next: ${hasNextPage}`);
+
+    console.log(
+      `Total Pages: ${totalPages}, Has Prev: ${hasPrevPage}, Has Next: ${hasNextPage}`
+    );
 
     res.render("profile/profileorder", {
       orders,
@@ -463,27 +657,128 @@ const loadProfileOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in loadProfileOrder:", error);
-    res.status(500).render("error", { 
-      message: "Error loading orders page" 
+    res.status(500).render("error", {
+      message: "Error loading orders page",
     });
   }
 };
 
+const loadOrderDetails = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    const orderId = req.params.id;
+
+    if (!userId) {
+      console.log("No userId in session, redirecting to login");
+      return res.redirect("/login");
+    }
+
+    const order = await Order.findOne({ _id: orderId, userId })
+      .populate("items.productId")
+      .populate("address");
+
+    if (!order) {
+      return res.status(404).render("error", {
+        message: "Order not found",
+      });
+    }
+
+    res.render("profile/orderDetails", {
+      order,
+      userData: await User.findById(userId),
+    });
+  } catch (error) {
+    console.error("Error in loadOrderDetails:", error);
+    res.status(500).render("error", {
+      message: "Error loading order details",
+    });
+  }
+};
+
+const cancelOrder = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    const orderId = req.params.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Please login first",
+      });
+    }
+
+    const order = await Order.findOne({ _id: orderId, userId });
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    if (order.status === "Cancelled" || order.status === "Returned") {
+      return res.status(400).json({
+        success: false,
+        message: "Order is already cancelled or returned",
+      });
+    }
+
+    if (order.status === "Delivered") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot cancel a delivered order",
+      });
+    }
+
+    // Update order status
+    order.status = "Cancelled";
+    await order.save();
+
+    // Refund to wallet
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!user.walletBalance) {
+      user.walletBalance = 0;
+    }
+
+    user.walletBalance += order.totalPrice;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: `Order cancelled successfully. ₹${order.totalPrice.toFixed(
+        2
+      )} refunded to your wallet.`,
+      newBalance: user.walletBalance,
+    });
+  } catch (error) {
+    console.error("Error cancelling order:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
 const loadWallet = async (req, res) => {
   try {
     const userId = req.session.user;
-    
+
     if (!userId) {
       return res.redirect("/login");
     }
-    
+
     const user = await User.findById(userId);
-    
+
     if (!user) {
       return res.redirect("/login");
     }
-    
+
     res.render("profile/wallet", { userData: user });
   } catch (error) {
     console.error("Error loading wallet page:", error);
@@ -494,11 +789,11 @@ const loadWallet = async (req, res) => {
 const addWalletMoney = async (req, res) => {
   try {
     const userId = req.session.user;
-    
+
     if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Please login first" 
+      return res.status(401).json({
+        success: false,
+        message: "Please login first",
       });
     }
 
@@ -507,33 +802,33 @@ const addWalletMoney = async (req, res) => {
 
     // Validation
     if (isNaN(amountNum) || amountNum <= 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Please enter a valid amount greater than 0" 
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid amount greater than 0",
       });
     }
 
     if (amountNum > 10000) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Maximum amount that can be added is ₹10,000" 
+      return res.status(400).json({
+        success: false,
+        message: "Maximum amount that can be added is ₹10,000",
       });
     }
 
     if (amountNum < 1) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Minimum amount that can be added is ₹1" 
+      return res.status(400).json({
+        success: false,
+        message: "Minimum amount that can be added is ₹1",
       });
     }
 
     // Find user and update wallet balance
     const user = await User.findById(userId);
-    
+
     if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "User not found" 
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
       });
     }
 
@@ -550,14 +845,13 @@ const addWalletMoney = async (req, res) => {
       success: true,
       message: "Money added successfully",
       newBalance: user.walletBalance,
-      addedAmount: amountNum
+      addedAmount: amountNum,
     });
-
   } catch (error) {
     console.error("Error adding money to wallet:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Internal server error" 
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };
@@ -571,6 +865,8 @@ module.exports = {
   updateAddress,
   loadProfileOrder,
   loadDashboard,
+  loadOrderDetails,
+  cancelOrder,
   loadWallet,
   addWalletMoney,
 };
