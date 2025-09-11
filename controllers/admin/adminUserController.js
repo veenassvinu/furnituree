@@ -43,6 +43,7 @@
             currentPage: page,
             totalPages,
             search,
+            activePage: "user"
         });
     } catch (error) {
         console.error(error);

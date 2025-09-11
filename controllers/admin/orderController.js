@@ -60,7 +60,8 @@ const loadOrder = async (req, res) => {
       hasPrevPage: page > 1,
       nextPage: page + 1,
       prevPage: page - 1,
-      searchQuery: req.query.search || ''
+      searchQuery: req.query.search || '',
+      activePage: "order"
     });
   } catch (error) {
     console.error("Error fetching orders:", error);

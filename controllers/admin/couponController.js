@@ -3,15 +3,14 @@ const Coupon = require("../../models/couponSchema");
 const loadCoupon = async (req, res) => {
   try {
     let search = req.query.search || "";
-    let query = {}; // Remove the isDeleted filter to get ALL coupons
+    let query = {}; 
 
     if (search) {
       query.name = { $regex: search, $options: "i" };
     }
 
-    // Load all coupons (both active and deleted) so the frontend can separate them
     const coupons = await Coupon.find(query).sort({ createOn: -1 });
-    res.render("coupon-management", { coupons, search });
+    res.render("coupon-management", { coupons, search, activePage: "coupon" });
   } catch (error) {
     console.error("Error loading coupons:", error);
     res.status(500).send("Server Error");
@@ -50,7 +49,6 @@ const createCoupon = async (req, res) => {
       return res.status(400).json({ success: false, message: "Discount and minimum price must be positive numbers" });
     }
 
-    // Check for existing active coupons only (allow reusing deleted coupon codes)
     const exists = await Coupon.findOne({ name, isDeleted: false });
     if (exists) {
       return res.status(409).json({ success: false, message: "Coupon code already exists" });
@@ -117,9 +115,12 @@ const deleteCoupon = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   loadCoupon,
   createCoupon,
   updateCoupon,
-  deleteCoupon
+  deleteCoupon,
+  
 };

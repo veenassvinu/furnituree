@@ -40,11 +40,16 @@
       transition: background-color 0.3s ease;
     }
 
+    .sidebar a.active {
+      background-color: #1d4044;
+      font-weight: bold;
+    }
+
     .sidebar a:hover {
       background-color: #285e61;
     }
   </style>
-  <div class="sidebar">
+  <!-- <div class="sidebar">
     <h2>Furniture.</h2>
     <a href="/admin/Dashboard">Dashboard</a>
     <a href="/admin/User">User Management</a>
@@ -56,10 +61,21 @@
     <a href="/admin/category">Category Management</a>
 
     <a type="button" onclick="confirmLogout()">Logout</a>
+  </div> -->
 
-
-
+  <div class="sidebar">
+    <h2>Furniture.</h2>
+    <a href="/admin/Dashboard" class="<%= activePage === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+    <a href="/admin/User" class="<%= activePage === 'user' ? 'active' : '' %>">User Management</a>
+    <a href="/admin/product" class="<%= activePage === 'product' ? 'active' : '' %>">Product Management</a>
+    <a href="/admin/addproduct" class="<%= activePage === 'addproduct' ? 'active' : '' %>">Add Product</a>
+    <a href="/admin/order" class="<%= activePage === 'order' ? 'active' : '' %>">Order Management</a>
+    <a href="/admin/coupon" class="<%= activePage === 'coupon' ? 'active' : '' %>">Coupon Management</a>
+    <a href="/admin/offer" class="<%= activePage === 'offer' ? 'active' : '' %>">Offer Management</a>
+    <a href="/admin/category" class="<%= activePage === 'category' ? 'active' : '' %>">Category Management</a>
+    <a type="button" onclick="confirmLogout()">Logout</a>
   </div>
+
 
   <script>
 
@@ -76,7 +92,7 @@
         cancelButtonText: 'Cancel',
       }).then((result) => {
         if (result.isConfirmed) {
-          fetch('/admin/adminLogout', {  
+          fetch('/admin/adminLogout', {
             method: 'GET',
             credentials: 'include'
           })

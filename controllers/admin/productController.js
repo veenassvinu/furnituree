@@ -39,6 +39,7 @@ const loadProduct = async (req, res) => {
       totalPages,
       currentPage,
       search,
+      activePage: "product"
     });
   } catch (error) {
     console.error("Error loading products:", error);
@@ -49,7 +50,7 @@ const loadProduct = async (req, res) => {
 const getProductAddPage = async (req, res) => {
   try {
     const categories = await Category.find({ isListed: true });
-    res.render("add-product", { cat: categories });
+    res.render("add-product", { cat: categories ,activePage: "addproduct"});
   } catch (error) {
     console.error("Error fetching categories:", error);
     res.redirect("/pageerror");

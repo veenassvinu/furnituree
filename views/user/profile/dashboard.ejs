@@ -170,7 +170,7 @@
                     <div class="profile-header">
                         <div class="profile-avatar">
                             <% if (userData.profileImage) { %>
-                                <img src="<%= userData.profileImage %>" alt="Profile Picture">
+                                <img src="/uploads/profile-images/<%= userData.profileImage %>" alt="Profile Picture">
                             <% } else { %>
                                 <% 
                                 let initials = "";

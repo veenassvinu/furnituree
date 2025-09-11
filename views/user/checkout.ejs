@@ -120,7 +120,7 @@
                         <div class="order-total">
                             <div class="total-row">
                                 <span>Subtotal:</span>
-                                <span id="subtotal">₹<%= total %></span>
+                                <span id="subtotal">₹<%= subtotal.toFixed(2) %></span>
                             </div>
                             <div class="total-row">
                                 <span>Shipping:</span>
@@ -128,13 +128,15 @@
                             </div>
                             <div class="total-row">
                                 <span>Discount:</span>
-                                <span id="discount">₹0.00</span>
+                                <span id="discount">₹<%= discount.toFixed(2) %></span>
                             </div>
                             <div class="total-row final">
                                 <span>Grand Total:</span>
-                                <span id="grandTotal">₹<%= total %></span>
+                                <span id="grandTotal">₹<%= grandTotal.toFixed(2) %></span>
                             </div>
                         </div>
+
+
 
                         <div class="payment-methods">
                             <h3>Payment Methods</h3>
@@ -236,9 +238,6 @@
                             });
                         }
                     });
-
-
-
 
 
                     document.getElementById("placeOrderBtn").addEventListener("click", async () => {

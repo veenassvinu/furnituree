@@ -13,6 +13,9 @@ const cartController=require("../controllers/user/cartController.js")
 const aboutController = require('../controllers/user/aboutController.js')
 const checkoutController=require('../controllers/user/checkoutController.js')
 
+const profileUpload = require("../middlewares/profileUpload.js");
+
+
 // ---------Banned Page--------//
 
 router.get("/banned", (req, res) => {
@@ -60,20 +63,26 @@ router.get('/productDetails/:id([a-fA-F0-9]{24})', userController.productDetails
 
 // --------------Profile Section -------------- //
 
-router.get('/profile' , profileController.loadProfilePage)
 router.get('/dashboard' , profileController.loadDashboard)
 router.get('/address',profileController.loadAddressPage);
 router.post('/save-address', profileController.addAddress);
 router.put('/update-address/:id', profileController.updateAddress);
 router.delete('/delete-address/:id', profileController.deleteAddress);
+
 router.get('/profileorder',profileController.loadProfileOrder)
-router.put('/profile/profile', profileController.updateProfileOrPassword);
 router.get('/orders/:id([a-fA-F0-9]{24})', userAuth, profileController.loadOrderDetails);
 router.post('/orders/:id([a-fA-F0-9]{24})/cancel', userAuth, profileController.cancelOrder);
+
 router.get('/wallet', profileController.loadWallet);           
 router.post('/profile/add-wallet-money', profileController.addWalletMoney); 
- 
 
+router.get('/profile' , profileController.loadProfilePage)
+router.put('/profile/profile', profileController.updateProfileOrPassword);
+router.post("/profile/update-profile-image", profileUpload.single("profileImage"), profileController.updateProfileImage);
+router.post("/profile/remove-profile-image",profileController.removeProfileImage);
+
+router.post('/profile/send-otp',profileController.sendOTP);
+router.post('/profile/verify-otp',profileController.verifyOTP);
 
 
 
@@ -102,7 +111,8 @@ router.put("/update-cart-quantity", cartController.updateQuantity);
 router.get("/get-product-stock/:productId", cartController.getProductStock);
 router.get("/get-cart-count", cartController.getCartCount);
 router.get("/update-time", cartController.updateTime);
-
+router.post("/apply-coupon", cartController.applyCoupon);
+router.get("/get-applied-coupon", cartController.getAppliedCoupon);
 
 //--------------forgot password-----------//
 

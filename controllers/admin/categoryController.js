@@ -27,6 +27,7 @@ const categoryInfo = async (req, res) => {
       totalPages,
       totalCategories,
       search, 
+      activePage: "category"
     });
   } catch (error) {
     console.error("Error loading categories:", error);

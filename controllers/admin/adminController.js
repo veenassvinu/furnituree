@@ -55,12 +55,30 @@ const login = async (req, res) => {
 };
 
 
+// const loadDashboard = async (req, res) => {
+//   if (req.session.admin) {
+//     try {
+//       const successMessage = req.session.successMessage;
+//       req.session.successMessage = null; 
+//       res.render("adminDashboard", { successMessage });
+//     } catch (error) {
+//       console.log("error loading dashboard:", error);
+//       res.redirect("/pageerror");
+//     }
+//   } else {
+//     res.redirect("/admin/admin-login");
+//   }
+// };
+
 const loadDashboard = async (req, res) => {
   if (req.session.admin) {
     try {
       const successMessage = req.session.successMessage;
-      req.session.successMessage = null; 
-      res.render("adminDashboard", { successMessage });
+      req.session.successMessage = null;
+      res.render("adminDashboard", { 
+        successMessage,
+        activePage: "dashboard" 
+      });
     } catch (error) {
       console.log("error loading dashboard:", error);
       res.redirect("/pageerror");

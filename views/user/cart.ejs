@@ -1,265 +1,613 @@
 <%- include("../../views/partials/user/header.ejs") %>
 
-<style>
-  .badge {
-    font-size: 0.7rem;
-    padding: 0.35em 0.55em;
-  }
+  <style>
+    .badge {
+      font-size: 0.7rem;
+      padding: 0.35em 0.55em;
+    }
 
-  .quantity-controls {
-    justify-content: center;
-  }
+    .quantity-controls {
+      justify-content: center;
+    }
 
-  .quantity-controls button {
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    .quantity-controls button {
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .quantity-controls button:hover {
-    background-color: #f8f9fa;
-    border-color: #6c757d;
-  }
+    .quantity-controls button:hover {
+      background-color: #f8f9fa;
+      border-color: #6c757d;
+    }
 
-  .quantity-controls button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+    .quantity-controls button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-  .quantity-input {
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-  }
+    .quantity-input {
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+    }
 
-  .quantity-input:focus {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  }
+    .quantity-input:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
 
-  .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: white;
-  }
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+      color: white;
+    }
 
-  .btn-danger:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-  }
-</style>
+    .btn-danger:hover {
+      background-color: #c82333;
+      border-color: #bd2130;
+    }
 
-<body>
-  <!-- Start Header/Navigation -->
-  <%- include("../../views/partials/user/navBar.ejs") %>
-  <!-- End Header/Navigation -->
+    .btn-copy {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
 
-  <!-- Start Hero Section -->
-  <div class="hero">
-    <div class="container">
-      <div class="row justify-content-between">
-        <div class="col-lg-5">
-          <div class="intro-excerpt">
-            <h1>Cart</h1>
+    .btn-copy:hover {
+      background-color: #0056b3;
+    }
+  </style>
+
+  <body>
+    <!-- Start Header/Navigation -->
+    <%- include("../../views/partials/user/navBar.ejs") %>
+      <!-- End Header/Navigation -->
+
+      <!-- Start Hero Section -->
+      <div class="hero">
+        <div class="container">
+          <div class="row justify-content-between">
+            <div class="col-lg-5">
+              <div class="intro-excerpt">
+                <h1>Cart</h1>
+              </div>
+            </div>
+            <div class="col-lg-7"></div>
           </div>
         </div>
-        <div class="col-lg-7"></div>
       </div>
-    </div>
-  </div>
-  <!-- End Hero Section -->
+      <!-- End Hero Section -->
 
-  <div class="untree_co-section before-footer-section">
-    <div class="container">
-      <div class="row mb-5">
-        <form class="col-md-12" method="post">
-          <div class="site-blocks-table">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th class="product-thumbnail">Product Image</th>
-                  <th class="product-name">Product Name</th>
-                  <th class="product-price">Price</th>
-                  <th class="product-quantity">Quantity</th>
-                  <th class="product-total">Total</th>
-                  <th class="product-remove">Remove</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (cartItems.length > 0) { %>
-                  <% cartItems.forEach(item => { %>
-                    <tr data-id="<%= item._id %>" data-stock="<%= item.stock || 0 %>">
-                      <td class="product-thumbnail">
-                        <img src="/Uploads/product-images/<%= item.image %>" alt="Image" class="img-fluid">
-                      </td>
-                      <td class="product-name">
-                        <%= item.productName %>
-                      </td>
-                      <td class="product-price">₹<%= item.price.toFixed(2) %></td>
-                      <td>
-                        <div class="quantity-controls d-flex align-items-center">
-                          <button type="button" class="btn btn-sm btn-outline-secondary quantity-decrease" style="width: 35px; height: 35px; padding: 0;">
-                            <i class="fas fa-minus"></i>
-                          </button>
-                          <input type="number" value="<%= item.quantity %>" min="1" class="form-control quantity-input text-center mx-2" style="width:60px; height: 35px;" readonly>
-                          <button type="button" class="btn btn-sm btn-outline-secondary quantity-increase" style="width: 35px; height: 35px; padding: 0;">
-                            <i class="fas fa-plus"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td class="item-total">₹<%= item.total.toFixed(2) %></td>
-                      <td>
-                        <button class="btn btn-danger btn-sm remove-btn">
-                          <i class="fas fa-times"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  <% }) %>
-                <% } else { %>
-                  <tr>
-                    <td colspan="6" class="text-center">Your cart is empty</td>
-                  </tr>
-                <% } %>
-              </tbody>
-            </table>
-          </div>
-        </form>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
+      <div class="untree_co-section before-footer-section">
+        <div class="container">
           <div class="row mb-5">
-            <div class="col-md-6 mb-3 mb-md-0">
-              <button class="btn btn-black btn-sm btn-block">Update Cart</button>
-            </div>
-            <div class="col-md-6">
-              <button class="btn btn-outline-black btn-sm btn-block" onclick="window.location='/shop'">Continue Shopping</button>
-            </div>
+            <form class="col-md-12" method="post">
+              <div class="site-blocks-table">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th class="product-thumbnail">Product Image</th>
+                      <th class="product-name">Product Name</th>
+                      <th class="product-price">Price</th>
+                      <th class="product-quantity">Quantity</th>
+                      <th class="product-total">Total</th>
+                      <th class="product-remove">Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (cartItems.length> 0) { %>
+                      <% cartItems.forEach(item=> { %>
+                        <tr data-id="<%= item._id %>" data-stock="<%= item.stock || 0 %>">
+                          <td class="product-thumbnail">
+                            <img src="/Uploads/product-images/<%= item.image %>" alt="Image" class="img-fluid">
+                          </td>
+                          <td class="product-name">
+                            <%= item.productName %>
+                          </td>
+                          <td class="product-price">₹<%= item.price.toFixed(2) %>
+                          </td>
+                          <td>
+                            <div class="quantity-controls d-flex align-items-center">
+                              <button type="button" class="btn btn-sm btn-outline-secondary quantity-decrease"
+                                style="width: 35px; height: 35px; padding: 0;">
+                                <i class="fas fa-minus"></i>
+                              </button>
+                              <input type="number" value="<%= item.quantity %>" min="1"
+                                class="form-control quantity-input text-center mx-2" style="width:60px; height: 35px;"
+                                readonly>
+                              <button type="button" class="btn btn-sm btn-outline-secondary quantity-increase"
+                                style="width: 35px; height: 35px; padding: 0;">
+                                <i class="fas fa-plus"></i>
+                              </button>
+                            </div>
+                          </td>
+                          <td class="item-total">₹<%= item.total.toFixed(2) %>
+                          </td>
+                          <td>
+                            <button class="btn btn-danger btn-sm remove-btn">
+                              <i class="fas fa-times"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        <% }) %>
+                          <% } else { %>
+                            <tr>
+                              <td colspan="6" class="text-center">Your cart is empty</td>
+                            </tr>
+                            <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </form>
           </div>
-          <div class="row">
-            <div class="col-md-12">
-              <label class="text-black h4" for="coupon">Coupon</label>
-              <p>Enter your coupon code if you have one.</p>
-            </div>
-            <div class="col-md-8 mb-3 mb-md-0">
-              <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
-            </div>
-            <div class="col-md-4">
-              <button class="btn btn-black">Apply Coupon</button>
-            </div>
-          </div>
-        </div>
 
-        <div class="col-md-6 pl-5">
-          <div class="row justify-content-end">
-            <div class="col-md-7">
-              <div class="row">
-                <div class="col-md-12 text-right border-bottom mb-5">
-                  <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
-                </div>
-              </div>
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <span class="text-black">Subtotal</span>
-                </div>
-                <div class="col-md-6 text-right">
-                  <strong class="text-black subtotal-amount">₹<%= totalPrice.toFixed(2) %></strong>
-                </div>
-              </div>
+          <div class="row">
+            <div class="col-md-6">
               <div class="row mb-5">
-                <div class="col-md-6">
-                  <span class="text-black">Total</span>
+                <div class="col-md-6 mb-3 mb-md-0">
+                  <button class="btn btn-black btn-sm btn-block" onclick="updateCart()">Update Cart</button>
                 </div>
-                <div class="col-md-6 text-right">
-                  <strong class="text-black total-amount">₹<%= totalPrice.toFixed(2) %></strong>
+                <div class="col-md-6">
+                  <button class="btn btn-outline-black btn-sm btn-block" onclick="window.location='/shop'">Continue
+                    Shopping</button>
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-12">
-                  <button class="btn btn-black btn-lg py-3 btn-block" onclick="window.location='/checkout'">Proceed To Checkout</button>
+                <div class="col-md-8 mb-3 mb-md-0">
+                  <div class="input-group">
+                    <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code"
+                      value="<%= appliedCoupon ? appliedCoupon.name : '' %>">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <button class="btn btn-black" onclick="applyCoupon()">Apply Coupon</button>
+                </div>
+                <div class="col-md-12 mt-3">
+                  <p id="coupon-status" class="text-black">
+                    <%= appliedCoupon && discount> 0 ? `Coupon "${appliedCoupon.name}" applied with
+                      ₹${discount.toFixed(2)} discount` : '' %>
+                  </p>
+                </div>
+                <div class="col-md-12 mt-3">
+                  <h2>Available Coupons</h2>
+                  <div id="available-coupons" class="available-coupons">
+                    <% if (availableCoupons && availableCoupons.length> 0) { %>
+                      <% availableCoupons.forEach(coupon=> { %>
+                        <div class="coupon-item">
+                          <span>Coupon ID: <%= coupon._id %>, Code: <%= coupon.name %></span>
+                          <button class="btn-copy" onclick="copyCouponCode('<%= coupon.name %>')">Copy</button>
+                        </div>
+                        <% }) %>
+                          <% } else { %>
+                            <p>No available coupons found.</p>
+                            <% } %>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="col-md-6 pl-5">
+              <div class="row justify-content-end">
+                <div class="col-md-7">
+                  <div class="row">
+                    <div class="col-md-12 text-right border-bottom mb-5">
+                      <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <span class="text-black">Subtotal</span>
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <strong class="text-black subtotal-amount">₹<%= (totalPrice + (discount || 0)).toFixed(2) %>
+                      </strong>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <span class="text-black">Discount</span>
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <strong class="text-black coupon-discount">₹<%= discount ? discount.toFixed(2) : '0.00' %>
+                      </strong>
+                    </div>
+                  </div>
+                  <div class="row mb-5">
+                    <div class="col-md-6">
+                      <span class="text-black">Total</span>
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <strong class="text-black total-amount">₹<%= totalPrice.toFixed(2) %></strong>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <button class="btn btn-black btn-lg py-3 btn-block" onclick="window.location='/checkout'">Proceed
+                        To Checkout</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Script Section -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Initialize cart badge on page load
-      updateCartBadge();
+      <!-- Script Section -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+      <script>
+        let appliedCoupon = `<%= appliedCoupon ? JSON.stringify(appliedCoupon) : 'null' %>`;
+        let availableCoupons = ` <%= availableCoupons ? JSON.stringify(availableCoupons) : '[]' %>`;
 
-      // Add to cart
-      document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
-        btn.addEventListener("click", async e => {
-          e.preventDefault();
-          const productId = btn.dataset.id;
+        document.addEventListener("DOMContentLoaded", () => {
+          updateCartBadge(`<%= cartCount %>`);
+          attachQuantityListeners();
+          attachRemoveListeners();
+          checkAppliedCoupon();
+          loadAvailableCoupons();
+        });
+
+        async function loadAvailableCoupons() {
+          try {
+            const res = await fetch("/get-available-coupons");
+            const data = await res.json();
+            if (data.success && data.coupons) {
+              availableCoupons = data.coupons;
+              renderAvailableCoupons();
+            }
+          } catch (err) {
+            console.error("Failed to load available coupons:", err);
+          }
+        }
+
+        function renderAvailableCoupons() {
+          const container = document.getElementById("available-coupons");
+          if (availableCoupons.length > 0) {
+            container.innerHTML = availableCoupons.map(coupon => `<p>Coupon ID: ${coupon._id}, Code: ${coupon.name}</p>`).join('');
+          } else {
+            container.innerHTML = '<p>No available coupons found.</p>';
+          }
+        }
+
+        async function checkAppliedCoupon() {
+          try {
+            const res = await fetch("/get-applied-coupon");
+            const data = await res.json();
+            if (data.success && data.coupon) {
+              appliedCoupon = data.coupon;
+              document.getElementById("coupon").value = appliedCoupon.name;
+              document.getElementById("coupon-status").textContent = `Coupon "${appliedCoupon.name}" applied with ₹${data.discount.toFixed(2)} discount`;
+              updateTotalDisplay(data.totalPrice, data.discount);
+            } else {
+              document.getElementById("coupon").value = "";
+              document.getElementById("coupon-status").textContent = "";
+              appliedCoupon = null;
+              updateTotalDisplay(data.totalPrice || `<%= totalPrice %>`, 0);
+            }
+          } catch (err) {
+            console.error("Failed to check applied coupon:", err);
+            document.getElementById("coupon").value = "";
+            document.getElementById("coupon-status").textContent = "";
+            appliedCoupon = null;
+          }
+        }
+
+        async function applyCoupon() {
+          const couponCode = document.getElementById("coupon").value.trim();
+          if (!couponCode) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Please enter a coupon code"
+            });
+            return;
+          }
 
           try {
-            const res = await fetch(`/add-to-cart/${productId}`, {
+            const res = await fetch("/apply-coupon", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ quantity: 1 })
+              body: JSON.stringify({ couponCode })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+              appliedCoupon = { name: couponCode, offerPrice: data.discount };
+              document.getElementById("coupon").value = couponCode;
+              document.getElementById("coupon-status").textContent = `Coupon "${couponCode}" applied with ₹${data.discount.toFixed(2)} discount`;
+              updateTotalDisplay(data.totalPrice, data.discount);
+              Swal.fire({
+                icon: "success",
+                title: "Coupon Applied!",
+                text: `Discount of ₹${data.discount.toFixed(2)} applied`,
+                showConfirmButton: false,
+                timer: 1500
+              });
+            } else {
+              document.getElementById("coupon").value = "";
+              document.getElementById("coupon-status").textContent = data.message || "Coupon code is invalid, expired, or cart total is below ₹2000";
+              appliedCoupon = null;
+              updateTotalDisplay(data.totalPrice || `<%= totalPrice %>`, 0);
+              Swal.fire({
+                icon: "error",
+                title: "Invalid Coupon",
+                text: data.message || "Coupon code is invalid, expired, or cart total is below ₹2000"
+              });
+            }
+          } catch (err) {
+            document.getElementById("coupon").value = "";
+            document.getElementById("coupon-status").textContent = "";
+            appliedCoupon = null;
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to apply coupon"
+            });
+          }
+        }
+
+        function copyCouponCode(code) {
+          const couponInput = document.getElementById("coupon");
+
+          if (couponInput) {
+            couponInput.value = code; // put code into the input box
+          }
+
+          // copy to clipboard
+          navigator.clipboard.writeText(code).then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Copied!",
+              text: `Coupon code "${code}" copied to clipboard`,
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }).catch(err => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to copy coupon code"
+            });
+          });
+        }
+
+
+        async function updateCart() {
+          try {
+            const res = await fetch("/update-cart", { method: "POST" });
+            const data = await res.json();
+            if (data.success) {
+              updateTotalDisplay(data.totalPrice, data.discount);
+              await checkAppliedCoupon();
+              loadAvailableCoupons();
+              Swal.fire({
+                icon: "success",
+                title: "Cart Updated!",
+                text: "Cart has been updated successfully",
+                showConfirmButton: false,
+                timer: 1500
+              });
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data.message || "Failed to update cart"
+              });
+            }
+          } catch (err) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to update cart"
+            });
+          }
+        }
+
+        async function updateCartBadge(cartCount) {
+          const badge = document.querySelector(".cart-badge");
+          if (!badge) return;
+
+          if (cartCount !== undefined) {
+            badge.textContent = cartCount;
+            badge.style.display = cartCount > 0 ? "inline-block" : "none";
+          } else {
+            try {
+              const res = await fetch("/get-cart-count");
+              const data = await res.json();
+              if (data.success) {
+                badge.textContent = data.cartCount;
+                badge.style.display = data.cartCount > 0 ? "inline-block" : "none";
+              }
+            } catch (err) {
+              console.error("Failed to update cart badge:", err);
+            }
+          }
+        }
+
+        function updateTotalDisplay(totalPrice, discount = 0) {
+          const subtotal = totalPrice + (discount || 0);
+          document.querySelector(".subtotal-amount").textContent = `₹${subtotal.toFixed(2)}`;
+          document.querySelector(".coupon-discount").textContent = discount ? `₹${discount.toFixed(2)}` : "₹0.00";
+          document.querySelector(".total-amount").textContent = `₹${totalPrice.toFixed(2)}`;
+        }
+
+        function attachQuantityListeners() {
+          document.querySelectorAll(".quantity-increase").forEach(btn => {
+            btn.addEventListener("click", async e => {
+              e.preventDefault();
+              const row = e.target.closest("tr");
+              const quantityInput = row.querySelector(".quantity-input");
+              const currentQuantity = parseInt(quantityInput.value);
+              const newQuantity = currentQuantity + 1;
+
+              await updateQuantity(row, newQuantity);
+            });
+          });
+
+          document.querySelectorAll(".quantity-decrease").forEach(btn => {
+            btn.addEventListener("click", async e => {
+              e.preventDefault();
+              const row = e.target.closest("tr");
+              const quantityInput = row.querySelector(".quantity-input");
+              const currentQuantity = parseInt(quantityInput.value);
+
+              if (currentQuantity > 1) {
+                const newQuantity = currentQuantity - 1;
+                await updateQuantity(row, newQuantity);
+              }
+            });
+          });
+        }
+
+        function attachRemoveListeners() {
+          document.querySelectorAll(".remove-btn").forEach(btn => {
+            btn.addEventListener("click", async e => {
+              e.preventDefault();
+              const row = e.target.closest("tr");
+              const productId = row.dataset.id;
+
+              try {
+                const res = await fetch(`/remove-from-cart/${productId}`, { method: "DELETE" });
+                const data = await res.json();
+
+                if (data.success) {
+                  row.remove();
+                  updateTotalDisplay(data.totalPrice, data.discount);
+                  updateCartBadge(data.cartCount);
+                  Swal.fire({
+                    icon: "success",
+                    title: "Item Removed",
+                    text: data.message || "Item removed from cart successfully",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+
+                  const tbody = document.querySelector(".site-blocks-table tbody");
+                  if (tbody.children.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Your cart is empty</td></tr>';
+                    document.getElementById("coupon").value = "";
+                    document.getElementById("coupon-status").textContent = "";
+                    appliedCoupon = null;
+                  }
+
+                  await checkAppliedCoupon();
+                  loadAvailableCoupons();
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: data.message || "Failed to remove item"
+                  });
+                }
+              } catch (err) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Failed to remove item from cart"
+                });
+              }
+            });
+          });
+        }
+
+        async function updateQuantity(row, quantity) {
+          const productId = row.dataset.id;
+          const quantityInput = row.querySelector(".quantity-input");
+          const decreaseBtn = row.querySelector(".quantity-decrease");
+          const increaseBtn = row.querySelector(".quantity-increase");
+          const originalQuantity = parseInt(quantityInput.value);
+
+          try {
+            const res = await fetch(`/update-cart-quantity`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ productId, quantity })
             });
 
             const data = await res.json();
             if (data.success) {
-              // Update cart table
-              const tbody = document.querySelector(".site-blocks-table tbody");
-              tbody.innerHTML = ""; // Clear existing rows
-              if (data.cartItems && data.cartItems.length > 0) {
-                data.cartItems.forEach(item => {
-                  const row = document.createElement("tr");
-                  row.setAttribute("data-id", item._id);
-                  row.setAttribute("data-stock", item.stock || 0);
-                  row.innerHTML = `
-                    <td class="product-thumbnail">
-                      <img src="/Uploads/product-images/${item.image}" alt="Image" class="img-fluid">
-                    </td>
-                    <td class="product-name">${item.productName}</td>
-                    <td class="product-price">₹${item.price.toFixed(2)}</td>
-                    <td>
-                      <div class="quantity-controls d-flex align-items-center">
-                        <button type="button" class="btn btn-sm btn-outline-secondary quantity-decrease" style="width: 35px; height: 35px; padding: 0;">
-                          <i class="fas fa-minus"></i>
-                        </button>
-                        <input type="number" value="${item.quantity}" min="1" class="form-control quantity-input text-center mx-2" style="width:60px; height: 35px;" readonly>
-                        <button type="button" class="btn btn-sm btn-outline-secondary quantity-increase" style="width: 35px; height: 35px; padding: 0;">
-                          <i class="fas fa-plus"></i>
-                        </button>
-                      </div>
-                    </td>
-                    <td class="item-total">₹${item.total.toFixed(2)}</td>
-                    <td>
-                      <button class="btn btn-danger btn-sm remove-btn">
-                        <i class="fas fa-times"></i>
-                      </button>
-                    </td>
-                  `;
-                  tbody.appendChild(row);
-                });
-              } else {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Your cart is empty</td></tr>';
-              }
+              quantityInput.value = quantity;
+              decreaseBtn.disabled = quantity <= 1;
+              increaseBtn.disabled = quantity >= parseInt(row.dataset.stock);
 
-              // Reattach event listeners
-              attachQuantityListeners();
-              attachRemoveListeners();
+              const price = parseFloat(row.querySelector(".product-price").textContent.replace("₹", ""));
+              const itemTotal = price * quantity;
+              row.querySelector(".item-total").textContent = `₹${itemTotal.toFixed(2)}`;
 
-              // Update total display and cart badge
-              updateTotalDisplay(data.totalPrice);
+              updateTotalDisplay(data.totalPrice, data.discount);
               updateCartBadge(data.cartCount);
 
+              await checkAppliedCoupon();
+              loadAvailableCoupons();
+            } else {
+              quantityInput.value = originalQuantity;
+              if (data.message && data.message.includes('stock')) {
+                Swal.fire({
+                  icon: "warning",
+                  title: "Insufficient Stock!",
+                  text: data.message,
+                  confirmButtonText: "Got it",
+                  confirmButtonColor: "#3085d6"
+                });
+              } else {
+                Swal.fire({
+                  icon: "error",
+                  title: "Update Failed",
+                  text: data.message || "Failed to update quantity"
+                });
+              }
+            }
+          } catch (err) {
+            quantityInput.value = originalQuantity;
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to update quantity"
+            });
+          }
+        }
+
+        document.querySelectorAll(".quantity-input").forEach(async (input) => {
+          const row = input.closest("tr");
+          const decreaseBtn = row.querySelector(".quantity-decrease");
+          const increaseBtn = row.querySelector(".quantity-increase");
+          const quantity = parseInt(input.value);
+          const productId = row.dataset.id;
+
+          decreaseBtn.disabled = quantity <= 1;
+
+          try {
+            const res = await fetch(`/get-product-stock/${productId}`);
+            const data = await res.json();
+            if (data.success && data.stock !== undefined) {
+              row.dataset.stock = data.stock;
+              increaseBtn.disabled = quantity >= data.stock;
+            }
+          } catch (err) {
+            console.error("Failed to fetch stock info for product:", productId);
+          }
+        });
+
+        document.getElementById("update-time-btn")?.addEventListener("click", async () => {
+          try {
+            const res = await fetch("/update-time", { method: "GET" });
+            const data = await res.json();
+
+            if (data.success) {
               Swal.fire({
                 icon: "success",
-                title: "Added to Cart!",
-                text: data.message || "Item added to cart successfully",
+                title: "Time Updated!",
+                text: data.message || "Current time updated successfully",
+                footer: `Current Time: ${data.currentTime}`,
                 showConfirmButton: false,
                 timer: 1500
               });
@@ -267,255 +615,24 @@
               Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: data.message || "Failed to add item to cart"
+                text: data.message || "Failed to update time"
               });
             }
           } catch (err) {
             Swal.fire({
               icon: "error",
               title: "Error",
-              text: "Failed to add item to cart"
+              text: "Failed to update time"
             });
           }
         });
-      });
+      </script>
 
-    
-      
-      // Function to update cart badge
-      async function updateCartBadge(cartCount) {
-        const badge = document.querySelector(".cart-badge");
-        if (!badge) return;
+      <!-- Start Footer Section -->
+      <%- include("../../views/partials/user/footer.ejs") %>
+        <!-- End Footer Section -->
 
-        if (cartCount !== undefined) {
-          badge.textContent = cartCount;
-          badge.style.display = cartCount > 0 ? "inline-block" : "none";
-        } else {
-          try {
-            const res = await fetch("/get-cart-count");
-            const data = await res.json();
-            if (data.success) {
-              badge.textContent = data.cartCount;
-              badge.style.display = data.cartCount > 0 ? "inline-block" : "none";
-            }
-          } catch (err) {
-            console.error("Failed to update cart badge:", err);
-          }
-        }
-      }
-
-      // Update total display
-      function updateTotalDisplay(totalPrice) {
-        if (totalPrice !== undefined) {
-          document.querySelector(".subtotal-amount").textContent = `₹${totalPrice.toFixed(2)}`;
-          document.querySelector(".total-amount").textContent = `₹${totalPrice.toFixed(2)}`;
-        } else {
-          let calculatedTotal = 0;
-          document.querySelectorAll(".item-total").forEach(el => {
-            const itemTotal = parseFloat(el.textContent.replace("₹", ""));
-            calculatedTotal += itemTotal;
-          });
-          document.querySelector(".subtotal-amount").textContent = `₹${calculatedTotal.toFixed(2)}`;
-          document.querySelector(".total-amount").textContent = `₹${calculatedTotal.toFixed(2)}`;
-        }
-      }
-
-      // Attach quantity listeners
-      function attachQuantityListeners() {
-        document.querySelectorAll(".quantity-increase").forEach(btn => {
-          btn.addEventListener("click", async e => {
-            e.preventDefault();
-            const row = e.target.closest("tr");
-            const quantityInput = row.querySelector(".quantity-input");
-            const currentQuantity = parseInt(quantityInput.value);
-            const newQuantity = currentQuantity + 1;
-
-            await updateQuantity(row, newQuantity);
-          });
-        });
-
-        document.querySelectorAll(".quantity-decrease").forEach(btn => {
-          btn.addEventListener("click", async e => {
-            e.preventDefault();
-            const row = e.target.closest("tr");
-            const quantityInput = row.querySelector(".quantity-input");
-            const currentQuantity = parseInt(quantityInput.value);
-
-            if (currentQuantity > 1) {
-              const newQuantity = currentQuantity - 1;
-              await updateQuantity(row, newQuantity);
-            }
-          });
-        });
-      }
-
-      // Attach remove listeners
-      function attachRemoveListeners() {
-        document.querySelectorAll(".remove-btn").forEach(btn => {
-          btn.addEventListener("click", async e => {
-            e.preventDefault();
-            const row = e.target.closest("tr");
-            const productId = row.dataset.id;
-
-            try {
-              const res = await fetch(`/remove-from-cart/${productId}`, { method: "DELETE" });
-              const data = await res.json();
-
-              if (data.success) {
-                row.remove();
-                updateTotalDisplay(data.totalPrice);
-                updateCartBadge(data.cartCount);
-                Swal.fire({
-                  icon: "success",
-                  title: "Item Removed",
-                  text: data.message || "Item removed from cart successfully",
-                  showConfirmButton: false,
-                  timer: 1500
-                });
-
-                const tbody = document.querySelector(".site-blocks-table tbody");
-                if (tbody.children.length === 0) {
-                  tbody.innerHTML = '<tr><td colspan="6" class="text-center">Your cart is empty</td></tr>';
-                }
-              } else {
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: data.message || "Failed to remove item"
-                });
-              }
-            } catch (err) {
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Failed to remove item from cart"
-              });
-            }
-          });
-        });
-      }
-
-      // Update quantity function
-      async function updateQuantity(row, quantity) {
-        const productId = row.dataset.id;
-        const quantityInput = row.querySelector(".quantity-input");
-        const decreaseBtn = row.querySelector(".quantity-decrease");
-        const increaseBtn = row.querySelector(".quantity-increase");
-        const originalQuantity = parseInt(quantityInput.value);
-
-        try {
-          const res = await fetch(`/update-cart-quantity`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId, quantity })
-          });
-
-          const data = await res.json();
-          if (data.success) {
-            quantityInput.value = quantity;
-            decreaseBtn.disabled = quantity <= 1;
-            increaseBtn.disabled = quantity >= parseInt(row.dataset.stock);
-
-            const price = parseFloat(row.querySelector(".product-price").textContent.replace("₹", ""));
-            const itemTotal = price * quantity;
-            row.querySelector(".item-total").textContent = `₹${itemTotal.toFixed(2)}`;
-
-            updateTotalDisplay(data.totalPrice);
-            updateCartBadge(data.cartCount);
-          } else {
-            quantityInput.value = originalQuantity;
-            if (data.message && data.message.includes('stock')) {
-              Swal.fire({
-                icon: "warning",
-                title: "Insufficient Stock!",
-                text: data.message,
-                confirmButtonText: "Got it",
-                confirmButtonColor: "#3085d6"
-              });
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: "Update Failed",
-                text: data.message || "Failed to update quantity"
-              });
-            }
-          }
-        } catch (err) {
-          quantityInput.value = originalQuantity;
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Failed to update quantity"
-          });
-        }
-      }
-
-      // Initialize decrease button states and get stock info
-      document.querySelectorAll(".quantity-input").forEach(async (input) => {
-        const row = input.closest("tr");
-        const decreaseBtn = row.querySelector(".quantity-decrease");
-        const increaseBtn = row.querySelector(".quantity-increase");
-        const quantity = parseInt(input.value);
-        const productId = row.dataset.id;
-
-        decreaseBtn.disabled = quantity <= 1;
-
-        try {
-          const res = await fetch(`/get-product-stock/${productId}`);
-          const data = await res.json();
-          if (data.success && data.stock !== undefined) {
-            row.dataset.stock = data.stock;
-            increaseBtn.disabled = quantity >= data.stock;
-          }
-        } catch (err) {
-          console.error("Failed to fetch stock info for product:", productId);
-        }
-      });
-
-      // Update current time
-      document.getElementById("update-time-btn")?.addEventListener("click", async () => {
-        try {
-          const res = await fetch("/update-time", { method: "GET" });
-          const data = await res.json();
-
-          if (data.success) {
-            Swal.fire({
-              icon: "success",
-              title: "Time Updated!",
-              text: data.message || "Current time updated successfully",
-              footer: `Current Time: ${data.currentTime}`,
-              showConfirmButton: false,
-              timer: 1500
-            });
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: data.message || "Failed to update time"
-            });
-          }
-        } catch (err) {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Failed to update time"
-          });
-        }
-      });
-
-      // Initialize event listeners
-      attachQuantityListeners();
-      attachRemoveListeners();
-    });
-  </script>
-
-  <!-- Start Footer Section -->
-  <%- include("../../views/partials/user/footer.ejs") %>
-  <!-- End Footer Section -->
-
-  <script src="/js/bootstrap.bundle.min.js"></script>
-  <script src="/js/tiny-slider.js"></script>
-  <script src="/js/custom.js"></script>
-</body>
-
-</html>
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/tiny-slider.js"></script>
+        <script src="/js/custom.js"></script>
+  </body>
