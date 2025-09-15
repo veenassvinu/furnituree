@@ -27,6 +27,8 @@ const loadProfilePage = async (req, res) => {
       return res.redirect("/login");
     }
 
+   
+
     res.render("profile/profile", { userData: user ,activePage: "profile"});
   } catch (error) {
     console.error("Error loading profile page:", error);
@@ -50,6 +52,7 @@ const loadDashboard = async (req, res) => {
       return res.redirect("/login");
     }
 
+   
     res.render("profile/dashboard", { userData: user ,activePage: "dashboard", });
 
   } catch (error) {
@@ -350,48 +353,7 @@ const sendOTP = async (req, res) => {
     }
 };
 
-// // Verify OTP
-// const verifyOTP = async (req, res) => {
-//     try {
-//         const { email, otp } = req.body;
 
-//         if (!email || !otp) {
-//             return res.status(400).json({ success: false, message: 'Email and OTP are required' });
-//         }
-
-//         const storedOTP = otpStore.get(email);
-
-//         if (!storedOTP) {
-//             return res.status(400).json({ success: false, message: 'OTP not found or expired' });
-//         }
-
-//         if (storedOTP.expires < Date.now()) {
-//             otpStore.delete(email);
-//             return res.status(400).json({ success: false, message: 'OTP has expired' });
-//         }
-
-//         if (storedOTP.otp !== otp) {
-//             return res.status(400).json({ success: false, message: 'Invalid OTP' });
-//         }
-
-//         // OTP is valid, update user's email
-//         const user = await User.findById(req.user._id);
-//         if (!user) {
-//             return res.status(404).json({ success: false, message: 'User not found' });
-//         }
-
-//         user.email = email;
-//         await user.save();
-
-//         // Clear OTP from store
-//         otpStore.delete(email);
-
-//         res.status(200).json({ success: true, message: 'Email verified and updated successfully', user });
-//     } catch (error) {
-//         console.error('Error verifying OTP:', error);
-//         res.status(500).json({ success: false, message: 'Failed to verify OTP' });
-//     }
-// };
 
 // ✅ verify OTP
 const verifyOTP = async (req, res) => {

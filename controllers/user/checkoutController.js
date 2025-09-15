@@ -4,63 +4,6 @@ const Address = require("../../models/addressSchema");
 const cartSchema = require("../../models/cartSchema");
 const Cart = require("../../models/cartSchema");
 
-// const loadCheckout = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     if (!userId) return res.redirect("/login");
-
-//     // find user
-//     const user = await User.findById(userId);
-
-//     // find addresses
-//     const addressDoc = await Address.findOne({ userId });
-//     const addressList = addressDoc ? addressDoc.address : [];
-
-//     // find cart
-//     const cart = await cartSchema
-//       .findOne({ userId })
-//       .populate("items.productId");
-
-//     let cartItems = [];
-//     let total = 0;
-
-//     if (cart && cart.items.length > 0) {
-//       cartItems = cart.items.map((item) => {
-//         total += item.productId.salePrice * item.quantity;
-//         return {
-//           name: item.productId.name,
-//           price: item.productId.salePrice,
-//           quantity: item.quantity,
-//           image: item.productId.productImages[0], 
-//         };
-//       });
-//     }
-
-//     res.render("checkout", {
-//       user,
-//       addresses: addressList,
-//       cartItems,
-//       total,
-//     });
-//   } catch (error) {
-//     console.error("Error rendering checkout page", error);
-//     res.status(500).send("Server Error");
-//   }
-// };
-
-let Coupon = null;
-try {
-  Coupon = require("../models/couponModel"); // Try default path
-  console.log("Coupon model loaded successfully from ../models/couponModel");
-} catch (err) {
-  console.error("Failed to load Coupon model from ../models/couponModel:", err);
-  try {
-    Coupon = require("./couponModel"); // Try relative to controller
-    console.log("Coupon model loaded successfully from ./couponModel");
-  } catch (err2) {
-    console.error("Failed to load Coupon model from ./couponModel:", err2);
-  }
-}
 
 const loadCheckout = async (req, res) => {
   try {
@@ -128,7 +71,6 @@ const loadCheckout = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
-
 
 const placeOrder = async (req, res) => {
   try {
@@ -276,7 +218,6 @@ const cancelOrder = async (req, res) => {
         });
     }
 };
-
 
 
 module.exports = {

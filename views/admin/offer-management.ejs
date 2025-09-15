@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Offers Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background-color: #7EBDC3;
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 200px;
+            background-color: white;
+            padding-top: 60px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .sidebar a.active {
+            background-color: #7EBDC3;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 200px;
+            padding: 80px 20px 20px 20px;
+            flex: 1;
+        }
+
+        .offers-form {
+            background-color: #7EBDC3;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #333;
+        }
+
+        .form-group input[type="date"] {
+            color: #666;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .update-btn {
+            background-color: #5BA9B0;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .update-btn:hover {
+            background-color: #4A9299;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 180px;
+            }
+            
+            .main-content {
+                margin-left: 180px;
+            }
+            
+            .offers-form {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding-left: 50px;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                color: white;
+                font-size: 18px;
+                cursor: pointer;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        Furniture.
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#user-management">User Management</a></li>
+            <li><a href="#products-management">Products Management</a></li>
+            <li><a href="#add-product">Add Product</a></li>
+            <li><a href="#order-management">Order Management</a></li>
+            <li><a href="#coupon-management">Coupon Management</a></li>
+            <li><a href="#offers-management" class="active">offers Management</a></li>
+            <li><a href="#category-management">Category Management</a></li>
+            <li><a href="#logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="offers-form">
+            <form id="offersForm">
+                <div class="form-group">
+                    <label for="discount">discount</label>
+                    <input type="text" id="discount" name="discount" placeholder="discount">
+                </div>
+
+                <div class="form-group">
+                    <label for="productApplicable">product applicable</label>
+                    <input type="text" id="productApplicable" name="productApplicable" placeholder="product applicable">
+                </div>
+
+                <div class="form-group">
+                    <label for="expiry">expiry</label>
+                    <input type="date" id="expiry" name="expiry" placeholder="dd-mm-yyyy">
+                </div>
+
+                <div class="form-group">
+                    <label for="categoryApplicable">category applicable</label>
+                    <select id="categoryApplicable" name="categoryApplicable">
+                        <option value="">category applicable</option>
+                        <option value="sofas">Sofas</option>
+                        <option value="chairs">Chairs</option>
+                        <option value="tables">Tables</option>
+                        <option value="beds">Beds</option>
+                        <option value="storage">Storage</option>
+                        <option value="decor">Decor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="discountPrice">discount price</label>
+                    <input type="text" id="discountPrice" name="discountPrice" placeholder="discount price">
+                </div>
+
+                <button type="submit" class="update-btn">Update</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Handle form submission
+        document.getElementById('offersForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const offerData = {};
+            
+            for (let [key, value] of formData.entries()) {
+                offerData[key] = value;
+            }
+            
+            console.log('Offer data:', offerData);
+            
+            // Show success message
+            alert('Offer updated successfully!');
+            
+            // You can add your API call here
+            // updateOffer(offerData);
+        });
+
+        // Handle sidebar navigation
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Close sidebar on mobile after selection
+                if (window.innerWidth <= 640) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+                
+                console.log('Navigating to:', this.textContent);
+            });
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 640) {
+                const sidebar = document.getElementById('sidebar');
+                const menuToggle = document.querySelector('.menu-toggle');
+                
+                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 640) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        });
+
+        // Sample function to simulate API call
+        function updateOffer(data) {
+            // This would typically make an API call to your backend
+            console.log('Making API call to update offer:', data);
+            
+            // Example API call structure:
+            /*
+            fetch('/api/offers', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            */
+        }
+
+        // Form validation
+        function validateForm() {
+            const discount = document.getElementById('discount').value;
+            const expiry = document.getElementById('expiry').value;
+            const discountPrice = document.getElementById('discountPrice').value;
+            
+            if (!discount) {
+                alert('Please enter discount value');
+                return false;
+            }
+            
+            if (!expiry) {
+                alert('Please select expiry date');
+                return false;
+            }
+            
+            if (!discountPrice) {
+                alert('Please enter discount price');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Add validation to form submit
+        document.getElementById('offersForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (validateForm()) {
+                const formData = new FormData(this);
+                const offerData = {};
+                
+                for (let [key, value] of formData.entries()) {
+                    offerData[key] = value;
+                }
+                
+                console.log('Offer data:', offerData);
+                alert('Offer updated successfully!');
+                
+                // Reset form after successful submission
+                this.reset();
+            }
+        });
+    </script>
+</body>
+</html>

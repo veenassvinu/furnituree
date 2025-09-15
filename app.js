@@ -55,4 +55,9 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+// const rzp = new Razorpay({
+//  key_id: "YOUR_KEY_ID",
+//  key_secret: "YOUR_KEY_SECRET",
+// })
+
 module.exports = app;

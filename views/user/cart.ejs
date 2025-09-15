@@ -175,21 +175,28 @@
                       ₹${discount.toFixed(2)} discount` : '' %>
                   </p>
                 </div>
+
                 <div class="col-md-12 mt-3">
-                  <h2>Available Coupons</h2>
+                  <h5>Available Coupons</h5>
                   <div id="available-coupons" class="available-coupons">
                     <% if (availableCoupons && availableCoupons.length> 0) { %>
                       <% availableCoupons.forEach(coupon=> { %>
-                        <div class="coupon-item">
-                          <span>Coupon ID: <%= coupon._id %>, Code: <%= coupon.name %></span>
-                          <button class="btn-copy" onclick="copyCouponCode('<%= coupon.name %>')">Copy</button>
+                        <div class="coupon-item border p-2 mb-2 rounded bg-light">
+                          <p class="mb-1"><strong>Code:</strong>
+                            <%= coupon.name %>
+                          </p>
+                          <!-- <p class="mb-1 text-muted">Min Purchase: ₹<%= coupon.minimumPrice %> -->
+                          </p>
+                          <button class="btn-copy btn btn-sm btn-primary"
+                            onclick="copyCouponCode('<%= coupon.name %>')">Copy</button>
                         </div>
                         <% }) %>
                           <% } else { %>
-                            <p>No available coupons found.</p>
+                            <p>No coupons available for this subtotal.</p>
                             <% } %>
                   </div>
                 </div>
+
 
               </div>
             </div>
