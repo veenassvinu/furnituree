@@ -136,7 +136,8 @@ router.get('/checkout',checkoutController.loadCheckout);
 router.get('/orders',checkoutController.loadOrder)
 router.post("/place-order", checkoutController.placeOrder);
 router.get('/orders/:id/cancel',checkoutController.cancelOrder);
-
+router.post('/createRazorPayOrder',checkoutController.createRazorPayOrder)
+router.post('/verify-payment', checkoutController.verifyPayment);
 
 
 module.exports=router;

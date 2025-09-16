@@ -140,13 +140,20 @@
 
                         <div class="payment-methods">
                             <h3>Payment Methods</h3>
+
                             <div class="payment-method selected" data-method="cod">
                                 <input type="radio" name="paymentMethod" value="COD" checked>
                                 <span>Cash on Delivery</span>
                             </div>
+
                             <div class="payment-method" data-method="card">
-                                <input type="radio" name="payment" value="card">
+                                <input type="radio" name="paymentMethod" value="Card">
                                 <span>Credit / Debit Card</span>
+                            </div>
+
+                            <div class="payment-method" data-method="razorpay">
+                                <input type="radio" name="paymentMethod" value="Razorpay">
+                                <span>Pay with Razorpay</span>
                             </div>
                         </div>
 
@@ -241,72 +248,138 @@
 
 
                     document.getElementById("placeOrderBtn").addEventListener("click", async () => {
-                        // Get selected address
                         const selectedAddressEl = document.querySelector("input[name='selectedAddress']:checked");
-
                         if (!selectedAddressEl) {
-                            Swal.fire({
-                                icon: "warning",
-                                title: "No Address Selected",
-                                text: "Please select an address before placing your order.",
-                            });
+                            Swal.fire("No Address Selected", "Please select an address.", "warning");
                             return;
                         }
-
                         const selectedAddressIndex = selectedAddressEl.value;
 
-                        // Get selected payment method
                         const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value;
-
                         if (!paymentMethod) {
-                            Swal.fire({
-                                icon: "warning",
-                                title: "No Payment Method",
-                                text: "Please select a payment method to continue.",
-                            });
+                            Swal.fire("No Payment Method", "Please select a payment method.", "warning");
                             return;
                         }
 
+                        if (paymentMethod === "COD" || paymentMethod === "Card") {
+                            // Normal order placement
+                            try {
+                                const response = await fetch("/place-order", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ selectedAddressIndex, paymentMethod })
+                                });
+                                const data = await response.json();
+
+                                if (response.ok) {
+                                    Swal.fire("Order Placed", "Your order has been placed successfully!", "success")
+                                        .then(() => window.location.href = "/orders");
+                                } else {
+                                    Swal.fire("Error", data.message || "Order failed!", "error");
+                                }
+                            } catch (err) {
+                                Swal.fire("Error", "Something went wrong!", "error");
+                            }
+                        }
+                        else if (paymentMethod === "Razorpay") {
+                            // 🔹 Call Razorpay checkout instead of placing order directly
+                            startPayment(orderId, totalPrice);
+                        }
+                    });
+
+                </script>
+
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+                <script>
+                    async function startPayment(orderId, totalPrice) {
+                        console.log("payment started", orderId, totalPrice);
+
                         try {
-                            const response = await fetch("/place-order", {
+                            Swal.fire({
+                                title: "Creating Order...",
+                                text: "Please wait while we contact Razorpay",
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            // Call backend to create Razorpay order
+                            const response = await fetch("/createRazorOrder", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    selectedAddressIndex,
-                                    paymentMethod
-                                })
+                                body: JSON.stringify({ orderId, totalPrice })
                             });
 
                             const data = await response.json();
 
-                            if (response.ok) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Order Placed!",
-                                    text: "Your order has been placed successfully.",
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    window.location.href = "/orders";
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Order Failed",
-                                    text: data.message || "Error placing order. Please try again.",
-                                });
+                            if (!data.success) {
+                                Swal.fire("Error", "Error creating Razorpay order", "error");
+                                return;
                             }
-                        } catch (err) {
-                            console.error("Error placing order:", err);
-                            Swal.fire({
-                                icon: "error",
-                                title: "Something Went Wrong",
-                                text: "Please try again later.",
-                            });
+
+                            Swal.close();
+
+                            const options = {
+                                key: data.key,
+                                amount: data.order.amount,
+                                currency: data.order.currency,
+                                order_id: data.order.id,
+                                name: "My Store",
+                                description: "Order Payment",
+                                handler: async function (response) {
+                                    Swal.fire({
+                                        title: "Verifying Payment...",
+                                        text: "Please wait",
+                                        allowOutsideClick: false,
+                                        didOpen: () => {
+                                            Swal.showLoading();
+                                        }
+                                    });
+
+                                    const verifyRes = await fetch("/verify-payment", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            razorpay_order_id: response.razorpay_order_id,
+                                            razorpay_payment_id: response.razorpay_payment_id,
+                                            razorpay_signature: response.razorpay_signature,
+                                            orderId: orderId
+                                        })
+                                    });
+
+                                    const verifyData = await verifyRes.json();
+
+                                    if (verifyData.success) {
+                                        Swal.fire("Success", "Payment successful!", "success")
+                                            .then(() => window.location.href = "/orders");
+                                    } else {
+                                        Swal.fire("Error", "Payment verification failed!", "error");
+                                    }
+                                },
+                                prefill: {
+                                    name: "Test User",
+                                    email: "test@example.com",
+                                    contact: "9999999999"
+                                },
+                                theme: { color: "#3399cc" }
+                            };
+
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+
+                        } catch (error) {
+                            console.error("Payment error:", error);
+                            Swal.fire("Error", "Something went wrong, please try again", "error");
                         }
-                    });
+                    }
+
                 </script>
 
+                <button onclick="startPayment('ORDabcd')">Pay Now</button>
+                <button id="placeOrderBtn">Place Order</button>
 
 
     </body>

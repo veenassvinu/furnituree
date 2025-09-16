@@ -13,43 +13,26 @@ const orderSchema = new Schema({
     ref: "User",
     required: true
   },
-  name: {
-    type: String, 
-    trim: true
-  },
+  name: { type: String, trim: true },
   items: [
     {
-      productId: {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-        required: true
-      },
-      quantity: {
-        type: Number,
-        required: true
-      },
-      price: {
-        type: Number,
-        required: true
-      }
+      productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+      quantity: { type: Number, required: true },
+      price: { type: Number, required: true }
     }
   ],
-  totalPrice: {
-    type: Number,
-    required: true
-  },
-  discount: {
-    type: Number,
-    default: 0
-  },
-  address: {
-    type: Object, // <-- store full address object from Address collection
-    required: true
-  },
+  totalPrice: { type: Number, required: true },
+  discount: { type: Number, default: 0 },
+  address: { type: Object, required: true },
   paymentMethod: {
     type: String,
     enum: ["COD", "Razorpay", "Wallet"],
     required: true
+  },
+  paymentInfo: {
+    orderId: String,
+    paymentId: String,
+    signature: String
   },
   status: {
     type: String,
@@ -64,15 +47,8 @@ const orderSchema = new Schema({
     ],
     default: "Pending"
   },
-  couponApplied: {
-    type: Boolean,
-    default: false
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
+  couponApplied: { type: Boolean, default: false }
+}, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);
 module.exports = Order;

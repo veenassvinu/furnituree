@@ -1,5 +1,6 @@
 const Order = require("../../models/orderSchema");
 const User = require("../../models/userSchema");
+const razorpay=require('../../config/razorpay');
 
 const loadOrder = async (req, res) => {
   try {
@@ -119,8 +120,11 @@ const changeStatus = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   loadOrder,
   loadOrderDetails,
-  changeStatus
+  changeStatus,
+  
 };
