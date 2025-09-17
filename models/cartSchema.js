@@ -34,7 +34,6 @@ const cartSchema = new Schema({
             default: "none"
         }
     }]
-}, { timestamps: true }); // timestamps = createdAt & updatedAt
+}, { timestamps: true }); 
 
-// ✅ Register and export in one line
 module.exports = mongoose.model("Cart", cartSchema);

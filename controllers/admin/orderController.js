@@ -1,6 +1,5 @@
 const Order = require("../../models/orderSchema");
 const User = require("../../models/userSchema");
-const razorpay=require('../../config/razorpay');
 
 const loadOrder = async (req, res) => {
   try {
@@ -70,7 +69,7 @@ const loadOrderDetails = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
       .populate("userId", "name email")
-      .populate("items.productId", "_id name images") // Explicitly include _id
+      .populate("items.productId", "_id name images") 
       .populate("address")
       .lean();
 

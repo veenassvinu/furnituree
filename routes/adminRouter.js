@@ -35,7 +35,6 @@ router.put("/unlist-category/:id",adminAuth,categoryController.unlistCategory);
 
 
 //------------product management-----------//
-
 router.get("/product",adminAuth,productController.loadProduct);
 router.get("/addproduct",adminAuth,productController.getProductAddPage);
 // router.post("/addproduct",upload.array("productImages",4),productController.addproduct);
@@ -76,6 +75,9 @@ router.post("/coupon/create", couponController.createCoupon);
 router.post("/coupon/update/:id", couponController.updateCoupon);
 router.post("/coupon/delete/:id", couponController.deleteCoupon);
 
+
+
+//----------------offer management-----------//
 router.get('/offer',offerController.loadOffer)
 
 module.exports=router;

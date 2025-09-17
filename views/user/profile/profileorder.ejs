@@ -2,8 +2,6 @@
     <%- include("../../views/partials/user/navBar") %>
 
         <link rel="stylesheet" href="/css/profile.css">
-
-
         <link rel="stylesheet" href="/css/profileOrders.css">
 
         <div class="profile-session-container">
@@ -35,33 +33,33 @@
                                                 <% orders.forEach(order=> { %>
                                                     <tr id="order-<%= order._id %>">
                                                         <td>
-                                                            <span class="order-id">#<%= order.orderId.toString() %>
+                                                            <span class="order-id">#<%= order.orderId ? order.orderId.toString() : 'N/A' %>
                                                             </span>
                                                         </td>
                                                         <td>
                                                             <span class="order-date">
-                                                                <%= order.createdAt.toDateString() %>
+                                                                <%= order.createdAt ? order.createdAt.toDateString() : 'N/A' %>
                                                             </span>
                                                         </td>
                                                         <td>
+                                                            <!-- ✅ Fixed: Use orderStatus instead of status -->
                                                             <span
-                                                                class="status-badge status-<%= order.status.toLowerCase().replace(/\s+/g, '-') %>">
-                                                                <%= order.status %>
+                                                                class="status-badge status-<%= order.orderStatus ? order.orderStatus.toLowerCase().replace(/\s+/g, '-') : 'unknown' %>">
+                                                                <%= order.orderStatus || 'Unknown' %>
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <span class="order-total">₹<%= order.totalPrice.toFixed(2)
-                                                                    %></span>
+                                                            <span class="order-total">₹<%= order.totalPrice ? order.totalPrice.toFixed(2) : '0.00' %></span>
                                                         </td>
                                                         <td class="actions-cell">
                                                             <div class="action-buttons">
                                                                 <a href="/orders/<%= order._id %>"
                                                                     class="btn btn-view">View</a>
-                                                                <% if (order.status !=='Cancelled' && order.status
-                                                                    !=='Returned' ) { %>
+                                                                <!-- ✅ Fixed: Use orderStatus instead of status -->
+                                                                <% if (order.orderStatus && order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned' && order.orderStatus !== 'Delivered') { %>
                                                                     <button class="btn btn-cancel"
-                                                                        onclick="cancelOrder('<%= order._id %>', '<%= order.totalPrice %>')">Cancel</button>
-                                                                    <% } %>
+                                                                        onclick="cancelOrder('<%= order._id %>', '<%= order.totalPrice || 0 %>')">Cancel</button>
+                                                                <% } %>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -83,7 +81,7 @@
                                 </div>
 
                                 <!-- Pagination Controls -->
-                                <% if (totalPages> 1) { %>
+                                <% if (totalPages && totalPages > 1) { %>
                                     <div class="pagination-container">
                                         <nav class="pagination">
                                             <% if (hasPrevPage) { %>
@@ -146,12 +144,17 @@
                         }
                     });
 
-                    const response = await fetch(`/orders/${orderId}/cancel`, {
+                    // ✅ Fixed: Use correct cancel route that matches your controller
+                    const response = await fetch(`/cancel-order`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json'
-                        }
+                        },
+                        body: JSON.stringify({
+                            orderId: orderId,
+                            reason: 'Cancelled by user'
+                        })
                     });
 
                     const data = await response.json();

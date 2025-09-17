@@ -136,8 +136,6 @@
                             </div>
                         </div>
 
-
-
                         <div class="payment-methods">
                             <h3>Payment Methods</h3>
 
@@ -170,7 +168,8 @@
                     <% addresses.forEach((addr, index)=> { %>
                         <div class="address-box">
                             <label for="addr-<%= index %>">
-                                <input type="radio" name="selectedAddress" value="<%= index %>" id="addr-<%= index %>"
+                                <!-- ✅ Fixed: Use addr._id instead of index -->
+                                <input type="radio" name="selectedAddress" value="<%= addr._id %>" id="addr-<%= index %>"
                                     <%=index===0 ? "checked" : "" %>>
                                 <strong>
                                     <%= addr.addressType %>
@@ -184,203 +183,223 @@
                             <% } else { %>
                                 <p>No saved addresses found. Please add an address.</p>
                                 <% } %>
-
-
-
-
-                                    <!-- Cart Items -->
-
             </div>
 
             <!-- Footer -->
             <%- include("../../views/partials/user/footer.ejs") %>
 
+<!-- ✅ SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+<script>
+document.getElementById("addressForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
+    const form = e.target;
+    const formData = new FormData(form);
+    const plainFormData = Object.fromEntries(formData.entries());
 
-                <!-- ✅ SweetAlert2 -->
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    try {
+        const response = await fetch("/save-address", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(plainFormData)
+        });
 
-                <script>
+        const data = await response.json();
 
-                    document.getElementById("addressForm").addEventListener("submit", async (e) => {
-                        e.preventDefault();
+        if (response.ok && data.success) {
+            Swal.fire({
+                icon: "success",
+                title: "Address Added!",
+                text: "Your address was saved successfully.",
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data.message || "Failed to save address. Please try again."
+            });
+        }
+    } catch (err) {
+        console.error("Error saving address:", err);
+        Swal.fire({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please try again later."
+        });
+    }
+});
 
-                        const form = e.target;
-                        const formData = new FormData(form);
-                        const plainFormData = Object.fromEntries(formData.entries()); // convert to object
+document.getElementById("placeOrderBtn").addEventListener("click", async () => {
+    const selectedAddressEl = document.querySelector("input[name='selectedAddress']:checked");
+    if (!selectedAddressEl) {
+        Swal.fire("No Address Selected", "Please select an address.", "warning");
+        return;
+    }
+    // ✅ Fixed: Now getting the actual address ID, not index
+    const selectedAddressId = selectedAddressEl.value;
 
-                        try {
-                            const response = await fetch("/save-address", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify(plainFormData) // send as JSON
-                            });
+    const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value;
+    if (!paymentMethod) {
+        Swal.fire("No Payment Method", "Please select a payment method.", "warning");
+        return;
+    }
 
-                            const data = await response.json();
+    if (paymentMethod === "COD" || paymentMethod === "Card") {
+        // 🔹 Normal order placement (no Razorpay)
+        try {
+            Swal.fire({
+                title: "Placing Order...",
+                text: "Please wait",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
 
-                            if (response.ok && data.success) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Address Added!",
-                                    text: "Your address was saved successfully.",
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    window.location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: data.message || "Failed to save address. Please try again."
-                                });
-                            }
-                        } catch (err) {
-                            console.error("Error saving address:", err);
-                            Swal.fire({
-                                icon: "error",
-                                title: "Something went wrong",
-                                text: "Please try again later."
-                            });
-                        }
+            const response = await fetch("/place-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    addressId: selectedAddressId,  // ✅ Fixed: Send addressId, not selectedAddressIndex
+                    paymentMethod 
+                })
+            });
+            
+            const data = await response.json();
+            Swal.close();
+
+            if (response.ok && data.success) {
+                Swal.fire("Order Placed", "Your order has been placed successfully!", "success")
+                    .then(() => window.location.href = "/orders");
+            } else {
+                console.error("Order placement error:", data);
+                Swal.fire("Error", data.message || "Order failed!", "error");
+            }
+        } catch (err) {
+            console.error("Network error:", err);
+            Swal.close();
+            Swal.fire("Error", "Network error. Please try again!", "error");
+        }
+    }
+    else if (paymentMethod === "Razorpay") {
+        // 🔹 Start Razorpay flow
+        startPayment(selectedAddressId);
+    }
+});
+
+async function startPayment(addressId) {
+    try {
+        Swal.fire({
+            title: "Creating Order...",
+            text: "Please wait while we contact Razorpay",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        // 🔹 Call backend to create Razorpay order
+        const response = await fetch("/createRazorPayOrder", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ addressId })
+        });
+
+        const data = await response.json();
+        Swal.close();
+
+        if (!response.ok || !data.success) {
+            console.error("Razorpay order creation failed:", data);
+            Swal.fire("Error", data.message || "Error creating Razorpay order", "error");
+            return;
+        }
+
+        // ✅ Fixed: Use correct property names from backend response
+        const options = {
+            key: data.key,
+            amount: data.razorpayOrder.amount,  // ✅ Fixed: Use razorpayOrder.amount
+            currency: data.razorpayOrder.currency,
+            order_id: data.razorpayOrder.id,    // ✅ Fixed: Use razorpayOrder.id
+            name: "Furniture Store",
+            description: "Order Payment",
+            handler: async function (response) {
+                Swal.fire({
+                    title: "Verifying Payment...",
+                    text: "Please wait",
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                try {
+                    const verifyRes = await fetch("/verify-payment", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            orderId: data.orderId // ✅ Fixed: Use orderId from response
+                        })
                     });
 
+                    const verifyData = await verifyRes.json();
+                    Swal.close();
 
-                    document.getElementById("placeOrderBtn").addEventListener("click", async () => {
-                        const selectedAddressEl = document.querySelector("input[name='selectedAddress']:checked");
-                        if (!selectedAddressEl) {
-                            Swal.fire("No Address Selected", "Please select an address.", "warning");
-                            return;
-                        }
-                        const selectedAddressIndex = selectedAddressEl.value;
-
-                        const paymentMethod = document.querySelector("input[name='paymentMethod']:checked")?.value;
-                        if (!paymentMethod) {
-                            Swal.fire("No Payment Method", "Please select a payment method.", "warning");
-                            return;
-                        }
-
-                        if (paymentMethod === "COD" || paymentMethod === "Card") {
-                            // Normal order placement
-                            try {
-                                const response = await fetch("/place-order", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ selectedAddressIndex, paymentMethod })
-                                });
-                                const data = await response.json();
-
-                                if (response.ok) {
-                                    Swal.fire("Order Placed", "Your order has been placed successfully!", "success")
-                                        .then(() => window.location.href = "/orders");
-                                } else {
-                                    Swal.fire("Error", data.message || "Order failed!", "error");
-                                }
-                            } catch (err) {
-                                Swal.fire("Error", "Something went wrong!", "error");
-                            }
-                        }
-                        else if (paymentMethod === "Razorpay") {
-                            // 🔹 Call Razorpay checkout instead of placing order directly
-                            startPayment(orderId, totalPrice);
-                        }
-                    });
-
-                </script>
-
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-                <script>
-                    async function startPayment(orderId, totalPrice) {
-                        console.log("payment started", orderId, totalPrice);
-
-                        try {
-                            Swal.fire({
-                                title: "Creating Order...",
-                                text: "Please wait while we contact Razorpay",
-                                allowOutsideClick: false,
-                                didOpen: () => {
-                                    Swal.showLoading();
-                                }
-                            });
-
-                            // Call backend to create Razorpay order
-                            const response = await fetch("/createRazorOrder", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ orderId, totalPrice })
-                            });
-
-                            const data = await response.json();
-
-                            if (!data.success) {
-                                Swal.fire("Error", "Error creating Razorpay order", "error");
-                                return;
-                            }
-
-                            Swal.close();
-
-                            const options = {
-                                key: data.key,
-                                amount: data.order.amount,
-                                currency: data.order.currency,
-                                order_id: data.order.id,
-                                name: "My Store",
-                                description: "Order Payment",
-                                handler: async function (response) {
-                                    Swal.fire({
-                                        title: "Verifying Payment...",
-                                        text: "Please wait",
-                                        allowOutsideClick: false,
-                                        didOpen: () => {
-                                            Swal.showLoading();
-                                        }
-                                    });
-
-                                    const verifyRes = await fetch("/verify-payment", {
-                                        method: "POST",
-                                        headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({
-                                            razorpay_order_id: response.razorpay_order_id,
-                                            razorpay_payment_id: response.razorpay_payment_id,
-                                            razorpay_signature: response.razorpay_signature,
-                                            orderId: orderId
-                                        })
-                                    });
-
-                                    const verifyData = await verifyRes.json();
-
-                                    if (verifyData.success) {
-                                        Swal.fire("Success", "Payment successful!", "success")
-                                            .then(() => window.location.href = "/orders");
-                                    } else {
-                                        Swal.fire("Error", "Payment verification failed!", "error");
-                                    }
-                                },
-                                prefill: {
-                                    name: "Test User",
-                                    email: "test@example.com",
-                                    contact: "9999999999"
-                                },
-                                theme: { color: "#3399cc" }
-                            };
-
-                            const rzp1 = new Razorpay(options);
-                            rzp1.open();
-
-                        } catch (error) {
-                            console.error("Payment error:", error);
-                            Swal.fire("Error", "Something went wrong, please try again", "error");
-                        }
+                    if (verifyRes.ok && verifyData.success) {
+                        Swal.fire("Success", "Payment successful!", "success")
+                            .then(() => window.location.href = "/orders");
+                    } else {
+                        console.error("Payment verification failed:", verifyData);
+                        Swal.fire("Error", verifyData.message || "Payment verification failed!", "error");
                     }
+                } catch (error) {
+                    console.error("Payment verification error:", error);
+                    Swal.close();
+                    Swal.fire("Error", "Payment verification failed!", "error");
+                }
+            },
+            prefill: {
+                name: "<%= user ? user.name : '' %>",
+                email: "<%= user ? user.email : '' %>",
+                contact: "<%= user ? user.phone : '' %>"
+            },
+            theme: { color: "#3399cc" },
+            modal: {
+                ondismiss: function() {
+                    Swal.fire("Payment Cancelled", "Payment was cancelled by user", "info");
+                }
+            }
+        };
 
-                </script>
+        const rzp1 = new Razorpay(options);
+        
+        rzp1.on('payment.failed', function (response) {
+            console.error("Payment failed:", response.error);
+            Swal.fire("Payment Failed", response.error.description, "error");
+        });
 
-                <button onclick="startPayment('ORDabcd')">Pay Now</button>
-                <button id="placeOrderBtn">Place Order</button>
+        rzp1.open();
+        
+    } catch (error) {
+        console.error("Payment error:", error);
+        Swal.close();
+        Swal.fire("Error", "Something went wrong, please try again", "error");
+    }
+}
 
+// ✅ Enhanced error handling for debugging
+window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
+});
+
+// ✅ Log any unhandled promise rejections
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('Unhandled promise rejection:', e.reason);
+});
+</script>
 
     </body>
 
